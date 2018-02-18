@@ -38,18 +38,7 @@ func run() {
 		win.Update()
 		mat := pixel.IM
 		mat = mat.Moved(win.Bounds().Center())
-		// pieces["whiteKing"].Draw(win, mat)
-		// pieces["whiteQueen"].Draw(win, mat)
-		// pieces["whiteRook"].Draw(win, mat)
-		// pieces["whiteKnight"].Draw(win, mat)
-		// pieces["whiteBishop"].Draw(win, mat)
-		// pieces["whitePawn"].Draw(win, mat)
-		// pieces["blackKing"].Draw(win, mat)
-		// pieces["blackQueen"].Draw(win, mat)
-		// pieces["blackRook"].Draw(win, mat)
-		// pieces["blackKnight"].Draw(win, mat)
-		// pieces["blackBishop"].Draw(win, mat)
-		// pieces["blackPawn"].Draw(win, mat)
+		pieces["white"]["king"].Draw(win, mat)
 	}
 }
 
@@ -70,22 +59,26 @@ func loadPicture(path string) (pixel.Picture, error) {
 	return pixel.PictureDataFromImage(img), nil
 }
 
-func makePieces(pic pixel.Picture) map[string]*pixel.Sprite {
+func makePieces(pic pixel.Picture) map[string]map[string]*pixel.Sprite {
 	var xInc float64 = 62
 	var yInc float64 = 60
-	return map[string]*pixel.Sprite{
-		"whiteKing":   newSprite(pic, 0, 0, xInc, yInc),
-		"whiteQueen":  newSprite(pic, xInc, 0, xInc*2, yInc),
-		"whiteRook":   newSprite(pic, xInc*2, 0, xInc*3, yInc),
-		"whiteKnight": newSprite(pic, xInc*3, 0, xInc*4, yInc),
-		"whiteBishop": newSprite(pic, xInc*4, 0, xInc*5+5, yInc),
-		"whitePawn":   newSprite(pic, xInc*5+5, 0, xInc*6, yInc),
-		"blackKing":   newSprite(pic, 0, yInc, xInc, yInc*2),
-		"blackQueen":  newSprite(pic, xInc, yInc, xInc*2, yInc*2+5),
-		"blackRook":   newSprite(pic, xInc*2, yInc, xInc*3, yInc*2),
-		"blackKnight": newSprite(pic, xInc*3, yInc, xInc*4, yInc*3),
-		"blackBishop": newSprite(pic, xInc*4, yInc, xInc*5+5, yInc*4),
-		"blackPawn":   newSprite(pic, xInc*5+5, yInc, xInc*6, yInc*5),
+	return map[string]map[string]*pixel.Sprite{
+		"white": map[string]*pixel.Sprite{
+			"king":   newSprite(pic, 0, 0, xInc, yInc),
+			"queen":  newSprite(pic, xInc, 0, xInc*2, yInc),
+			"rook":   newSprite(pic, xInc*2, 0, xInc*3, yInc),
+			"knight": newSprite(pic, xInc*3, 0, xInc*4, yInc),
+			"bishop": newSprite(pic, xInc*4, 0, xInc*5+5, yInc),
+			"pawn":   newSprite(pic, xInc*5+5, 0, xInc*6, yInc),
+		},
+		"black": map[string]*pixel.Sprite{
+			"king":   newSprite(pic, 0, yInc, xInc, yInc*2),
+			"queen":  newSprite(pic, xInc, yInc, xInc*2, yInc*2+5),
+			"rook":   newSprite(pic, xInc*2, yInc, xInc*3, yInc*2),
+			"knight": newSprite(pic, xInc*3, yInc, xInc*4, yInc*3),
+			"bishop": newSprite(pic, xInc*4, yInc, xInc*5+5, yInc*4),
+			"pawn":   newSprite(pic, xInc*5+5, yInc, xInc*6, yInc*5),
+		},
 	}
 }
 
