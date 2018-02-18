@@ -49,7 +49,7 @@ func run() {
 		// pieces["blackRook"].Draw(win, mat)
 		// pieces["blackKnight"].Draw(win, mat)
 		// pieces["blackBishop"].Draw(win, mat)
-		pieces["blackPawn"].Draw(win, mat)
+		// pieces["blackPawn"].Draw(win, mat)
 	}
 }
 
