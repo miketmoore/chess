@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"image/color"
 	_ "image/png"
+	"os"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -9,6 +12,25 @@ import (
 	"github.com/miketmoore/go-chess/pieces"
 	"golang.org/x/image/colornames"
 )
+
+var boardColorSchemes = map[string]map[string]color.RGBA{
+	"classic": map[string]color.RGBA{
+		"black": color.RGBA{0, 0, 0, 1},
+		"white": color.RGBA{255, 255, 255, 1},
+	},
+	"coral": map[string]color.RGBA{
+		"black": color.RGBA{112, 162, 163, 1},
+		"white": color.RGBA{177, 228, 185, 1},
+	},
+	"emerald": map[string]color.RGBA{
+		"black": color.RGBA{111, 143, 114, 1},
+		"white": color.RGBA{173, 189, 143, 1},
+	},
+	"sandcastle": map[string]color.RGBA{
+		"black": color.RGBA{184, 139, 74, 50},
+		"white": color.RGBA{227, 193, 111, 50},
+	},
+}
 
 func run() {
 	// Chess board is 8x8
@@ -25,28 +47,41 @@ func run() {
 		panic(err)
 	}
 
-	win.Clear(colornames.Darkgray)
+	// Make board
+	// TODO why don't the custom colors work like colornames?
+	// boardThemeName := "sandcastle"
+	// blackFill := boardColorSchemes[boardThemeName]["black"]
+	// whiteFill := boardColorSchemes[boardThemeName]["white"]
+	board := board.Build(50, colornames.Darkcyan, colornames.Darkgray)
 
-	board := board.Build(50, colornames.Black, colornames.White)
+	// Make pieces
 	chessPieces := pieces.Build()
 
 	for !win.Closed() {
-		win.Update()
+
+		if win.JustPressed(pixelgl.KeyQ) {
+			fmt.Printf("Exiting...\n")
+			os.Exit(0)
+		}
+
+		win.Clear(colornames.Aliceblue)
 
 		// Draw board
-		for _, square := range board {
+		for i := 0; i < len(board); i++ {
+			square := board[i]
 			square.Draw(win)
 		}
 
 		// Draw pieces in starting positions
 		drawPawns(win, chessPieces["white"]["pawn"], 25, 75)
 		drawPawns(win, chessPieces["black"]["pawn"], 25, 410)
-
 		drawRook(win, chessPieces["white"]["rook"], 25, 25)
 		drawRook(win, chessPieces["white"]["rook"], 375, 25)
 
 		drawRook(win, chessPieces["black"]["rook"], 25, 370)
 		drawRook(win, chessPieces["black"]["rook"], 375, 370)
+
+		win.Update()
 	}
 }
 
