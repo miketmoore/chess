@@ -10,7 +10,7 @@ go get github.com/miketmoore/go-chess
 
 ## Draw Board
 
-<img src="assets/screenshots/go-chess-board.png" width="100">
+<img src="assets/screenshots/go-chess-board.png" width="200">
 
 ```
 go run cmd/board/board.go
