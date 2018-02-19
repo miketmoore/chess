@@ -72,14 +72,41 @@ func run() {
 		}
 
 		// Draw pieces in starting positions
-		drawPawns(win, chessPieces["white"]["pawn"], 25, 75)
-		drawPawns(win, chessPieces["black"]["pawn"], 25, 410)
+		mat := pixel.IM
+		mat = mat.Moved(pixel.Vec{223, 23})
+		chessPieces["black"]["king"].Draw(win, mat)
 
-		drawRook(win, chessPieces["white"]["rook"], 25, 25)
-		drawRook(win, chessPieces["white"]["rook"], 375, 25)
+		mat = pixel.IM
+		mat = mat.Moved(pixel.Vec{173, 23})
+		chessPieces["black"]["queen"].Draw(win, mat)
 
-		drawRook(win, chessPieces["black"]["rook"], 25, 370)
-		drawRook(win, chessPieces["black"]["rook"], 375, 370)
+		mat = pixel.IM
+		mat = mat.Moved(pixel.Vec{128, 23})
+		chessPieces["black"]["bishop"].Draw(win, mat)
+
+		mat = pixel.IM
+		mat = mat.Moved(pixel.Vec{278, 23})
+		chessPieces["black"]["bishop"].Draw(win, mat)
+
+		mat = pixel.IM
+		mat = mat.Moved(pixel.Vec{323, 23})
+		chessPieces["black"]["knight"].Draw(win, mat)
+
+		mat = pixel.IM
+		mat = mat.Moved(pixel.Vec{73, 23})
+		chessPieces["black"]["knight"].Draw(win, mat)
+
+		mat = pixel.IM
+		mat = mat.Moved(pixel.Vec{25, 23})
+		chessPieces["black"]["rook"].Draw(win, mat)
+
+		mat = pixel.IM
+		mat = mat.Moved(pixel.Vec{375, 23})
+		chessPieces["black"]["rook"].Draw(win, mat)
+
+		mat = pixel.IM
+		mat = mat.Moved(pixel.Vec{378, 75})
+		chessPieces["black"]["pawn"].Draw(win, mat)
 
 		win.Update()
 	}
