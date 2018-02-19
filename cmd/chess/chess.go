@@ -13,6 +13,14 @@ import (
 	"golang.org/x/image/colornames"
 )
 
+// TODO make my own chess grid position tool
+// Transform algebraic notation to x,y coordinates
+// https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
+// Rows a-h
+// Columns 1-8
+
+const squareSize float64 = 50
+
 var boardColorSchemes = map[string]map[string]color.RGBA{
 	"classic": map[string]color.RGBA{
 		"black": color.RGBA{0, 0, 0, 255},
@@ -51,7 +59,7 @@ func run() {
 	boardThemeName := "sandcastle"
 	blackFill := boardColorSchemes[boardThemeName]["black"]
 	whiteFill := boardColorSchemes[boardThemeName]["white"]
-	board := board.Build(50, blackFill, whiteFill)
+	board := board.Build(squareSize, blackFill, whiteFill)
 
 	// Make pieces
 	chessPieces := pieces.Build()
@@ -96,20 +104,37 @@ func run() {
 		mat = mat.Moved(pixel.Vec{73, 23})
 		chessPieces["black"]["knight"].Draw(win, mat)
 
+		// mat = pixel.IM
+		// mat = mat.Moved(pixel.Vec{25, 23})
+		// chessPieces["black"]["rook"].Draw(win, mat)
+
+		rook := chessPieces["black"]["rook"]
+		var rookX = center(rook.Frame().W(), 25)
+		var rookY = center(rook.Frame().H(), 25)
 		mat = pixel.IM
-		mat = mat.Moved(pixel.Vec{25, 23})
+		mat = mat.Moved(pixel.Vec{rookX, rookY})
 		chessPieces["black"]["rook"].Draw(win, mat)
 
-		mat = pixel.IM
-		mat = mat.Moved(pixel.Vec{375, 23})
-		chessPieces["black"]["rook"].Draw(win, mat)
-
-		mat = pixel.IM
-		mat = mat.Moved(pixel.Vec{378, 75})
-		chessPieces["black"]["pawn"].Draw(win, mat)
+		// TODO figure out width of shape
+		// fmt.Printf("%v\n", chessPieces["black"]["pawn"].Frame().W())
+		pawn := chessPieces["black"]["pawn"]
+		// var pawnXDiff float64 = (squareSize - pawn.Frame().W()) / 2
+		var pawnX float64 = center(pawn.Frame().W(), 25)
+		var pawnY float64 = center(pawn.Frame().H(), 75)
+		for i := 0; i < 8; i++ {
+			mat = pixel.IM
+			mat = mat.Moved(pixel.Vec{pawnX, pawnY})
+			chessPieces["black"]["pawn"].Draw(win, mat)
+			pawnX += 50
+		}
 
 		win.Update()
 	}
+}
+
+func center(a, b float64) float64 {
+	margin := (squareSize - a) / 2
+	return b + margin
 }
 
 func main() {
