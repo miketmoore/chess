@@ -15,20 +15,20 @@ import (
 
 var boardColorSchemes = map[string]map[string]color.RGBA{
 	"classic": map[string]color.RGBA{
-		"black": color.RGBA{0, 0, 0, 1},
-		"white": color.RGBA{255, 255, 255, 1},
+		"black": color.RGBA{0, 0, 0, 255},
+		"white": color.RGBA{255, 255, 255, 255},
 	},
 	"coral": map[string]color.RGBA{
-		"black": color.RGBA{112, 162, 163, 1},
-		"white": color.RGBA{177, 228, 185, 1},
+		"black": color.RGBA{112, 162, 163, 255},
+		"white": color.RGBA{177, 228, 185, 255},
 	},
 	"emerald": map[string]color.RGBA{
-		"black": color.RGBA{111, 143, 114, 1},
-		"white": color.RGBA{173, 189, 143, 1},
+		"black": color.RGBA{111, 143, 114, 255},
+		"white": color.RGBA{173, 189, 143, 255},
 	},
 	"sandcastle": map[string]color.RGBA{
-		"black": color.RGBA{184, 139, 74, 50},
-		"white": color.RGBA{227, 193, 111, 50},
+		"black": color.RGBA{184, 139, 74, 255},
+		"white": color.RGBA{227, 193, 111, 255},
 	},
 }
 
@@ -48,11 +48,10 @@ func run() {
 	}
 
 	// Make board
-	// TODO why don't the custom colors work like colornames?
-	// boardThemeName := "sandcastle"
-	// blackFill := boardColorSchemes[boardThemeName]["black"]
-	// whiteFill := boardColorSchemes[boardThemeName]["white"]
-	board := board.Build(50, colornames.Darkcyan, colornames.Darkgray)
+	boardThemeName := "sandcastle"
+	blackFill := boardColorSchemes[boardThemeName]["black"]
+	whiteFill := boardColorSchemes[boardThemeName]["white"]
+	board := board.Build(50, blackFill, whiteFill)
 
 	// Make pieces
 	chessPieces := pieces.Build()
@@ -75,6 +74,7 @@ func run() {
 		// Draw pieces in starting positions
 		drawPawns(win, chessPieces["white"]["pawn"], 25, 75)
 		drawPawns(win, chessPieces["black"]["pawn"], 25, 410)
+
 		drawRook(win, chessPieces["white"]["rook"], 25, 25)
 		drawRook(win, chessPieces["white"]["rook"], 375, 25)
 
