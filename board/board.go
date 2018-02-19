@@ -7,20 +7,24 @@ import (
 	"github.com/faiface/pixel/imdraw"
 )
 
+const totalSquares = 64
+const totalRows = 8
+const totalCols = 8
+
 // Build returns an array of *imdraw.IMDraw instances, each representing one square
 // on a chess board. The size argument defines the width and height of each square.
 // The blackFill and whiteFill arguments define what colors are used for the "black"
 // and "white" squares.
-func Build(size float64, blackFill, whiteFill color.RGBA) [64]*imdraw.IMDraw {
+func Build(size float64, blackFill, whiteFill color.RGBA) [totalSquares]*imdraw.IMDraw {
 	var squareW float64 = size
 	var squareH float64 = size
 	var r, c float64
-	var squares [64]*imdraw.IMDraw
+	var squares [totalSquares]*imdraw.IMDraw
 	var colorFlag = true
 	var xInc, yInc float64
 	i := 0
-	for r = 0; r < 8; r++ {
-		for c = 0; c < 8; c++ {
+	for r = 0; r < totalRows; r++ {
+		for c = 0; c < totalCols; c++ {
 			imd := imdraw.New(nil)
 			if colorFlag {
 				imd.Color = blackFill
