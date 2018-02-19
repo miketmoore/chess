@@ -7,6 +7,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/miketmoore/go-chess/board"
 	"golang.org/x/image/colornames"
 )
 
@@ -14,13 +15,16 @@ import (
 var spriteSheetPath = "assets/chess-pieces.png"
 
 func run() {
+	// Chess board is 8x8
+	// top left is white
+
 	// Load sprite sheet graphic
-	pic, err := loadPicture(spriteSheetPath)
+	piecesPic, err := loadPicture(spriteSheetPath)
 	if err != nil {
 		panic(err)
 	}
 
-	pieces := makePieces(pic)
+	pieces := makePieces(piecesPic)
 
 	// Setup GUI window
 	cfg := pixelgl.WindowConfig{
@@ -34,11 +38,16 @@ func run() {
 	}
 
 	win.Clear(colornames.Darkgray)
+
+	board := board.Build(50, colornames.Black, colornames.White)
 	for !win.Closed() {
 		win.Update()
 		mat := pixel.IM
 		mat = mat.Moved(win.Bounds().Center())
 		pieces["white"]["king"].Draw(win, mat)
+		for _, square := range board {
+			square.Draw(win)
+		}
 	}
 }
 
