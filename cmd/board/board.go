@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/miketmoore/go-chess/board"
 	"golang.org/x/image/colornames"
 )
 
@@ -25,35 +25,7 @@ func run() {
 
 	win.Clear(colornames.Darkgray)
 
-	var squareW float64 = 50
-	var squareH float64 = 50
-	var r, c float64
-	var squares [64]*imdraw.IMDraw
-	var colorFlag = true
-	var xInc, yInc float64
-	i := 0
-	for r = 0; r < 8; r++ {
-		for c = 0; c < 8; c++ {
-			fmt.Printf("i:%d: r:%d x c:%d - xInc:%d x yInc:%d\n", i, int(r), int(c), int(xInc), int(yInc))
-			imd := imdraw.New(nil)
-			if colorFlag {
-				imd.Color = colornames.Black
-				colorFlag = false
-			} else {
-				imd.Color = colornames.White
-				colorFlag = true
-			}
-			imd.Push(pixel.V(xInc, yInc))
-			imd.Push(pixel.V(squareW+xInc, squareH+yInc))
-			imd.Rectangle(0)
-			squares[i] = imd
-			xInc += 50
-			i++
-		}
-		colorFlag = !colorFlag
-		xInc = 0
-		yInc += 50
-	}
+	squares := board.Build(50, colornames.Darkgray, colornames.Antiquewhite)
 
 	fmt.Printf("%T\n", squares[0])
 	fmt.Printf("%T\n", squares[1])
