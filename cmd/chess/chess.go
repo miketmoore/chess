@@ -28,7 +28,8 @@ func run() {
 	win.Clear(colornames.Darkgray)
 
 	board := board.Build(50, colornames.Black, colornames.White)
-	pieces := pieces.Build()
+	chessPieces := pieces.Build()
+
 	for !win.Closed() {
 		win.Update()
 
@@ -37,13 +38,33 @@ func run() {
 			square.Draw(win)
 		}
 
-		// Draw piece
-		mat := pixel.IM
-		mat = mat.Moved(win.Bounds().Center())
-		pieces["white"]["king"].Draw(win, mat)
+		// Draw pieces in starting positions
+		drawPawns(win, chessPieces["white"]["pawn"], 25, 75)
+		drawPawns(win, chessPieces["black"]["pawn"], 25, 410)
+
+		drawRook(win, chessPieces["white"]["rook"], 25, 25)
+		drawRook(win, chessPieces["white"]["rook"], 375, 25)
+
+		drawRook(win, chessPieces["black"]["rook"], 25, 370)
+		drawRook(win, chessPieces["black"]["rook"], 375, 370)
 	}
 }
 
 func main() {
 	pixelgl.Run(run)
+}
+
+func drawPawns(win *pixelgl.Window, piece *pixel.Sprite, x, y float64) {
+	for i := 0; i < 8; i++ {
+		mat := pixel.IM
+		mat = mat.Moved(pixel.Vec{x, y})
+		piece.Draw(win, mat)
+		x += 50
+	}
+}
+
+func drawRook(win *pixelgl.Window, piece *pixel.Sprite, x, y float64) {
+	mat := pixel.IM
+	mat = mat.Moved(pixel.Vec{x, y})
+	piece.Draw(win, mat)
 }
