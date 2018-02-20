@@ -42,6 +42,9 @@ type Square struct {
 	OriginY float64
 }
 
+// ColNames is the list of column names in algebraic notation
+var ColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
+
 // New returns an array of *imdraw.IMDraw instances, each representing one square
 // on a chess board. The size argument defines the width and height of each square.
 // The blackFill and whiteFill arguments define what colors are used for the "black"
@@ -55,8 +58,6 @@ func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map {
 	var yInc = originY
 	i := 0
 	squares := Map{}
-
-	colNames := [totalCols]string{"a", "b", "c", "d", "e", "f", "g", "h"}
 
 	for r = 0; r < totalRows; r++ {
 		for c = 0; c < totalCols; c++ {
@@ -74,7 +75,7 @@ func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map {
 			shape.Push(pixel.V(xInc, yInc))
 			shape.Push(pixel.V(squareW+xInc, squareH+yInc))
 			shape.Rectangle(0)
-			name := colNames[int(c)] + fmt.Sprintf("%d", int(r)+1)
+			name := ColNames[int(c)] + fmt.Sprintf("%d", int(r)+1)
 
 			squares[name] = Square{
 				Shape:   shape,

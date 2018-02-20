@@ -79,7 +79,7 @@ func run() {
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
 	fmt.Printf("board origin x: %d\n", boardOriginX)
-	board := board.New(
+	squares := board.New(
 		float64(boardOriginX),
 		150,
 		squareSize,
@@ -129,47 +129,37 @@ func run() {
 		case "start":
 			if draw {
 				// Draw board
-				for _, square := range board {
+				for _, square := range squares {
 					// fmt.Printf(">%v\n", k)
 					square.Shape.Draw(win)
 				}
 
 				// Draw pieces in starting positions
-				placePiece(win, board, drawer.Black.Rook, "a8")
-				placePiece(win, board, drawer.Black.Knight, "b8")
-				placePiece(win, board, drawer.Black.Bishop, "c8")
-				placePiece(win, board, drawer.Black.Queen, "d8")
-				placePiece(win, board, drawer.Black.King, "e8")
-				placePiece(win, board, drawer.Black.Bishop, "f8")
-				placePiece(win, board, drawer.Black.Knight, "g8")
-				placePiece(win, board, drawer.Black.Rook, "h8")
+				placePiece(win, squares, drawer.Black.Rook, "a8")
+				placePiece(win, squares, drawer.Black.Knight, "b8")
+				placePiece(win, squares, drawer.Black.Bishop, "c8")
+				placePiece(win, squares, drawer.Black.Queen, "d8")
+				placePiece(win, squares, drawer.Black.King, "e8")
+				placePiece(win, squares, drawer.Black.Bishop, "f8")
+				placePiece(win, squares, drawer.Black.Knight, "g8")
+				placePiece(win, squares, drawer.Black.Rook, "h8")
 
-				placePiece(win, board, drawer.Black.Pawn, "a7")
-				placePiece(win, board, drawer.Black.Pawn, "b7")
-				placePiece(win, board, drawer.Black.Pawn, "c7")
-				placePiece(win, board, drawer.Black.Pawn, "d7")
-				placePiece(win, board, drawer.Black.Pawn, "e7")
-				placePiece(win, board, drawer.Black.Pawn, "f7")
-				placePiece(win, board, drawer.Black.Pawn, "g7")
-				placePiece(win, board, drawer.Black.Pawn, "h7")
+				for _, name := range board.ColNames {
+					placePiece(win, squares, drawer.Black.Pawn, fmt.Sprintf("%s7", name))
+				}
 
-				placePiece(win, board, drawer.White.Rook, "a1")
-				placePiece(win, board, drawer.White.Knight, "b1")
-				placePiece(win, board, drawer.White.Bishop, "c1")
-				placePiece(win, board, drawer.White.Queen, "d1")
-				placePiece(win, board, drawer.White.King, "e1")
-				placePiece(win, board, drawer.White.Bishop, "f1")
-				placePiece(win, board, drawer.White.Knight, "g1")
-				placePiece(win, board, drawer.White.Rook, "h1")
+				placePiece(win, squares, drawer.White.Rook, "a1")
+				placePiece(win, squares, drawer.White.Knight, "b1")
+				placePiece(win, squares, drawer.White.Bishop, "c1")
+				placePiece(win, squares, drawer.White.Queen, "d1")
+				placePiece(win, squares, drawer.White.King, "e1")
+				placePiece(win, squares, drawer.White.Bishop, "f1")
+				placePiece(win, squares, drawer.White.Knight, "g1")
+				placePiece(win, squares, drawer.White.Rook, "h1")
 
-				placePiece(win, board, drawer.White.Pawn, "a2")
-				placePiece(win, board, drawer.White.Pawn, "b2")
-				placePiece(win, board, drawer.White.Pawn, "c2")
-				placePiece(win, board, drawer.White.Pawn, "d2")
-				placePiece(win, board, drawer.White.Pawn, "e2")
-				placePiece(win, board, drawer.White.Pawn, "f2")
-				placePiece(win, board, drawer.White.Pawn, "g2")
-				placePiece(win, board, drawer.White.Pawn, "h2")
+				for _, name := range board.ColNames {
+					placePiece(win, squares, drawer.White.Pawn, fmt.Sprintf("%s2", name))
+				}
 
 				draw = false
 			}
@@ -179,7 +169,7 @@ func run() {
 				fmt.Printf("mouse pos: %v\n", mpos)
 
 				// What square was clicked?
-				square := findSquareByVec(board, mpos)
+				square := findSquareByVec(squares, mpos)
 				if square != nil {
 					fmt.Printf("Hit!\n")
 				}
