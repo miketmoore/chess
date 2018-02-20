@@ -7,8 +7,7 @@ import (
 	"github.com/faiface/pixel"
 )
 
-// var spriteSheetPath = "assets/chess-pieces.png"
-var spriteSheetPath = "assets/Chess_Pieces_Sprite.png"
+var spriteSheetPath = "assets/standard_chess_pieces_sprite_sheet.png"
 
 type PieceMap map[string]*pixel.Sprite
 type PiecesMap map[string]PieceMap
