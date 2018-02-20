@@ -16,3 +16,8 @@ go get github.com/miketmoore/go-chess
 ```
 go run cmd/chess/chess.go
 ```
+
+## Credit
+
+* Fonts by [Kenney](http://kenney.nl/support)
+* Chess pieces from [Wikipedia](https://commons.wikimedia.org/wiki/Category:PNG_chess_pieces/Standard_transparent#/media/File:ChessPiecesArray.png)
