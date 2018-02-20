@@ -42,11 +42,11 @@ type Square struct {
 	OriginY float64
 }
 
-// Build returns an array of *imdraw.IMDraw instances, each representing one square
+// New returns an array of *imdraw.IMDraw instances, each representing one square
 // on a chess board. The size argument defines the width and height of each square.
 // The blackFill and whiteFill arguments define what colors are used for the "black"
 // and "white" squares.
-func Build(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map {
+func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map {
 	var squareW = size
 	var squareH = size
 	var r, c float64

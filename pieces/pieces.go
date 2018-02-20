@@ -15,8 +15,8 @@ type PieceMap map[string]*pixel.Sprite
 // PiecesMap represents a map of color name to PieceMap
 type PiecesMap map[string]PieceMap
 
-// Build constructs a PiecesMap (chess piece sprites)
-func Build() PiecesMap {
+// New constructs a PiecesMap (chess piece sprites)
+func New() PiecesMap {
 	// Load sprite sheet graphic
 	pic, err := loadPicture(spriteSheetPath)
 	if err != nil {
@@ -24,6 +24,7 @@ func Build() PiecesMap {
 	}
 	return makePieces(pic)
 }
+
 func makePieces(pic pixel.Picture) PiecesMap {
 	return PiecesMap{
 		"black": PieceMap{

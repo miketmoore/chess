@@ -7,9 +7,9 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-func TestBuild(t *testing.T) {
+func TestNew(t *testing.T) {
 	var squares board.Map
-	squares = board.Build(0, 0, 50, colornames.Black, colornames.White)
+	squares = board.New(0, 0, 50, colornames.Black, colornames.White)
 
 	if len(squares) != 64 {
 		t.Fatal("not enough squares")

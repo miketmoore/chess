@@ -81,7 +81,7 @@ func run() {
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
 	fmt.Printf("board origin x: %d\n", boardOriginX)
-	board := board.Build(
+	board := board.New(
 		float64(boardOriginX),
 		150,
 		squareSize,
@@ -90,7 +90,7 @@ func run() {
 	)
 
 	// Make pieces
-	chessPieces := pieces.Build()
+	chessPieces := pieces.New()
 
 	state := "title"
 
