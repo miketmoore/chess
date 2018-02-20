@@ -12,6 +12,7 @@ import (
 	"github.com/golang/freetype/truetype"
 	"github.com/miketmoore/go-chess/board"
 	"github.com/miketmoore/go-chess/pieces"
+	"github.com/nicksnyder/go-i18n/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
 )
@@ -19,6 +20,8 @@ import (
 const screenW = 1280
 const screenH = 720
 
+// Chess board is 8x8
+// top left is white
 // TODO make my own chess grid position tool
 // Transform algebraic notation to x,y coordinates
 // https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
@@ -30,13 +33,20 @@ const squareSize float64 = 50
 const displayFontPath = "assets/kenney_fontpackage/Fonts/Kenney Future Narrow.ttf"
 const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 
+const translationFile = "i18n/chess/en-US.all.json"
+const lang = "en-US"
+
 func run() {
-	// Chess board is 8x8
-	// top left is white
+	// i18n
+	i18n.MustLoadTranslationFile(translationFile)
+	T, err := i18n.Tfunc(lang)
+	if err != nil {
+		panic(err)
+	}
 
 	// Setup GUI window
 	cfg := pixelgl.WindowConfig{
-		Title:  "Chess",
+		Title:  T("title"),
 		Bounds: pixel.R(0, 0, screenW, screenH),
 		VSync:  true,
 	}
@@ -73,7 +83,7 @@ func run() {
 	// displayTxt.Dot.X = displayTxt.BoundsOf(titleStr).W() / 2
 	fmt.Fprintln(displayTxt, titleStr)
 
-	pressAnyKeyStr := "Press any key"
+	pressAnyKeyStr := T("title_pressAnyKey")
 	// bodyTxt.Dot.X = bodyTxt.BoundsOf(pressAnyKeyStr).W() / 2
 	fmt.Fprintln(bodyTxt, pressAnyKeyStr)
 
