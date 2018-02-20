@@ -137,15 +137,6 @@ func run() {
 				}
 
 				// Draw pieces in starting positions
-				mat := pixel.IM
-				mat = mat.Moved(pixel.V(223, 23))
-				// chessPieces["black"]["king"].Draw(win, mat)
-
-				// TODO "place" piece on square by algebraic notation
-				// Black King - e8
-				// square := board["e8"]
-				// fmt.Printf("black king square: %v\n", square)
-				// chessPieces["black"]["king"].Draw(win, pixel.IM.Moved(pixel.V(square.OriginX+25, square.OriginY+25)))
 				placePiece(win, board, chessPieces["black"]["rook"], "a8")
 				placePiece(win, board, chessPieces["black"]["knight"], "b8")
 				placePiece(win, board, chessPieces["black"]["bishop"], "c8")
@@ -181,49 +172,6 @@ func run() {
 				placePiece(win, board, chessPieces["white"]["pawn"], "f2")
 				placePiece(win, board, chessPieces["white"]["pawn"], "g2")
 				placePiece(win, board, chessPieces["white"]["pawn"], "h2")
-
-				// mat = pixel.IM
-				// mat = mat.Moved(pixel.V(173, 23))
-				// chessPieces["black"]["queen"].Draw(win, mat)
-
-				// mat = pixel.IM
-				// mat = mat.Moved(pixel.V(128, 23))
-				// chessPieces["black"]["bishop"].Draw(win, mat)
-
-				// mat = pixel.IM
-				// mat = mat.Moved(pixel.V(278, 23))
-				// chessPieces["black"]["bishop"].Draw(win, mat)
-
-				// mat = pixel.IM
-				// mat = mat.Moved(pixel.V(323, 23))
-				// chessPieces["black"]["knight"].Draw(win, mat)
-
-				// mat = pixel.IM
-				// mat = mat.Moved(pixel.V(73, 23))
-				// chessPieces["black"]["knight"].Draw(win, mat)
-				// mat = pixel.IM
-				// mat = mat.Moved(pixel.Vec{25, 23})
-				// chessPieces["black"]["rook"].Draw(win, mat)
-
-				// rook := chessPieces["black"]["rook"]
-				// var rookX = center(rook.Frame().W(), 25)
-				// var rookY = center(rook.Frame().H(), 25)
-				// mat = pixel.IM
-				// mat = mat.Moved(pixel.Vec{X: rookX, Y: rookY})
-				// chessPieces["black"]["rook"].Draw(win, mat)
-
-				// // TODO figure out width of shape
-				// // fmt.Printf("%v\n", chessPieces["black"]["pawn"].Frame().W())
-				// pawn := chessPieces["black"]["pawn"]
-				// // var pawnXDiff float64 = (squareSize - pawn.Frame().W()) / 2
-				// var pawnX = center(pawn.Frame().W(), 25)
-				// var pawnY = center(pawn.Frame().H(), 75)
-				// for i := 0; i < 8; i++ {
-				// 	mat = pixel.IM
-				// 	mat = mat.Moved(pixel.Vec{X: pawnX, Y: pawnY})
-				// 	chessPieces["black"]["pawn"].Draw(win, mat)
-				// 	pawnX += 50
-				// }
 
 				draw = false
 			}
