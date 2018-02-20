@@ -8,10 +8,11 @@ This is a work in progress.
 go get github.com/miketmoore/go-chess
 ```
 
-## Draw Board
+<img src="assets/screenshots/chess-01-title.png" width="200">
+<img src="assets/screenshots/chess-02-start.png" width="200">
 
-<img src="assets/screenshots/go-chess-board.png" width="200">
+## Play Game
 
 ```
-go run cmd/board/board.go
+go run cmd/chess/chess.go
 ```
