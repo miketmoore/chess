@@ -33,7 +33,14 @@ var Themes = map[string]map[string]color.RGBA{
 }
 
 // Map is the type used to describe the map of board squares/shapes
-type Map map[string]*imdraw.IMDraw
+type Map map[string]Square
+
+// Square represents one square of the board
+type Square struct {
+	Shape   *imdraw.IMDraw
+	OriginX float64
+	OriginY float64
+}
 
 // Build returns an array of *imdraw.IMDraw instances, each representing one square
 // on a chess board. The size argument defines the width and height of each square.
@@ -53,21 +60,28 @@ func Build(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map 
 
 	for r = 0; r < totalRows; r++ {
 		for c = 0; c < totalCols; c++ {
-			square := imdraw.New(nil)
+
+			shape := imdraw.New(nil)
 			if colorFlag {
 				// dark
-				square.Color = blackFill
+				shape.Color = blackFill
 				colorFlag = false
 			} else {
 				// light
-				square.Color = whiteFill
+				shape.Color = whiteFill
 				colorFlag = true
 			}
-			square.Push(pixel.V(xInc, yInc))
-			square.Push(pixel.V(squareW+xInc, squareH+yInc))
-			square.Rectangle(0)
+			shape.Push(pixel.V(xInc, yInc))
+			shape.Push(pixel.V(squareW+xInc, squareH+yInc))
+			shape.Rectangle(0)
 			name := colNames[int(c)] + fmt.Sprintf("%d", int(r)+1)
-			squares[name] = square
+
+			squares[name] = Square{
+				Shape:   shape,
+				OriginX: xInc,
+				OriginY: yInc,
+			}
+
 			xInc += size
 			i++
 		}
