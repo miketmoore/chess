@@ -19,20 +19,9 @@ import (
 
 const screenW = 600
 const screenH = 600
-
-// Chess board is 8x8
-// top left is white
-// TODO make my own chess grid position tool
-// Transform algebraic notation to x,y coordinates
-// https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
-// Rows a-h
-// Columns 1-8
-
 const squareSize float64 = 50
-
 const displayFontPath = "assets/kenney_fontpackage/Fonts/Kenney Future Narrow.ttf"
 const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
-
 const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
 
