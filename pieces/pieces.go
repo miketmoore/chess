@@ -9,14 +9,14 @@ import (
 
 var spriteSheetPath = "assets/standard_chess_pieces_sprite_sheet.png"
 
-// PieceMap represents a map of piece names to sprites
-type PieceMap map[string]*pixel.Sprite
+// ByName represents a map of piece names to sprites
+type ByName map[string]*pixel.Sprite
 
-// PiecesMap represents a map of color name to PieceMap
-type PiecesMap map[string]PieceMap
+// ByColor represents a map of color name to ByName
+type ByColor map[string]ByName
 
-// New constructs a PiecesMap (chess piece sprites)
-func New() PiecesMap {
+// New constructs a ByColor (chess piece sprites)
+func New() ByColor {
 	// Load sprite sheet graphic
 	pic, err := loadPicture(spriteSheetPath)
 	if err != nil {
@@ -25,9 +25,9 @@ func New() PiecesMap {
 	return makePieces(pic)
 }
 
-func makePieces(pic pixel.Picture) PiecesMap {
-	return PiecesMap{
-		"black": PieceMap{
+func makePieces(pic pixel.Picture) ByColor {
+	return ByColor{
+		"black": ByName{
 			"king":   newSprite(pic, 0, 0, 40, 40),
 			"queen":  newSprite(pic, 40, 0, 90, 40),
 			"bishop": newSprite(pic, 90, 0, 140, 40),
@@ -35,7 +35,7 @@ func makePieces(pic pixel.Picture) PiecesMap {
 			"rook":   newSprite(pic, 185, 0, 220, 40),
 			"pawn":   newSprite(pic, 230, 0, 270, 40),
 		},
-		"white": PieceMap{
+		"white": ByName{
 			"king":   newSprite(pic, 0, 40, 40, 85),
 			"queen":  newSprite(pic, 40, 40, 90, 85),
 			"bishop": newSprite(pic, 90, 40, 140, 85),
