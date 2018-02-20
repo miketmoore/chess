@@ -74,8 +74,8 @@ func run() {
 		win.Clear(colornames.Aliceblue)
 
 		// Draw board
-		for i := 0; i < len(board); i++ {
-			square := board[i]
+		for _, square := range board {
+			// fmt.Printf(">%v\n", k)
 			square.Draw(win)
 		}
 
