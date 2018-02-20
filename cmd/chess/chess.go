@@ -44,8 +44,6 @@ func run() {
 		panic(err)
 	}
 
-	// win.SetSmooth(true)
-
 	// Prepare display text
 	displayFace, err := loadTTF(displayFontPath, 80)
 	if err != nil {
