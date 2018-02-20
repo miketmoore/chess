@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image/color"
 	_ "image/png"
 	"io/ioutil"
 	"os"
@@ -29,25 +28,7 @@ const screenH = 720
 const squareSize float64 = 50
 
 const displayFontPath = "assets/kenney_fontpackage/Fonts/Kenney Future Narrow.ttf"
-
-var boardColorSchemes = map[string]map[string]color.RGBA{
-	"classic": map[string]color.RGBA{
-		"black": color.RGBA{0, 0, 0, 255},
-		"white": color.RGBA{255, 255, 255, 255},
-	},
-	"coral": map[string]color.RGBA{
-		"black": color.RGBA{112, 162, 163, 255},
-		"white": color.RGBA{177, 228, 185, 255},
-	},
-	"emerald": map[string]color.RGBA{
-		"black": color.RGBA{111, 143, 114, 255},
-		"white": color.RGBA{173, 189, 143, 255},
-	},
-	"sandcastle": map[string]color.RGBA{
-		"black": color.RGBA{184, 139, 74, 255},
-		"white": color.RGBA{227, 193, 111, 255},
-	},
-}
+const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 
 func run() {
 	// Chess board is 8x8
@@ -66,7 +47,7 @@ func run() {
 
 	// win.SetSmooth(true)
 
-	// Prepare text
+	// Prepare display text
 	displayFace, err := loadTTF(displayFontPath, 80)
 	if err != nil {
 		panic(err)
@@ -76,21 +57,40 @@ func run() {
 	displayOrig := pixel.V(screenW/2, screenH/2)
 	displayTxt := text.New(displayOrig, displayAtlas)
 
-	// fmt.Fprintln(displayTxt, displayTxt.BoundsOf("Chess").W() / 2"Chess")
+	// Prepare body text
+	bodyFace, err := loadTTF(bodyFontPath, 12)
+	if err != nil {
+		panic(err)
+	}
+
+	// Build body text
+	bodyAtlas := text.NewAtlas(bodyFace, text.ASCII)
+	bodyOrig := pixel.V(screenW/2, screenH/2)
+	bodyTxt := text.New(bodyOrig, bodyAtlas)
+
+	// Title
 	titleStr := "Chess"
-	displayTxt.Dot.X = displayTxt.BoundsOf(titleStr).W() / 2
+	// displayTxt.Dot.X = displayTxt.BoundsOf(titleStr).W() / 2
 	fmt.Fprintln(displayTxt, titleStr)
+
+	pressAnyKeyStr := "Press any key"
+	// bodyTxt.Dot.X = bodyTxt.BoundsOf(pressAnyKeyStr).W() / 2
+	fmt.Fprintln(bodyTxt, pressAnyKeyStr)
 
 	// Make board
 	boardThemeName := "sandcastle"
-	blackFill := boardColorSchemes[boardThemeName]["black"]
-	whiteFill := boardColorSchemes[boardThemeName]["white"]
-	board := board.Build(squareSize, blackFill, whiteFill)
+	board := board.Build(
+		squareSize,
+		board.Themes[boardThemeName]["black"],
+		board.Themes[boardThemeName]["white"],
+	)
 
 	// Make pieces
 	chessPieces := pieces.Build()
 
 	state := "title"
+
+	draw := true
 
 	for !win.Closed() {
 
@@ -101,9 +101,25 @@ func run() {
 
 		switch state {
 		case "title":
-			win.Clear(colornames.Black)
-			displayTxt.Color = colornames.White
-			displayTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(displayTxt.Bounds().Center())))
+			if draw {
+				fmt.Printf("Drawing title state...\n")
+				win.Clear(colornames.Black)
+
+				// Draw title text
+				winCenter := win.Bounds().Center()
+				displayTxtCenter := displayTxt.Bounds().Center()
+				vec := winCenter.Sub(displayTxtCenter)
+				displayTxt.Color = colornames.White
+				displayTxt.Draw(win, pixel.IM.Moved(vec))
+
+				// Draw secondary text
+				bodyTxt.Color = colornames.White
+				vec = win.Bounds().Center().Sub(bodyTxt.Bounds().Center())
+				bodyTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(bodyTxt.Bounds().Center())))
+
+				draw = false
+			}
+
 			if win.JustPressed(pixelgl.KeyEnter) {
 				fmt.Printf("title enter!\n")
 			}
