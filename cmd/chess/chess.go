@@ -132,27 +132,27 @@ func run() {
 
 			// Draw pieces in starting positions
 			mat := pixel.IM
-			mat = mat.Moved(pixel.Vec{223, 23})
+			mat = mat.Moved(pixel.V(223, 23))
 			chessPieces["black"]["king"].Draw(win, mat)
 
 			mat = pixel.IM
-			mat = mat.Moved(pixel.Vec{173, 23})
+			mat = mat.Moved(pixel.V(173, 23))
 			chessPieces["black"]["queen"].Draw(win, mat)
 
 			mat = pixel.IM
-			mat = mat.Moved(pixel.Vec{128, 23})
+			mat = mat.Moved(pixel.V(128, 23))
 			chessPieces["black"]["bishop"].Draw(win, mat)
 
 			mat = pixel.IM
-			mat = mat.Moved(pixel.Vec{278, 23})
+			mat = mat.Moved(pixel.V(278, 23))
 			chessPieces["black"]["bishop"].Draw(win, mat)
 
 			mat = pixel.IM
-			mat = mat.Moved(pixel.Vec{323, 23})
+			mat = mat.Moved(pixel.V(323, 23))
 			chessPieces["black"]["knight"].Draw(win, mat)
 
 			mat = pixel.IM
-			mat = mat.Moved(pixel.Vec{73, 23})
+			mat = mat.Moved(pixel.V(73, 23))
 			chessPieces["black"]["knight"].Draw(win, mat)
 			// mat = pixel.IM
 			// mat = mat.Moved(pixel.Vec{25, 23})
@@ -162,18 +162,18 @@ func run() {
 			var rookX = center(rook.Frame().W(), 25)
 			var rookY = center(rook.Frame().H(), 25)
 			mat = pixel.IM
-			mat = mat.Moved(pixel.Vec{rookX, rookY})
+			mat = mat.Moved(pixel.Vec{X: rookX, Y: rookY})
 			chessPieces["black"]["rook"].Draw(win, mat)
 
 			// TODO figure out width of shape
 			// fmt.Printf("%v\n", chessPieces["black"]["pawn"].Frame().W())
 			pawn := chessPieces["black"]["pawn"]
 			// var pawnXDiff float64 = (squareSize - pawn.Frame().W()) / 2
-			var pawnX float64 = center(pawn.Frame().W(), 25)
-			var pawnY float64 = center(pawn.Frame().H(), 75)
+			var pawnX = center(pawn.Frame().W(), 25)
+			var pawnY = center(pawn.Frame().H(), 75)
 			for i := 0; i < 8; i++ {
 				mat = pixel.IM
-				mat = mat.Moved(pixel.Vec{pawnX, pawnY})
+				mat = mat.Moved(pixel.Vec{X: pawnX, Y: pawnY})
 				chessPieces["black"]["pawn"].Draw(win, mat)
 				pawnX += 50
 			}
@@ -195,7 +195,7 @@ func main() {
 func drawPawns(win *pixelgl.Window, piece *pixel.Sprite, x, y float64) {
 	for i := 0; i < 8; i++ {
 		mat := pixel.IM
-		mat = mat.Moved(pixel.Vec{x, y})
+		mat = mat.Moved(pixel.V(x, y))
 		piece.Draw(win, mat)
 		x += 50
 	}
@@ -203,7 +203,7 @@ func drawPawns(win *pixelgl.Window, piece *pixel.Sprite, x, y float64) {
 
 func drawRook(win *pixelgl.Window, piece *pixel.Sprite, x, y float64) {
 	mat := pixel.IM
-	mat = mat.Moved(pixel.Vec{x, y})
+	mat = mat.Moved(pixel.V(x, y))
 	piece.Draw(win, mat)
 }
 
