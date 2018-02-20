@@ -198,21 +198,6 @@ func main() {
 	pixelgl.Run(run)
 }
 
-func drawPawns(win *pixelgl.Window, piece *pixel.Sprite, x, y float64) {
-	for i := 0; i < 8; i++ {
-		mat := pixel.IM
-		mat = mat.Moved(pixel.V(x, y))
-		piece.Draw(win, mat)
-		x += 50
-	}
-}
-
-func drawRook(win *pixelgl.Window, piece *pixel.Sprite, x, y float64) {
-	mat := pixel.IM
-	mat = mat.Moved(pixel.V(x, y))
-	piece.Draw(win, mat)
-}
-
 func loadTTF(path string, size float64) (font.Face, error) {
 	file, err := os.Open(path)
 	if err != nil {
