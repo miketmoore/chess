@@ -116,15 +116,13 @@ func run() {
 				win.Clear(colornames.Black)
 
 				// Draw title text
-				winCenter := win.Bounds().Center()
-				displayTxtCenter := displayTxt.Bounds().Center()
-				vec := winCenter.Sub(displayTxtCenter)
-				displayTxt.Color = colornames.White
-				displayTxt.Draw(win, pixel.IM.Moved(vec))
+				c := displayTxt.Bounds().Center()
+				heightThird := screenH / 5
+				c.Y = c.Y - float64(heightThird)
+				displayTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(c)))
 
 				// Draw secondary text
 				bodyTxt.Color = colornames.White
-				vec = win.Bounds().Center().Sub(bodyTxt.Bounds().Center())
 				bodyTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(bodyTxt.Bounds().Center())))
 
 				draw = false
