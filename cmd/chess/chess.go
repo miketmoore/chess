@@ -174,14 +174,34 @@ func run() {
 				draw = false
 			}
 
+			if win.JustPressed(pixelgl.MouseButtonLeft) {
+				mpos := win.MousePosition()
+				fmt.Printf("mouse pos: %v\n", mpos)
+
+				// What square was clicked?
+				square := findSquareByVec(board, mpos)
+				if square != nil {
+					fmt.Printf("Hit!\n")
+				}
+			}
+
 		}
 
 		win.Update()
 	}
 }
 
-func placePiece(win *pixelgl.Window, board board.Map, piece *pixel.Sprite, coord string) {
-	square := board[coord]
+func findSquareByVec(squares board.Map, vec pixel.Vec) *board.Square {
+	for _, square := range squares {
+		if vec.X > square.OriginX && vec.X < (square.OriginX+50) && vec.Y > square.OriginY && vec.Y < (square.OriginY+50) {
+			return &square
+		}
+	}
+	return nil
+}
+
+func placePiece(win *pixelgl.Window, squares board.Map, piece *pixel.Sprite, coord string) {
+	square := squares[coord]
 	x := square.OriginX + 25
 	y := square.OriginY + 25
 	piece.Draw(win, pixel.IM.Moved(pixel.V(x, y)))
