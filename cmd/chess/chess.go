@@ -88,7 +88,7 @@ func run() {
 	)
 
 	// Make pieces
-	chessPieces := pieces.New()
+	drawer := pieces.New()
 
 	state := "title"
 
@@ -135,41 +135,41 @@ func run() {
 				}
 
 				// Draw pieces in starting positions
-				placePiece(win, board, chessPieces["black"]["rook"], "a8")
-				placePiece(win, board, chessPieces["black"]["knight"], "b8")
-				placePiece(win, board, chessPieces["black"]["bishop"], "c8")
-				placePiece(win, board, chessPieces["black"]["queen"], "d8")
-				placePiece(win, board, chessPieces["black"]["king"], "e8")
-				placePiece(win, board, chessPieces["black"]["bishop"], "f8")
-				placePiece(win, board, chessPieces["black"]["knight"], "g8")
-				placePiece(win, board, chessPieces["black"]["rook"], "h8")
+				placePiece(win, board, drawer.Black["rook"], "a8")
+				placePiece(win, board, drawer.Black["knight"], "b8")
+				placePiece(win, board, drawer.Black["bishop"], "c8")
+				placePiece(win, board, drawer.Black["queen"], "d8")
+				placePiece(win, board, drawer.Black["king"], "e8")
+				placePiece(win, board, drawer.Black["bishop"], "f8")
+				placePiece(win, board, drawer.Black["knight"], "g8")
+				placePiece(win, board, drawer.Black["rook"], "h8")
 
-				placePiece(win, board, chessPieces["black"]["pawn"], "a7")
-				placePiece(win, board, chessPieces["black"]["pawn"], "b7")
-				placePiece(win, board, chessPieces["black"]["pawn"], "c7")
-				placePiece(win, board, chessPieces["black"]["pawn"], "d7")
-				placePiece(win, board, chessPieces["black"]["pawn"], "e7")
-				placePiece(win, board, chessPieces["black"]["pawn"], "f7")
-				placePiece(win, board, chessPieces["black"]["pawn"], "g7")
-				placePiece(win, board, chessPieces["black"]["pawn"], "h7")
+				placePiece(win, board, drawer.Black["pawn"], "a7")
+				placePiece(win, board, drawer.Black["pawn"], "b7")
+				placePiece(win, board, drawer.Black["pawn"], "c7")
+				placePiece(win, board, drawer.Black["pawn"], "d7")
+				placePiece(win, board, drawer.Black["pawn"], "e7")
+				placePiece(win, board, drawer.Black["pawn"], "f7")
+				placePiece(win, board, drawer.Black["pawn"], "g7")
+				placePiece(win, board, drawer.Black["pawn"], "h7")
 
-				placePiece(win, board, chessPieces["white"]["rook"], "a1")
-				placePiece(win, board, chessPieces["white"]["knight"], "b1")
-				placePiece(win, board, chessPieces["white"]["bishop"], "c1")
-				placePiece(win, board, chessPieces["white"]["queen"], "d1")
-				placePiece(win, board, chessPieces["white"]["king"], "e1")
-				placePiece(win, board, chessPieces["white"]["bishop"], "f1")
-				placePiece(win, board, chessPieces["white"]["knight"], "g1")
-				placePiece(win, board, chessPieces["white"]["rook"], "h1")
+				placePiece(win, board, drawer.White["rook"], "a1")
+				placePiece(win, board, drawer.White["knight"], "b1")
+				placePiece(win, board, drawer.White["bishop"], "c1")
+				placePiece(win, board, drawer.White["queen"], "d1")
+				placePiece(win, board, drawer.White["king"], "e1")
+				placePiece(win, board, drawer.White["bishop"], "f1")
+				placePiece(win, board, drawer.White["knight"], "g1")
+				placePiece(win, board, drawer.White["rook"], "h1")
 
-				placePiece(win, board, chessPieces["white"]["pawn"], "a2")
-				placePiece(win, board, chessPieces["white"]["pawn"], "b2")
-				placePiece(win, board, chessPieces["white"]["pawn"], "c2")
-				placePiece(win, board, chessPieces["white"]["pawn"], "d2")
-				placePiece(win, board, chessPieces["white"]["pawn"], "e2")
-				placePiece(win, board, chessPieces["white"]["pawn"], "f2")
-				placePiece(win, board, chessPieces["white"]["pawn"], "g2")
-				placePiece(win, board, chessPieces["white"]["pawn"], "h2")
+				placePiece(win, board, drawer.White["pawn"], "a2")
+				placePiece(win, board, drawer.White["pawn"], "b2")
+				placePiece(win, board, drawer.White["pawn"], "c2")
+				placePiece(win, board, drawer.White["pawn"], "d2")
+				placePiece(win, board, drawer.White["pawn"], "e2")
+				placePiece(win, board, drawer.White["pawn"], "f2")
+				placePiece(win, board, drawer.White["pawn"], "g2")
+				placePiece(win, board, drawer.White["pawn"], "h2")
 
 				draw = false
 			}

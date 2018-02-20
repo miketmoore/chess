@@ -15,19 +15,22 @@ type ByName map[string]*pixel.Sprite
 // ByColor represents a map of color name to ByName
 type ByColor map[string]ByName
 
+// Drawer contains all chess piece sprites
+type Drawer struct {
+	Black ByName
+	White ByName
+}
+
 // New constructs a ByColor (chess piece sprites)
-func New() ByColor {
+func New() Drawer {
 	// Load sprite sheet graphic
 	pic, err := loadPicture(spriteSheetPath)
 	if err != nil {
 		panic(err)
 	}
-	return makePieces(pic)
-}
 
-func makePieces(pic pixel.Picture) ByColor {
-	return ByColor{
-		"black": ByName{
+	return Drawer{
+		Black: ByName{
 			"king":   newSprite(pic, 0, 0, 40, 40),
 			"queen":  newSprite(pic, 40, 0, 90, 40),
 			"bishop": newSprite(pic, 90, 0, 140, 40),
@@ -35,7 +38,7 @@ func makePieces(pic pixel.Picture) ByColor {
 			"rook":   newSprite(pic, 185, 0, 220, 40),
 			"pawn":   newSprite(pic, 230, 0, 270, 40),
 		},
-		"white": ByName{
+		White: ByName{
 			"king":   newSprite(pic, 0, 40, 40, 85),
 			"queen":  newSprite(pic, 40, 40, 90, 85),
 			"bishop": newSprite(pic, 90, 40, 140, 85),
