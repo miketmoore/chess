@@ -122,11 +122,11 @@ func run() {
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
 				fmt.Printf("title enter!\n")
-				state = "start"
+				state = "drawGameState"
 				win.Clear(colornames.Black)
 				draw = true
 			}
-		case "start":
+		case "drawGameState":
 			if draw {
 				// Draw board
 				for _, square := range squares {
@@ -172,6 +172,9 @@ func run() {
 				square := findSquareByVec(squares, mpos)
 				if square != nil {
 					fmt.Printf("Hit!\n")
+
+					// Is the square occupied?
+					// TODO
 				}
 			}
 
