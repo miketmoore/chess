@@ -13,6 +13,9 @@ import (
 	"golang.org/x/image/colornames"
 )
 
+const screenW = 1280
+const screenH = 720
+
 // TODO make my own chess grid position tool
 // Transform algebraic notation to x,y coordinates
 // https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
@@ -47,7 +50,7 @@ func run() {
 	// Setup GUI window
 	cfg := pixelgl.WindowConfig{
 		Title:  "Chess",
-		Bounds: pixel.R(0, 0, 400, 400),
+		Bounds: pixel.R(0, 0, screenW, screenH),
 		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
