@@ -120,7 +120,7 @@ func run() {
 				draw = false
 			}
 
-			if win.JustPressed(pixelgl.KeyEnter) {
+			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
 				fmt.Printf("title enter!\n")
 				state = "start"
 				win.Clear(colornames.Black)
