@@ -89,7 +89,12 @@ func run() {
 
 	// Make board
 	boardThemeName := "sandcastle"
+	boardW := squareSize * 8
+	boardOriginX := (screenW - int(boardW)) / 2
+	fmt.Printf("board origin x: %d\n", boardOriginX)
 	board := board.Build(
+		float64(boardOriginX),
+		150,
 		squareSize,
 		board.Themes[boardThemeName]["black"],
 		board.Themes[boardThemeName]["white"],

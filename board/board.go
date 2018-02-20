@@ -32,20 +32,22 @@ var Themes = map[string]map[string]color.RGBA{
 	},
 }
 
-type boardMap map[string]*imdraw.IMDraw
+// Map is the type used to describe the map of board squares/shapes
+type Map map[string]*imdraw.IMDraw
 
 // Build returns an array of *imdraw.IMDraw instances, each representing one square
 // on a chess board. The size argument defines the width and height of each square.
 // The blackFill and whiteFill arguments define what colors are used for the "black"
 // and "white" squares.
-func Build(size float64, blackFill, whiteFill color.RGBA) boardMap {
-	var squareW float64 = size
-	var squareH float64 = size
+func Build(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map {
+	var squareW = size
+	var squareH = size
 	var r, c float64
 	var colorFlag = true
-	var xInc, yInc float64
+	var xInc = originX
+	var yInc = originY
 	i := 0
-	squares := boardMap{}
+	squares := Map{}
 
 	colNames := [totalCols]string{"a", "b", "c", "d", "e", "f", "g", "h"}
 
@@ -70,7 +72,7 @@ func Build(size float64, blackFill, whiteFill color.RGBA) boardMap {
 			i++
 		}
 		colorFlag = !colorFlag
-		xInc = 0
+		xInc = originX
 		yInc += size
 	}
 	return squares
