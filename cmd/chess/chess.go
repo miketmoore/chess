@@ -128,7 +128,6 @@ func run() {
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				fmt.Printf("title enter!\n")
 				state = StateDraw
 				win.Clear(colornames.Black)
 				draw = true
@@ -137,7 +136,6 @@ func run() {
 			if draw {
 				// Draw board
 				for _, square := range squares {
-					// fmt.Printf(">%v\n", k)
 					square.Shape.Draw(win)
 				}
 
