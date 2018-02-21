@@ -28,9 +28,9 @@ const lang = "en-US"
 type GameState string
 
 const (
-	StateTitle = "title"
-	StateDraw  = "draw"
-	StateInput = "input"
+	stateTitle = "title"
+	stateDraw  = "draw"
+	stateInput = "input"
 )
 
 func run() {
@@ -97,7 +97,7 @@ func run() {
 	// Make pieces
 	drawer := pieces.New()
 
-	state := StateTitle
+	state := stateTitle
 
 	draw := true
 
@@ -109,7 +109,7 @@ func run() {
 		}
 
 		switch state {
-		case StateTitle:
+		case stateTitle:
 			if draw {
 				fmt.Printf("Drawing title state...\n")
 				win.Clear(colornames.Black)
@@ -128,11 +128,11 @@ func run() {
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				state = StateDraw
+				state = stateDraw
 				win.Clear(colornames.Black)
 				draw = true
 			}
-		case StateDraw:
+		case stateDraw:
 			if draw {
 				// Draw board
 				for _, square := range squares {
@@ -167,9 +167,9 @@ func run() {
 				}
 
 				draw = false
-				state = StateInput
+				state = stateInput
 			}
-		case StateInput:
+		case stateInput:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 				fmt.Printf("mouse pos: %v\n", mpos)
