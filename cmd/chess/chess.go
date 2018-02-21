@@ -25,12 +25,12 @@ const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
 
-type GameState string
+type gameState string
 
 const (
-	stateTitle = "title"
-	stateDraw  = "draw"
-	stateInput = "input"
+	stateTitle gameState = "title"
+	stateDraw  gameState = "draw"
+	stateInput gameState = "input"
 )
 
 func run() {
