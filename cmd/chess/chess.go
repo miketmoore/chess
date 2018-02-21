@@ -25,6 +25,14 @@ const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
 
+type GameState string
+
+const (
+	StateTitle = "title"
+	StateDraw  = "draw"
+	StateInput = "input"
+)
+
 func run() {
 	// i18n
 	i18n.MustLoadTranslationFile(translationFile)
@@ -67,11 +75,10 @@ func run() {
 
 	// Title
 	titleStr := "Chess"
-	// displayTxt.Dot.X = displayTxt.BoundsOf(titleStr).W() / 2
 	fmt.Fprintln(displayTxt, titleStr)
 
+	// Sub-title
 	pressAnyKeyStr := T("title_pressAnyKey")
-	// bodyTxt.Dot.X = bodyTxt.BoundsOf(pressAnyKeyStr).W() / 2
 	fmt.Fprintln(bodyTxt, pressAnyKeyStr)
 
 	// Make board
@@ -90,7 +97,7 @@ func run() {
 	// Make pieces
 	drawer := pieces.New()
 
-	state := "title"
+	state := StateTitle
 
 	draw := true
 
@@ -102,7 +109,7 @@ func run() {
 		}
 
 		switch state {
-		case "title":
+		case StateTitle:
 			if draw {
 				fmt.Printf("Drawing title state...\n")
 				win.Clear(colornames.Black)
@@ -122,11 +129,11 @@ func run() {
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
 				fmt.Printf("title enter!\n")
-				state = "drawGameState"
+				state = StateDraw
 				win.Clear(colornames.Black)
 				draw = true
 			}
-		case "drawGameState":
+		case StateDraw:
 			if draw {
 				// Draw board
 				for _, square := range squares {
@@ -162,8 +169,9 @@ func run() {
 				}
 
 				draw = false
+				state = StateInput
 			}
-
+		case StateInput:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 				fmt.Printf("mouse pos: %v\n", mpos)
