@@ -2,10 +2,10 @@
 
 This is a work in progress.
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/miketmoore/go-chess)](https://goreportcard.com/report/github.com/miketmoore/go-chess)
+[![Go Report Card](https://goreportcard.com/badge/github.com/miketmoore/chess)](https://goreportcard.com/report/github.com/miketmoore/chess)
 
 ```
-go get github.com/miketmoore/go-chess
+go get github.com/miketmoore/chess
 ```
 
 <img src="assets/screenshots/chess-01-title.png" width="200">

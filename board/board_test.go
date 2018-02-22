@@ -3,7 +3,7 @@ package board_test
 import (
 	"testing"
 
-	"github.com/miketmoore/go-chess/board"
+	"github.com/miketmoore/chess/board"
 	"golang.org/x/image/colornames"
 )
 
