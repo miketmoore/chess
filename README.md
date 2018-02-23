@@ -5,7 +5,7 @@ This is a work in progress.
 [![Go Report Card](https://goreportcard.com/badge/github.com/miketmoore/chess)](https://goreportcard.com/report/github.com/miketmoore/chess)
 
 ```
-go get github.com/miketmoore/chess
+go get -u github.com/miketmoore/chess/...
 ```
 
 <img src="assets/screenshots/chess-01-title.png" width="200">
