@@ -25,6 +25,10 @@ const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
 
+// BoardState contains algebraic notation coordinates as keys and pieces.Piece values
+// Only pieces currently on the board are set
+type BoardState map[string]*pixel.Sprite
+
 type gameState string
 
 const (
@@ -101,6 +105,34 @@ func run() {
 
 	draw := true
 
+	boardState := BoardState{
+		"a8": drawer.Black.Rook,
+		"b8": drawer.Black.Knight,
+		"c8": drawer.Black.Bishop,
+		"d8": drawer.Black.Queen,
+		"e8": drawer.Black.King,
+		"f8": drawer.Black.Bishop,
+		"g8": drawer.Black.Knight,
+		"h8": drawer.Black.Rook,
+
+		"a1": drawer.White.Rook,
+		"b1": drawer.White.Knight,
+		"c1": drawer.White.Bishop,
+		"d1": drawer.White.Queen,
+		"e1": drawer.White.King,
+		"f1": drawer.White.Bishop,
+		"g1": drawer.White.Knight,
+		"h1": drawer.White.Rook,
+	}
+
+	for _, name := range board.ColNames {
+		boardState[fmt.Sprintf("%s7", name)] = drawer.Black.Pawn
+	}
+
+	for _, name := range board.ColNames {
+		boardState[fmt.Sprintf("%s2", name)] = drawer.White.Pawn
+	}
+
 	for !win.Closed() {
 
 		if win.JustPressed(pixelgl.KeyQ) {
@@ -140,30 +172,8 @@ func run() {
 				}
 
 				// Draw pieces in starting positions
-				placePiece(win, squares, drawer.Black.Rook, "a8")
-				placePiece(win, squares, drawer.Black.Knight, "b8")
-				placePiece(win, squares, drawer.Black.Bishop, "c8")
-				placePiece(win, squares, drawer.Black.Queen, "d8")
-				placePiece(win, squares, drawer.Black.King, "e8")
-				placePiece(win, squares, drawer.Black.Bishop, "f8")
-				placePiece(win, squares, drawer.Black.Knight, "g8")
-				placePiece(win, squares, drawer.Black.Rook, "h8")
-
-				for _, name := range board.ColNames {
-					placePiece(win, squares, drawer.Black.Pawn, fmt.Sprintf("%s7", name))
-				}
-
-				placePiece(win, squares, drawer.White.Rook, "a1")
-				placePiece(win, squares, drawer.White.Knight, "b1")
-				placePiece(win, squares, drawer.White.Bishop, "c1")
-				placePiece(win, squares, drawer.White.Queen, "d1")
-				placePiece(win, squares, drawer.White.King, "e1")
-				placePiece(win, squares, drawer.White.Bishop, "f1")
-				placePiece(win, squares, drawer.White.Knight, "g1")
-				placePiece(win, squares, drawer.White.Rook, "h1")
-
-				for _, name := range board.ColNames {
-					placePiece(win, squares, drawer.White.Pawn, fmt.Sprintf("%s2", name))
+				for coord, piece := range boardState {
+					placePiece(win, squares, piece, coord)
 				}
 
 				draw = false
