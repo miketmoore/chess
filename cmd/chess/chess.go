@@ -158,6 +158,7 @@ func run() {
 		livePieces[fmt.Sprintf("%s2", name)] = LivePieceData{PieceColorWhite, PieceTypePawn}
 	}
 
+	var pieceToMove LivePieceData
 	var moveStartCoord string
 	var moveDestinationCoord string
 
@@ -240,8 +241,14 @@ func run() {
 					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						fmt.Printf("moveStartCoord: %s\n", squareName)
-						moveStartCoord = squareName
-						state = stateSelectDestination
+						// Is there a piece on this square?
+						occupant, ok := livePieces[squareName]
+						if ok {
+							pieceToMove = occupant
+							fmt.Printf("pieceToMove: %v\n", pieceToMove)
+							moveStartCoord = squareName
+							state = stateSelectDestination
+						}
 					}
 
 				}
@@ -266,7 +273,7 @@ func run() {
 			}
 		case stateDrawMove:
 			if draw {
-				fmt.Printf("Drawing move...%s to %s\n", moveStartCoord, moveDestinationCoord)
+				fmt.Printf("Drawing move %v from %s to %s\n", pieceToMove, moveStartCoord, moveDestinationCoord)
 				draw = false
 			}
 		}
