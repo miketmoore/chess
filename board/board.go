@@ -49,7 +49,7 @@ var ColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 // on a chess board. The size argument defines the width and height of each square.
 // The blackFill and whiteFill arguments define what colors are used for the "black"
 // and "white" squares.
-func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map {
+func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) (Map, map[string][]float64) {
 	var squareW = size
 	var squareH = size
 	var r, c float64
@@ -58,6 +58,8 @@ func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map {
 	var yInc = originY
 	i := 0
 	squares := Map{}
+
+	squareOriginByCoords := map[string][]float64{}
 
 	for r = 0; r < totalRows; r++ {
 		for c = 0; c < totalCols; c++ {
@@ -83,6 +85,8 @@ func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map {
 				OriginY: yInc,
 			}
 
+			squareOriginByCoords[name] = []float64{xInc, yInc}
+
 			xInc += size
 			i++
 		}
@@ -90,5 +94,5 @@ func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) Map {
 		xInc = originX
 		yInc += size
 	}
-	return squares
+	return squares, squareOriginByCoords
 }

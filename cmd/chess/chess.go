@@ -55,9 +55,11 @@ type LivePieces map[string]LivePieceData
 type gameState string
 
 const (
-	stateTitle gameState = "title"
-	stateDraw  gameState = "draw"
-	stateInput gameState = "input"
+	stateTitle             gameState = "title"
+	stateDraw              gameState = "draw"
+	stateSelectPiece       gameState = "selectSpace"
+	stateSelectDestination gameState = "selectDestination"
+	stateDrawMove          gameState = "drawMove"
 )
 
 func run() {
@@ -113,7 +115,7 @@ func run() {
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
 	fmt.Printf("board origin x: %d\n", boardOriginX)
-	squares := board.New(
+	squares, squareOriginByCoords := board.New(
 		float64(boardOriginX),
 		150,
 		squareSize,
@@ -155,6 +157,9 @@ func run() {
 	for _, name := range board.ColNames {
 		LivePieces[fmt.Sprintf("%s2", name)] = LivePieceData{PieceColorWhite, PieceTypePawn}
 	}
+
+	var moveStartCoord string
+	var moveDestinationCoord string
 
 	for !win.Closed() {
 
@@ -223,27 +228,60 @@ func run() {
 				}
 
 				draw = false
-				state = stateInput
+				state = stateSelectPiece
 			}
-		case stateInput:
+		case stateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
-				fmt.Printf("mouse pos: %v\n", mpos)
 
 				// What square was clicked?
 				square := findSquareByVec(squares, mpos)
 				if square != nil {
-					fmt.Printf("Hit!\n")
+					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
+					if squareName != "" {
+						fmt.Printf("moveStartCoord: %s\n", squareName)
+						moveStartCoord = squareName
+						state = stateSelectDestination
+					}
 
-					// Is the square occupied?
-					// TODO
 				}
 			}
+		case stateSelectDestination:
+			if win.JustPressed(pixelgl.MouseButtonLeft) {
+				mpos := win.MousePosition()
 
+				// What square was clicked?
+				square := findSquareByVec(squares, mpos)
+				if square != nil {
+					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
+					if squareName != "" {
+						fmt.Printf("moveDestinationCoord: %s\n", squareName)
+						moveDestinationCoord = squareName
+						state = stateDrawMove
+						// TODO add validation
+						draw = true
+					}
+
+				}
+			}
+		case stateDrawMove:
+			if draw {
+				fmt.Printf("Drawing move...%s to %s\n", moveStartCoord, moveDestinationCoord)
+				draw = false
+			}
 		}
 
 		win.Update()
 	}
+}
+
+func getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords map[string][]float64, x, y float64) string {
+	for squareName, originCoords := range squareOriginByCoords {
+		if originCoords[0] == x && originCoords[1] == y {
+			return squareName
+		}
+	}
+	return ""
 }
 
 func findSquareByVec(squares board.Map, vec pixel.Vec) *board.Square {
