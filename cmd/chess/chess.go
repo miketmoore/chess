@@ -130,6 +130,8 @@ func run() {
 
 	draw := true
 
+	whitesMove := true
+
 	livePieces := LivePieces{
 		"a8": LivePieceData{PieceColorBlack, PieceTypeRook},
 		"b8": LivePieceData{PieceColorBlack, PieceTypeKnight},
@@ -244,10 +246,28 @@ func run() {
 						// Is there a piece on this square?
 						occupant, ok := livePieces[squareName]
 						if ok {
-							pieceToMove = occupant
-							fmt.Printf("pieceToMove: %v\n", pieceToMove)
-							moveStartCoord = squareName
-							state = stateSelectDestination
+							// TODO
+							// Is this a valid piece to move?
+							valid := false
+							if whitesMove && occupant.Color == PieceColorWhite {
+								// Are there valid moves for the piece?
+								if occupant.Type == PieceTypePawn {
+									// TODO has the pawn moved yet?
+									// pawn can move one or two spaces ahead on first move
+									// pawn can move one space ahead on moves after first
+									// pawn can capture a piece by moving diagonal ahead, if it puts it behind an enemy piece
+								}
+								valid = true
+							} else if !whitesMove && occupant.Color == PieceColorBlack {
+								// Are there valid moves for the piece?
+								valid = true
+							}
+							if valid {
+								pieceToMove = occupant
+								fmt.Printf("pieceToMove: %v\n", pieceToMove)
+								moveStartCoord = squareName
+								state = stateSelectDestination
+							}
 						}
 					}
 
