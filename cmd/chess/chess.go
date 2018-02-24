@@ -25,9 +25,32 @@ const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
 
-// BoardState contains algebraic notation coordinates as keys and pieces.Piece values
+type PieceColor string
+
+const (
+	PieceColorWhite PieceColor = "white"
+	PieceColorBlack PieceColor = "black"
+)
+
+type PieceType string
+
+const (
+	PieceTypePawn   PieceType = "pawn"
+	PieceTypeRook   PieceType = "rook"
+	PieceTypeKnight PieceType = "knight"
+	PieceTypeBishop PieceType = "bishop"
+	PieceTypeQueen  PieceType = "queen"
+	PieceTypeKing   PieceType = "king"
+)
+
+type LivePieceData struct {
+	Color PieceColor
+	Type  PieceType
+}
+
+// LivePieces contains algebraic notation coordinates as keys and piece identifiers as values
 // Only pieces currently on the board are set
-type BoardState map[string]*pixel.Sprite
+type LivePieces map[string]LivePieceData
 
 type gameState string
 
@@ -105,32 +128,32 @@ func run() {
 
 	draw := true
 
-	boardState := BoardState{
-		"a8": drawer.Black.Rook,
-		"b8": drawer.Black.Knight,
-		"c8": drawer.Black.Bishop,
-		"d8": drawer.Black.Queen,
-		"e8": drawer.Black.King,
-		"f8": drawer.Black.Bishop,
-		"g8": drawer.Black.Knight,
-		"h8": drawer.Black.Rook,
+	LivePieces := LivePieces{
+		"a8": LivePieceData{PieceColorBlack, PieceTypeRook},
+		"b8": LivePieceData{PieceColorBlack, PieceTypeKnight},
+		"c8": LivePieceData{PieceColorBlack, PieceTypeBishop},
+		"d8": LivePieceData{PieceColorBlack, PieceTypeQueen},
+		"e8": LivePieceData{PieceColorBlack, PieceTypeKing},
+		"f8": LivePieceData{PieceColorBlack, PieceTypeBishop},
+		"g8": LivePieceData{PieceColorBlack, PieceTypeKnight},
+		"h8": LivePieceData{PieceColorBlack, PieceTypeRook},
 
-		"a1": drawer.White.Rook,
-		"b1": drawer.White.Knight,
-		"c1": drawer.White.Bishop,
-		"d1": drawer.White.Queen,
-		"e1": drawer.White.King,
-		"f1": drawer.White.Bishop,
-		"g1": drawer.White.Knight,
-		"h1": drawer.White.Rook,
+		"a1": LivePieceData{PieceColorWhite, PieceTypeRook},
+		"b1": LivePieceData{PieceColorWhite, PieceTypeKnight},
+		"c1": LivePieceData{PieceColorWhite, PieceTypeBishop},
+		"d1": LivePieceData{PieceColorWhite, PieceTypeQueen},
+		"e1": LivePieceData{PieceColorWhite, PieceTypeKing},
+		"f1": LivePieceData{PieceColorWhite, PieceTypeBishop},
+		"g1": LivePieceData{PieceColorWhite, PieceTypeKnight},
+		"h1": LivePieceData{PieceColorWhite, PieceTypeRook},
 	}
 
 	for _, name := range board.ColNames {
-		boardState[fmt.Sprintf("%s7", name)] = drawer.Black.Pawn
+		LivePieces[fmt.Sprintf("%s7", name)] = LivePieceData{PieceColorBlack, PieceTypePawn}
 	}
 
 	for _, name := range board.ColNames {
-		boardState[fmt.Sprintf("%s2", name)] = drawer.White.Pawn
+		LivePieces[fmt.Sprintf("%s2", name)] = LivePieceData{PieceColorWhite, PieceTypePawn}
 	}
 
 	for !win.Closed() {
@@ -171,8 +194,31 @@ func run() {
 					square.Shape.Draw(win)
 				}
 
-				// Draw pieces in starting positions
-				for coord, piece := range boardState {
+				// Draw pieces in the correct position
+				for coord, livePieceData := range LivePieces {
+					var set pieces.Set
+					if livePieceData.Color == PieceColorBlack {
+						set = drawer.Black
+					} else {
+						set = drawer.White
+					}
+
+					var piece *pixel.Sprite
+					switch livePieceData.Type {
+					case PieceTypeBishop:
+						piece = set.Bishop
+					case PieceTypeKing:
+						piece = set.King
+					case PieceTypeKnight:
+						piece = set.Knight
+					case PieceTypePawn:
+						piece = set.Pawn
+					case PieceTypeQueen:
+						piece = set.Queen
+					case PieceTypeRook:
+						piece = set.Rook
+					}
+
 					placePiece(win, squares, piece, coord)
 				}
 
