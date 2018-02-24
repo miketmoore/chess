@@ -130,7 +130,7 @@ func run() {
 
 	draw := true
 
-	LivePieces := LivePieces{
+	livePieces := LivePieces{
 		"a8": LivePieceData{PieceColorBlack, PieceTypeRook},
 		"b8": LivePieceData{PieceColorBlack, PieceTypeKnight},
 		"c8": LivePieceData{PieceColorBlack, PieceTypeBishop},
@@ -151,11 +151,11 @@ func run() {
 	}
 
 	for _, name := range board.ColNames {
-		LivePieces[fmt.Sprintf("%s7", name)] = LivePieceData{PieceColorBlack, PieceTypePawn}
+		livePieces[fmt.Sprintf("%s7", name)] = LivePieceData{PieceColorBlack, PieceTypePawn}
 	}
 
 	for _, name := range board.ColNames {
-		LivePieces[fmt.Sprintf("%s2", name)] = LivePieceData{PieceColorWhite, PieceTypePawn}
+		livePieces[fmt.Sprintf("%s2", name)] = LivePieceData{PieceColorWhite, PieceTypePawn}
 	}
 
 	var moveStartCoord string
@@ -200,7 +200,7 @@ func run() {
 				}
 
 				// Draw pieces in the correct position
-				for coord, livePieceData := range LivePieces {
+				for coord, livePieceData := range livePieces {
 					var set pieces.Set
 					if livePieceData.Color == PieceColorBlack {
 						set = drawer.Black
