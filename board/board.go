@@ -1,4 +1,4 @@
-package chess
+package board
 
 import (
 	"fmt"
@@ -49,7 +49,7 @@ var ColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 // on a chess board. The size argument defines the width and height of each square.
 // The blackFill and whiteFill arguments define what colors are used for the "black"
 // and "white" squares.
-func NewBoard(originX, originY, size float64, blackFill, whiteFill color.RGBA) (Map, map[string][]float64) {
+func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) (Map, map[string][]float64) {
 	var squareW = size
 	var squareH = size
 	var r, c float64

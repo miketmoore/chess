@@ -10,7 +10,8 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
-	"github.com/miketmoore/chess"
+	"github.com/miketmoore/chess/board"
+	"github.com/miketmoore/chess/pieces"
 	"github.com/nicksnyder/go-i18n/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
@@ -114,16 +115,16 @@ func run() {
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
 	fmt.Printf("board origin x: %d\n", boardOriginX)
-	squares, squareOriginByCoords := chess.NewBoard(
+	squares, squareOriginByCoords := board.New(
 		float64(boardOriginX),
 		150,
 		squareSize,
-		chess.Themes[boardThemeName]["black"],
-		chess.Themes[boardThemeName]["white"],
+		board.Themes[boardThemeName]["black"],
+		board.Themes[boardThemeName]["white"],
 	)
 
 	// Make pieces
-	drawer := chess.NewDrawer()
+	drawer := pieces.New()
 
 	state := stateTitle
 
@@ -151,11 +152,11 @@ func run() {
 		"h1": LivePieceData{PieceColorWhite, PieceTypeRook},
 	}
 
-	for _, name := range chess.ColNames {
+	for _, name := range board.ColNames {
 		livePieces[fmt.Sprintf("%s7", name)] = LivePieceData{PieceColorBlack, PieceTypePawn}
 	}
 
-	for _, name := range chess.ColNames {
+	for _, name := range board.ColNames {
 		livePieces[fmt.Sprintf("%s2", name)] = LivePieceData{PieceColorWhite, PieceTypePawn}
 	}
 
@@ -203,7 +204,7 @@ func run() {
 
 				// Draw pieces in the correct position
 				for coord, livePieceData := range livePieces {
-					var set chess.Set
+					var set pieces.Set
 					if livePieceData.Color == PieceColorBlack {
 						set = drawer.Black
 					} else {
@@ -310,7 +311,7 @@ func getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords map[string][]
 	return ""
 }
 
-func findSquareByVec(squares chess.Map, vec pixel.Vec) *chess.Square {
+func findSquareByVec(squares board.Map, vec pixel.Vec) *board.Square {
 	for _, square := range squares {
 		if vec.X > square.OriginX && vec.X < (square.OriginX+50) && vec.Y > square.OriginY && vec.Y < (square.OriginY+50) {
 			return &square
@@ -319,7 +320,7 @@ func findSquareByVec(squares chess.Map, vec pixel.Vec) *chess.Square {
 	return nil
 }
 
-func placePiece(win *pixelgl.Window, squares chess.Map, piece *pixel.Sprite, coord string) {
+func placePiece(win *pixelgl.Window, squares board.Map, piece *pixel.Sprite, coord string) {
 	square := squares[coord]
 	x := square.OriginX + 25
 	y := square.OriginY + 25

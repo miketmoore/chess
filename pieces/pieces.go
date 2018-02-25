@@ -1,4 +1,4 @@
-package chess
+package pieces
 
 import (
 	"image"
@@ -31,8 +31,8 @@ type Set struct {
 	Pawn   *pixel.Sprite
 }
 
-// NewDrawer constructs a Drawer (chess piece sprites by color and type)
-func NewDrawer() Drawer {
+// New constructs a ByColor (chess piece sprites)
+func New() Drawer {
 	// Load sprite sheet graphic
 	pic, err := loadPicture(spriteSheetPath)
 	if err != nil {
