@@ -14,6 +14,7 @@ import (
 	"github.com/miketmoore/chess/piecesdata"
 	"github.com/miketmoore/chess/piecesview"
 	"github.com/miketmoore/chess/player"
+	"github.com/miketmoore/chess/state"
 	"github.com/nicksnyder/go-i18n/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
@@ -26,16 +27,6 @@ const displayFontPath = "assets/kenney_fontpackage/Fonts/Kenney Future Narrow.tt
 const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
-
-type gameState string
-
-const (
-	stateTitle             gameState = "title"
-	stateDraw              gameState = "draw"
-	stateSelectPiece       gameState = "selectSpace"
-	stateSelectDestination gameState = "selectDestination"
-	stateDrawMove          gameState = "drawMove"
-)
 
 func run() {
 	// i18n
@@ -101,7 +92,7 @@ func run() {
 	// Make pieces
 	drawer := piecesview.New()
 
-	state := stateTitle
+	currentState := state.Title
 
 	draw := true
 
@@ -146,8 +137,8 @@ func run() {
 			os.Exit(0)
 		}
 
-		switch state {
-		case stateTitle:
+		switch currentState {
+		case state.Title:
 			if draw {
 				fmt.Printf("Drawing title state...\n")
 				win.Clear(colornames.Black)
@@ -166,11 +157,11 @@ func run() {
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				state = stateDraw
+				currentState = state.Draw
 				win.Clear(colornames.Black)
 				draw = true
 			}
-		case stateDraw:
+		case state.Draw:
 			if draw {
 				// Draw board
 				for _, square := range squares {
@@ -206,9 +197,9 @@ func run() {
 				}
 
 				draw = false
-				state = stateSelectPiece
+				currentState = state.SelectPiece
 			}
-		case stateSelectPiece:
+		case state.SelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 
@@ -241,14 +232,14 @@ func run() {
 								pieceToMove = occupant
 								fmt.Printf("pieceToMove: %v\n", pieceToMove)
 								moveStartCoord = squareName
-								state = stateSelectDestination
+								currentState = state.SelectDestination
 							}
 						}
 					}
 
 				}
 			}
-		case stateSelectDestination:
+		case state.SelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 
@@ -259,14 +250,14 @@ func run() {
 					if squareName != "" {
 						fmt.Printf("moveDestinationCoord: %s\n", squareName)
 						moveDestinationCoord = squareName
-						state = stateDrawMove
+						currentState = state.DrawMove
 						// TODO add validation
 						draw = true
 					}
 
 				}
 			}
-		case stateDrawMove:
+		case state.DrawMove:
 			if draw {
 				fmt.Printf("Drawing move %v from %s to %s\n", pieceToMove, moveStartCoord, moveDestinationCoord)
 				draw = false
