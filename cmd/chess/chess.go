@@ -11,7 +11,9 @@ import (
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
 	"github.com/miketmoore/chess/boardview"
+	"github.com/miketmoore/chess/piecesdata"
 	"github.com/miketmoore/chess/piecesview"
+	"github.com/miketmoore/chess/player"
 	"github.com/nicksnyder/go-i18n/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
@@ -24,33 +26,6 @@ const displayFontPath = "assets/kenney_fontpackage/Fonts/Kenney Future Narrow.tt
 const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
-
-type PieceColor string
-
-const (
-	PieceColorWhite PieceColor = "white"
-	PieceColorBlack PieceColor = "black"
-)
-
-type PieceType string
-
-const (
-	PieceTypePawn   PieceType = "pawn"
-	PieceTypeRook   PieceType = "rook"
-	PieceTypeKnight PieceType = "knight"
-	PieceTypeBishop PieceType = "bishop"
-	PieceTypeQueen  PieceType = "queen"
-	PieceTypeKing   PieceType = "king"
-)
-
-type LivePieceData struct {
-	Color PieceColor
-	Type  PieceType
-}
-
-// LivePieces contains algebraic notation coordinates as keys and piece identifiers as values
-// Only pieces currently on the board are set
-type LivePieces map[string]LivePieceData
 
 type gameState string
 
@@ -132,35 +107,35 @@ func run() {
 
 	whitesMove := true
 
-	livePieces := LivePieces{
-		"a8": LivePieceData{PieceColorBlack, PieceTypeRook},
-		"b8": LivePieceData{PieceColorBlack, PieceTypeKnight},
-		"c8": LivePieceData{PieceColorBlack, PieceTypeBishop},
-		"d8": LivePieceData{PieceColorBlack, PieceTypeQueen},
-		"e8": LivePieceData{PieceColorBlack, PieceTypeKing},
-		"f8": LivePieceData{PieceColorBlack, PieceTypeBishop},
-		"g8": LivePieceData{PieceColorBlack, PieceTypeKnight},
-		"h8": LivePieceData{PieceColorBlack, PieceTypeRook},
+	livePieces := piecesdata.Live{
+		"a8": piecesdata.LiveData{Color: player.Black, Type: piecesdata.Rook},
+		"b8": piecesdata.LiveData{Color: player.Black, Type: piecesdata.Knight},
+		"c8": piecesdata.LiveData{Color: player.Black, Type: piecesdata.Bishop},
+		"d8": piecesdata.LiveData{Color: player.Black, Type: piecesdata.Queen},
+		"e8": piecesdata.LiveData{Color: player.Black, Type: piecesdata.King},
+		"f8": piecesdata.LiveData{Color: player.Black, Type: piecesdata.Bishop},
+		"g8": piecesdata.LiveData{Color: player.Black, Type: piecesdata.Knight},
+		"h8": piecesdata.LiveData{Color: player.Black, Type: piecesdata.Rook},
 
-		"a1": LivePieceData{PieceColorWhite, PieceTypeRook},
-		"b1": LivePieceData{PieceColorWhite, PieceTypeKnight},
-		"c1": LivePieceData{PieceColorWhite, PieceTypeBishop},
-		"d1": LivePieceData{PieceColorWhite, PieceTypeQueen},
-		"e1": LivePieceData{PieceColorWhite, PieceTypeKing},
-		"f1": LivePieceData{PieceColorWhite, PieceTypeBishop},
-		"g1": LivePieceData{PieceColorWhite, PieceTypeKnight},
-		"h1": LivePieceData{PieceColorWhite, PieceTypeRook},
+		"a1": piecesdata.LiveData{Color: player.White, Type: piecesdata.Rook},
+		"b1": piecesdata.LiveData{Color: player.White, Type: piecesdata.Knight},
+		"c1": piecesdata.LiveData{Color: player.White, Type: piecesdata.Bishop},
+		"d1": piecesdata.LiveData{Color: player.White, Type: piecesdata.Queen},
+		"e1": piecesdata.LiveData{Color: player.White, Type: piecesdata.King},
+		"f1": piecesdata.LiveData{Color: player.White, Type: piecesdata.Bishop},
+		"g1": piecesdata.LiveData{Color: player.White, Type: piecesdata.Knight},
+		"h1": piecesdata.LiveData{Color: player.White, Type: piecesdata.Rook},
 	}
 
 	for _, name := range boardview.ColNames {
-		livePieces[fmt.Sprintf("%s7", name)] = LivePieceData{PieceColorBlack, PieceTypePawn}
+		livePieces[fmt.Sprintf("%s7", name)] = piecesdata.LiveData{Color: player.Black, Type: piecesdata.Pawn}
 	}
 
 	for _, name := range boardview.ColNames {
-		livePieces[fmt.Sprintf("%s2", name)] = LivePieceData{PieceColorWhite, PieceTypePawn}
+		livePieces[fmt.Sprintf("%s2", name)] = piecesdata.LiveData{Color: player.White, Type: piecesdata.Pawn}
 	}
 
-	var pieceToMove LivePieceData
+	var pieceToMove piecesdata.LiveData
 	var moveStartCoord string
 	var moveDestinationCoord string
 
@@ -205,7 +180,7 @@ func run() {
 				// Draw pieces in the correct position
 				for coord, livePieceData := range livePieces {
 					var set piecesview.Set
-					if livePieceData.Color == PieceColorBlack {
+					if livePieceData.Color == player.Black {
 						set = drawer.Black
 					} else {
 						set = drawer.White
@@ -213,17 +188,17 @@ func run() {
 
 					var piece *pixel.Sprite
 					switch livePieceData.Type {
-					case PieceTypeBishop:
+					case piecesdata.Bishop:
 						piece = set.Bishop
-					case PieceTypeKing:
+					case piecesdata.King:
 						piece = set.King
-					case PieceTypeKnight:
+					case piecesdata.Knight:
 						piece = set.Knight
-					case PieceTypePawn:
+					case piecesdata.Pawn:
 						piece = set.Pawn
-					case PieceTypeQueen:
+					case piecesdata.Queen:
 						piece = set.Queen
-					case PieceTypeRook:
+					case piecesdata.Rook:
 						piece = set.Rook
 					}
 
@@ -249,16 +224,16 @@ func run() {
 							// TODO
 							// Is this a valid piece to move?
 							valid := false
-							if whitesMove && occupant.Color == PieceColorWhite {
+							if whitesMove && occupant.Color == player.White {
 								// Are there valid moves for the piece?
-								if occupant.Type == PieceTypePawn {
+								if occupant.Type == piecesdata.Pawn {
 									// TODO has the pawn moved yet?
 									// pawn can move one or two spaces ahead on first move
 									// pawn can move one space ahead on moves after first
 									// pawn can capture a piece by moving diagonal ahead, if it puts it behind an enemy piece
 								}
 								valid = true
-							} else if !whitesMove && occupant.Color == PieceColorBlack {
+							} else if !whitesMove && occupant.Color == player.Black {
 								// Are there valid moves for the piece?
 								valid = true
 							}
