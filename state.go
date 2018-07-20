@@ -12,6 +12,4 @@ const (
 	StateSelectPiece State = "selectSpace"
 	// StateSelectDestination is the "select destination for piece to move" state
 	StateSelectDestination State = "selectDestination"
-	// StateDrawMove is the state for drawing/animating the piece to move
-	StateDrawMove State = "drawMove"
 )

@@ -274,7 +274,8 @@ func run() {
 							model.currentState = chess.StateDraw
 							model.draw = true
 
-							// update model.OnBoard
+							fmt.Printf("Drawing move %v from %s to %s\n", model.pieceToMove, model.moveStartCoord, model.moveDestinationCoord)
+
 							model.OnBoard[squareName] = model.pieceToMove
 							delete(model.OnBoard, model.moveStartCoord)
 							model.whitesMove = !model.whitesMove
@@ -284,11 +285,6 @@ func run() {
 					}
 
 				}
-			}
-		case chess.StateDrawMove:
-			if model.draw {
-				fmt.Printf("Drawing move %v from %s to %s\n", model.pieceToMove, model.moveStartCoord, model.moveDestinationCoord)
-				model.draw = false
 			}
 		}
 
