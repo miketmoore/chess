@@ -18,11 +18,11 @@ const (
 	King Piece = "king"
 )
 
-// LiveData represents one player's piece
-type LiveData struct {
+// OnBoardData represents one player's piece
+type OnBoardData struct {
 	Color PlayerColor
 	Piece Piece
 }
 
-// Live is a data structure used to track pieces currently on the board
-type Live map[string]LiveData
+// OnBoard is a data structure used to track pieces currently on the board
+type OnBoard map[string]OnBoardData

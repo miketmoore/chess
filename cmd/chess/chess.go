@@ -27,6 +27,38 @@ const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
 
+type gameModel struct {
+	OnBoard              chess.OnBoard
+	pieceToMove          chess.OnBoardData
+	moveStartCoord       string
+	moveDestinationCoord string
+	draw                 bool
+	whitesMove           bool
+	currentState         chess.State
+}
+
+func initialOnBoardState() chess.OnBoard {
+	return chess.OnBoard{
+		"a8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Rook},
+		"b8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Knight},
+		"c8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Bishop},
+		"d8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Queen},
+		"e8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.King},
+		"f8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Bishop},
+		"g8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Knight},
+		"h8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Rook},
+
+		"a1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Rook},
+		"b1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Knight},
+		"c1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Bishop},
+		"d1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Queen},
+		"e1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.King},
+		"f1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Bishop},
+		"g1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Knight},
+		"h1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Rook},
+	}
+}
+
 func run() {
 	// i18n
 	bundle := &i18n.Bundle{DefaultLanguage: language.English}
@@ -46,6 +78,14 @@ func run() {
 			ID: "PressAnyKey",
 		},
 	})
+
+	// Game data
+	model := gameModel{
+		OnBoard:      initialOnBoardState(),
+		draw:         true,
+		whitesMove:   true,
+		currentState: chess.StateTitle,
+	}
 
 	// Setup GUI window
 	cfg := pixelgl.WindowConfig{
@@ -103,43 +143,13 @@ func run() {
 	// Make pieces
 	drawer := chess.NewSpriteByColor()
 
-	currentState := chess.StateTitle
-
-	draw := true
-
-	whitesMove := true
-
-	livePieces := chess.Live{
-		"a8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Rook},
-		"b8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Knight},
-		"c8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Bishop},
-		"d8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Queen},
-		"e8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.King},
-		"f8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Bishop},
-		"g8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Knight},
-		"h8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Rook},
-
-		"a1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Rook},
-		"b1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Knight},
-		"c1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Bishop},
-		"d1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Queen},
-		"e1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.King},
-		"f1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Bishop},
-		"g1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Knight},
-		"h1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Rook},
+	for _, name := range chess.BoardColNames {
+		model.OnBoard[fmt.Sprintf("%s7", name)] = chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Pawn}
 	}
 
 	for _, name := range chess.BoardColNames {
-		livePieces[fmt.Sprintf("%s7", name)] = chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Pawn}
+		model.OnBoard[fmt.Sprintf("%s2", name)] = chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Pawn}
 	}
-
-	for _, name := range chess.BoardColNames {
-		livePieces[fmt.Sprintf("%s2", name)] = chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Pawn}
-	}
-
-	var pieceToMove chess.LiveData
-	var moveStartCoord string
-	var moveDestinationCoord string
 
 	for !win.Closed() {
 
@@ -148,9 +158,9 @@ func run() {
 			os.Exit(0)
 		}
 
-		switch currentState {
+		switch model.currentState {
 		case chess.StateTitle:
-			if draw {
+			if model.draw {
 				fmt.Printf("Drawing title State..\n")
 				win.Clear(colornames.Black)
 
@@ -164,23 +174,23 @@ func run() {
 				bodyTxt.Color = colornames.White
 				bodyTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(bodyTxt.Bounds().Center())))
 
-				draw = false
+				model.draw = false
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				currentState = chess.StateDraw
+				model.currentState = chess.StateDraw
 				win.Clear(colornames.Black)
-				draw = true
+				model.draw = true
 			}
 		case chess.StateDraw:
-			if draw {
+			if model.draw {
 				// Draw board
 				for _, square := range squares {
 					square.Shape.Draw(win)
 				}
 
 				// Draw pieces in the correct position
-				for coord, livePieceData := range livePieces {
+				for coord, livePieceData := range model.OnBoard {
 					var set chess.PieceSpriteSet
 					if livePieceData.Color == chess.PlayerBlack {
 						set = drawer.Black
@@ -207,8 +217,8 @@ func run() {
 					placePiece(win, squares, piece, coord)
 				}
 
-				draw = false
-				currentState = chess.StateSelectPiece
+				model.draw = false
+				model.currentState = chess.StateSelectPiece
 			}
 		case chess.StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
@@ -221,12 +231,12 @@ func run() {
 					if squareName != "" {
 						fmt.Printf("moveStartCoord: %s\n", squareName)
 						// Is there a piece on this square?
-						occupant, ok := livePieces[squareName]
+						occupant, ok := model.OnBoard[squareName]
 						if ok {
 							// TODO
 							// Is this a valid piece to move?
 							valid := false
-							if whitesMove && occupant.Color == chess.PlayerWhite {
+							if model.whitesMove && occupant.Color == chess.PlayerWhite {
 								// Are there valid moves for the piece?
 								if occupant.Piece == chess.Pawn {
 									// TODO has the pawn moved yet?
@@ -235,15 +245,15 @@ func run() {
 									// pawn can capture a piece by moving diagonal ahead, if it puts it behind an enemy piece
 								}
 								valid = true
-							} else if !whitesMove && occupant.Color == chess.PlayerBlack {
+							} else if !model.whitesMove && occupant.Color == chess.PlayerBlack {
 								// Are there valid moves for the piece?
 								valid = true
 							}
 							if valid {
-								pieceToMove = occupant
-								fmt.Printf("pieceToMove: %v\n", pieceToMove)
-								moveStartCoord = squareName
-								currentState = chess.StateSelectDestination
+								model.pieceToMove = occupant
+								fmt.Printf("pieceToMove: %v\n", model.pieceToMove)
+								model.moveStartCoord = squareName
+								model.currentState = chess.StateSelectDestination
 							}
 						}
 					}
@@ -260,18 +270,18 @@ func run() {
 					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						fmt.Printf("moveDestinationCoord: %s\n", squareName)
-						moveDestinationCoord = squareName
-						currentState = chess.StateDrawMove
+						model.moveDestinationCoord = squareName
+						model.currentState = chess.StateDrawMove
 						// TODO add validation
-						draw = true
+						model.draw = true
 					}
 
 				}
 			}
 		case chess.StateDrawMove:
-			if draw {
-				fmt.Printf("Drawing move %v from %s to %s\n", pieceToMove, moveStartCoord, moveDestinationCoord)
-				draw = false
+			if model.draw {
+				fmt.Printf("Drawing move %v from %s to %s\n", model.pieceToMove, model.moveStartCoord, model.moveDestinationCoord)
+				model.draw = false
 			}
 		}
 
