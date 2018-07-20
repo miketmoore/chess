@@ -1,6 +1,6 @@
 package piecesdata
 
-import "github.com/miketmoore/chess/player"
+import "github.com/miketmoore/chess"
 
 // Type represents the piece type
 type Type string
@@ -22,7 +22,7 @@ const (
 
 // LiveData represents one player's piece
 type LiveData struct {
-	Color player.Color
+	Color chess.PlayerColor
 	Type  Type
 }
 
