@@ -1,4 +1,4 @@
-package boardview
+package chess
 
 import (
 	"fmt"
@@ -12,8 +12,8 @@ const totalSquares = 64
 const totalRows = 8
 const totalCols = 8
 
-// Themes is a collection of color themes for the board
-var Themes = map[string]map[string]color.RGBA{
+// BoardThemes is a collection of color themes for the board
+var BoardThemes = map[string]map[string]color.RGBA{
 	"classic": map[string]color.RGBA{
 		"black": color.RGBA{0, 0, 0, 255},
 		"white": color.RGBA{255, 255, 255, 255},
@@ -32,8 +32,8 @@ var Themes = map[string]map[string]color.RGBA{
 	},
 }
 
-// Map is the type used to describe the map of board squares/shapes
-type Map map[string]Square
+// BoardMap is the type used to describe the map of board squares/shapes
+type BoardMap map[string]Square
 
 // Square represents one square of the board
 type Square struct {
@@ -42,14 +42,14 @@ type Square struct {
 	OriginY float64
 }
 
-// ColNames is the list of column names in algebraic notation
-var ColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
+// BoardColNames is the list of column names in algebraic notation
+var BoardColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 
-// New returns an array of *imdraw.IMDraw instances, each representing one square
+// NewBoardView returns an array of *imdraw.IMDraw instances, each representing one square
 // on a chess boardview. The size argument defines the width and height of each square.
 // The blackFill and whiteFill arguments define what colors are used for the "black"
 // and "white" squares.
-func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) (Map, map[string][]float64) {
+func NewBoardView(originX, originY, size float64, blackFill, whiteFill color.RGBA) (BoardMap, map[string][]float64) {
 	var squareW = size
 	var squareH = size
 	var r, c float64
@@ -57,7 +57,7 @@ func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) (Map, 
 	var xInc = originX
 	var yInc = originY
 	i := 0
-	squares := Map{}
+	squares := BoardMap{}
 
 	squareOriginByCoords := map[string][]float64{}
 
@@ -77,7 +77,7 @@ func New(originX, originY, size float64, blackFill, whiteFill color.RGBA) (Map, 
 			shape.Push(pixel.V(xInc, yInc))
 			shape.Push(pixel.V(squareW+xInc, squareH+yInc))
 			shape.Rectangle(0)
-			name := ColNames[int(c)] + fmt.Sprintf("%d", int(r)+1)
+			name := BoardColNames[int(c)] + fmt.Sprintf("%d", int(r)+1)
 
 			squares[name] = Square{
 				Shape:   shape,

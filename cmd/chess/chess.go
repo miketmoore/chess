@@ -11,7 +11,6 @@ import (
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
 	"github.com/miketmoore/chess"
-	"github.com/miketmoore/chess/boardview"
 	"github.com/nicksnyder/go-i18n/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
@@ -78,12 +77,12 @@ func run() {
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
 	fmt.Printf("board origin x: %d\n", boardOriginX)
-	squares, squareOriginByCoords := boardview.New(
+	squares, squareOriginByCoords := chess.NewBoardView(
 		float64(boardOriginX),
 		150,
 		squareSize,
-		boardview.Themes[boardThemeName]["black"],
-		boardview.Themes[boardThemeName]["white"],
+		chess.BoardThemes[boardThemeName]["black"],
+		chess.BoardThemes[boardThemeName]["white"],
 	)
 
 	// Make pieces
@@ -115,11 +114,11 @@ func run() {
 		"h1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Rook},
 	}
 
-	for _, name := range boardview.ColNames {
+	for _, name := range chess.BoardColNames {
 		livePieces[fmt.Sprintf("%s7", name)] = chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Pawn}
 	}
 
-	for _, name := range boardview.ColNames {
+	for _, name := range chess.BoardColNames {
 		livePieces[fmt.Sprintf("%s2", name)] = chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Pawn}
 	}
 
@@ -274,7 +273,7 @@ func getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords map[string][]
 	return ""
 }
 
-func findSquareByVec(squares boardview.Map, vec pixel.Vec) *boardview.Square {
+func findSquareByVec(squares chess.BoardMap, vec pixel.Vec) *chess.Square {
 	for _, square := range squares {
 		if vec.X > square.OriginX && vec.X < (square.OriginX+50) && vec.Y > square.OriginY && vec.Y < (square.OriginY+50) {
 			return &square
@@ -283,7 +282,7 @@ func findSquareByVec(squares boardview.Map, vec pixel.Vec) *boardview.Square {
 	return nil
 }
 
-func placePiece(win *pixelgl.Window, squares boardview.Map, piece *pixel.Sprite, coord string) {
+func placePiece(win *pixelgl.Window, squares chess.BoardMap, piece *pixel.Sprite, coord string) {
 	square := squares[coord]
 	x := square.OriginX + 25
 	y := square.OriginY + 25
