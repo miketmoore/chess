@@ -10,11 +10,11 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
+	"github.com/miketmoore/chess"
 	"github.com/miketmoore/chess/boardview"
 	"github.com/miketmoore/chess/piecesdata"
 	"github.com/miketmoore/chess/piecesview"
 	"github.com/miketmoore/chess/player"
-	"github.com/miketmoore/chess/state"
 	"github.com/nicksnyder/go-i18n/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
@@ -92,7 +92,7 @@ func run() {
 	// Make pieces
 	drawer := piecesview.New()
 
-	currentState := state.Title
+	currentState := chess.StateTitle
 
 	draw := true
 
@@ -138,9 +138,9 @@ func run() {
 		}
 
 		switch currentState {
-		case state.Title:
+		case chess.StateTitle:
 			if draw {
-				fmt.Printf("Drawing title state...\n")
+				fmt.Printf("Drawing title State..\n")
 				win.Clear(colornames.Black)
 
 				// Draw title text
@@ -157,11 +157,11 @@ func run() {
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				currentState = state.Draw
+				currentState = chess.StateDraw
 				win.Clear(colornames.Black)
 				draw = true
 			}
-		case state.Draw:
+		case chess.StateDraw:
 			if draw {
 				// Draw board
 				for _, square := range squares {
@@ -197,9 +197,9 @@ func run() {
 				}
 
 				draw = false
-				currentState = state.SelectPiece
+				currentState = chess.StateSelectPiece
 			}
-		case state.SelectPiece:
+		case chess.StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 
@@ -232,14 +232,14 @@ func run() {
 								pieceToMove = occupant
 								fmt.Printf("pieceToMove: %v\n", pieceToMove)
 								moveStartCoord = squareName
-								currentState = state.SelectDestination
+								currentState = chess.StateSelectDestination
 							}
 						}
 					}
 
 				}
 			}
-		case state.SelectDestination:
+		case chess.StateSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 
@@ -250,14 +250,14 @@ func run() {
 					if squareName != "" {
 						fmt.Printf("moveDestinationCoord: %s\n", squareName)
 						moveDestinationCoord = squareName
-						currentState = state.DrawMove
+						currentState = chess.StateDrawMove
 						// TODO add validation
 						draw = true
 					}
 
 				}
 			}
-		case state.DrawMove:
+		case chess.StateDrawMove:
 			if draw {
 				fmt.Printf("Drawing move %v from %s to %s\n", pieceToMove, moveStartCoord, moveDestinationCoord)
 				draw = false
