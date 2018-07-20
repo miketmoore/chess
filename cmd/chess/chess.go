@@ -277,6 +277,7 @@ func run() {
 							// update model.OnBoard
 							model.OnBoard[squareName] = model.pieceToMove
 							delete(model.OnBoard, model.moveStartCoord)
+							model.whitesMove = !model.whitesMove
 						} else {
 							fmt.Println("Destination is occupied :(")
 						}
