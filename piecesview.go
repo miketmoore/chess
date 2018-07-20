@@ -1,4 +1,4 @@
-package piecesview
+package chess
 
 import (
 	"image"
@@ -9,20 +9,20 @@ import (
 
 var spriteSheetPath = "assets/standard_chess_pieces_sprite_sheet.png"
 
-// ByName represents a map of piece names to sprites
-type ByName map[string]*pixel.Sprite
+// SpriteByName represents a map of piece names to sprites
+type SpriteByName map[string]*pixel.Sprite
 
-// ByColor represents a map of color name to ByName
-type ByColor map[string]ByName
+// ByColor represents a map of color name to SpriteByName
+type ByColor map[string]SpriteByName
 
 // Drawer contains all chess piece sprites
 type Drawer struct {
-	Black Set
-	White Set
+	Black PieceSpriteSet
+	White PieceSpriteSet
 }
 
-// Set contains one sprite per type of piece
-type Set struct {
+// PieceSpriteSet contains one sprite per type of piece
+type PieceSpriteSet struct {
 	King   *pixel.Sprite
 	Queen  *pixel.Sprite
 	Bishop *pixel.Sprite
@@ -31,8 +31,8 @@ type Set struct {
 	Pawn   *pixel.Sprite
 }
 
-// New constructs a ByColor (chess piece sprites)
-func New() Drawer {
+// NewSpriteByColor constructs a ByColor (chess piece sprites)
+func NewSpriteByColor() Drawer {
 	// Load sprite sheet graphic
 	pic, err := loadPicture(spriteSheetPath)
 	if err != nil {
@@ -40,7 +40,7 @@ func New() Drawer {
 	}
 
 	return Drawer{
-		Black: Set{
+		Black: PieceSpriteSet{
 			King:   newSprite(pic, 0, 0, 40, 40),
 			Queen:  newSprite(pic, 40, 0, 90, 40),
 			Bishop: newSprite(pic, 90, 0, 140, 40),
@@ -48,7 +48,7 @@ func New() Drawer {
 			Rook:   newSprite(pic, 185, 0, 220, 40),
 			Pawn:   newSprite(pic, 230, 0, 270, 40),
 		},
-		White: Set{
+		White: PieceSpriteSet{
 			King:   newSprite(pic, 0, 40, 40, 85),
 			Queen:  newSprite(pic, 40, 40, 90, 85),
 			Bishop: newSprite(pic, 90, 40, 140, 85),

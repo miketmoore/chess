@@ -12,7 +12,6 @@ import (
 	"github.com/golang/freetype/truetype"
 	"github.com/miketmoore/chess"
 	"github.com/miketmoore/chess/boardview"
-	"github.com/miketmoore/chess/piecesview"
 	"github.com/nicksnyder/go-i18n/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
@@ -88,7 +87,7 @@ func run() {
 	)
 
 	// Make pieces
-	drawer := piecesview.New()
+	drawer := chess.NewSpriteByColor()
 
 	currentState := chess.StateTitle
 
@@ -168,7 +167,7 @@ func run() {
 
 				// Draw pieces in the correct position
 				for coord, livePieceData := range livePieces {
-					var set piecesview.Set
+					var set chess.PieceSpriteSet
 					if livePieceData.Color == chess.PlayerBlack {
 						set = drawer.Black
 					} else {
