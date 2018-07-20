@@ -25,7 +25,7 @@ const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
 
 type gameModel struct {
-	OnBoard              chess.OnBoard
+	BoardState           chess.BoardState
 	pieceToMove          chess.OnBoardData
 	moveStartCoord       string
 	moveDestinationCoord string
@@ -34,8 +34,8 @@ type gameModel struct {
 	currentState         chess.State
 }
 
-func initialOnBoardState() chess.OnBoard {
-	return chess.OnBoard{
+func initialOnBoardState() chess.BoardState {
+	return chess.BoardState{
 		"a8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Rook},
 		"b8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Knight},
 		"c8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Bishop},
@@ -78,7 +78,7 @@ func run() {
 
 	// Game data
 	model := gameModel{
-		OnBoard:      initialOnBoardState(),
+		BoardState:   initialOnBoardState(),
 		draw:         true,
 		whitesMove:   true,
 		currentState: chess.StateTitle,
@@ -141,11 +141,11 @@ func run() {
 	drawer := chess.NewSpriteByColor()
 
 	for _, name := range chess.BoardColNames {
-		model.OnBoard[fmt.Sprintf("%s7", name)] = chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Pawn}
+		model.BoardState[fmt.Sprintf("%s7", name)] = chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Pawn}
 	}
 
 	for _, name := range chess.BoardColNames {
-		model.OnBoard[fmt.Sprintf("%s2", name)] = chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Pawn}
+		model.BoardState[fmt.Sprintf("%s2", name)] = chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Pawn}
 	}
 
 	for !win.Closed() {
@@ -187,7 +187,7 @@ func run() {
 				}
 
 				// Draw pieces in the correct position
-				for coord, livePieceData := range model.OnBoard {
+				for coord, livePieceData := range model.BoardState {
 					var set chess.PieceSpriteSet
 					if livePieceData.Color == chess.PlayerBlack {
 						set = drawer.Black
@@ -228,7 +228,7 @@ func run() {
 					if squareName != "" {
 						fmt.Printf("moveStartCoord: %s\n", squareName)
 						// Is there a piece on this square?
-						occupant, isOccupied := model.OnBoard[squareName]
+						occupant, isOccupied := model.BoardState[squareName]
 						if isOccupied {
 							// TODO
 							// Is this a valid piece to move?
@@ -267,7 +267,7 @@ func run() {
 					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						fmt.Printf("moveDestinationCoord: %s\n", squareName)
-						_, isOccupied := model.OnBoard[squareName]
+						_, isOccupied := model.BoardState[squareName]
 						if !isOccupied {
 							fmt.Println("No occupant at destination")
 							model.moveDestinationCoord = squareName
@@ -276,8 +276,8 @@ func run() {
 
 							fmt.Printf("Drawing move %v from %s to %s\n", model.pieceToMove, model.moveStartCoord, model.moveDestinationCoord)
 
-							model.OnBoard[squareName] = model.pieceToMove
-							delete(model.OnBoard, model.moveStartCoord)
+							model.BoardState[squareName] = model.pieceToMove
+							delete(model.BoardState, model.moveStartCoord)
 							model.whitesMove = !model.whitesMove
 						} else {
 							fmt.Println("Destination is occupied :(")

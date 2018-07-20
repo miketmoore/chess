@@ -24,5 +24,5 @@ type OnBoardData struct {
 	Piece Piece
 }
 
-// OnBoard is a data structure used to track pieces currently on the board
-type OnBoard map[string]OnBoardData
+// BoardState is a data structure used to track pieces currently on the board
+type BoardState map[string]OnBoardData
