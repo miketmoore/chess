@@ -1,29 +1,27 @@
-package piecesdata
+package chess
 
-import "github.com/miketmoore/chess"
-
-// Type represents the piece type
-type Type string
+// Piece represents the piece type
+type Piece string
 
 const (
 	// Pawn represents the "pawn" piece
-	Pawn Type = "pawn"
+	Pawn Piece = "pawn"
 	// Rook represents the "rook" piece
-	Rook Type = "rook"
+	Rook Piece = "rook"
 	// Knight represents the "knight" piece
-	Knight Type = "knight"
+	Knight Piece = "knight"
 	// Bishop represents the "bishop" piece
-	Bishop Type = "bishop"
+	Bishop Piece = "bishop"
 	// Queen represents the "queen" piece
-	Queen Type = "queen"
+	Queen Piece = "queen"
 	// King represents the "king" piece
-	King Type = "king"
+	King Piece = "king"
 )
 
 // LiveData represents one player's piece
 type LiveData struct {
-	Color chess.PlayerColor
-	Type  Type
+	Color PlayerColor
+	Piece Piece
 }
 
 // Live is a data structure used to track pieces currently on the board

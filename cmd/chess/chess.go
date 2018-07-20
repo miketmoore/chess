@@ -12,7 +12,6 @@ import (
 	"github.com/golang/freetype/truetype"
 	"github.com/miketmoore/chess"
 	"github.com/miketmoore/chess/boardview"
-	"github.com/miketmoore/chess/piecesdata"
 	"github.com/miketmoore/chess/piecesview"
 	"github.com/nicksnyder/go-i18n/i18n"
 	"golang.org/x/image/colornames"
@@ -97,35 +96,35 @@ func run() {
 
 	whitesMove := true
 
-	livePieces := piecesdata.Live{
-		"a8": piecesdata.LiveData{Color: chess.PlayerBlack, Type: piecesdata.Rook},
-		"b8": piecesdata.LiveData{Color: chess.PlayerBlack, Type: piecesdata.Knight},
-		"c8": piecesdata.LiveData{Color: chess.PlayerBlack, Type: piecesdata.Bishop},
-		"d8": piecesdata.LiveData{Color: chess.PlayerBlack, Type: piecesdata.Queen},
-		"e8": piecesdata.LiveData{Color: chess.PlayerBlack, Type: piecesdata.King},
-		"f8": piecesdata.LiveData{Color: chess.PlayerBlack, Type: piecesdata.Bishop},
-		"g8": piecesdata.LiveData{Color: chess.PlayerBlack, Type: piecesdata.Knight},
-		"h8": piecesdata.LiveData{Color: chess.PlayerBlack, Type: piecesdata.Rook},
+	livePieces := chess.Live{
+		"a8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Rook},
+		"b8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Knight},
+		"c8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Bishop},
+		"d8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Queen},
+		"e8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.King},
+		"f8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Bishop},
+		"g8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Knight},
+		"h8": chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Rook},
 
-		"a1": piecesdata.LiveData{Color: chess.PlayerWhite, Type: piecesdata.Rook},
-		"b1": piecesdata.LiveData{Color: chess.PlayerWhite, Type: piecesdata.Knight},
-		"c1": piecesdata.LiveData{Color: chess.PlayerWhite, Type: piecesdata.Bishop},
-		"d1": piecesdata.LiveData{Color: chess.PlayerWhite, Type: piecesdata.Queen},
-		"e1": piecesdata.LiveData{Color: chess.PlayerWhite, Type: piecesdata.King},
-		"f1": piecesdata.LiveData{Color: chess.PlayerWhite, Type: piecesdata.Bishop},
-		"g1": piecesdata.LiveData{Color: chess.PlayerWhite, Type: piecesdata.Knight},
-		"h1": piecesdata.LiveData{Color: chess.PlayerWhite, Type: piecesdata.Rook},
+		"a1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Rook},
+		"b1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Knight},
+		"c1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Bishop},
+		"d1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Queen},
+		"e1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.King},
+		"f1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Bishop},
+		"g1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Knight},
+		"h1": chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Rook},
 	}
 
 	for _, name := range boardview.ColNames {
-		livePieces[fmt.Sprintf("%s7", name)] = piecesdata.LiveData{Color: chess.PlayerBlack, Type: piecesdata.Pawn}
+		livePieces[fmt.Sprintf("%s7", name)] = chess.LiveData{Color: chess.PlayerBlack, Piece: chess.Pawn}
 	}
 
 	for _, name := range boardview.ColNames {
-		livePieces[fmt.Sprintf("%s2", name)] = piecesdata.LiveData{Color: chess.PlayerWhite, Type: piecesdata.Pawn}
+		livePieces[fmt.Sprintf("%s2", name)] = chess.LiveData{Color: chess.PlayerWhite, Piece: chess.Pawn}
 	}
 
-	var pieceToMove piecesdata.LiveData
+	var pieceToMove chess.LiveData
 	var moveStartCoord string
 	var moveDestinationCoord string
 
@@ -177,18 +176,18 @@ func run() {
 					}
 
 					var piece *pixel.Sprite
-					switch livePieceData.Type {
-					case piecesdata.Bishop:
+					switch livePieceData.Piece {
+					case chess.Bishop:
 						piece = set.Bishop
-					case piecesdata.King:
+					case chess.King:
 						piece = set.King
-					case piecesdata.Knight:
+					case chess.Knight:
 						piece = set.Knight
-					case piecesdata.Pawn:
+					case chess.Pawn:
 						piece = set.Pawn
-					case piecesdata.Queen:
+					case chess.Queen:
 						piece = set.Queen
-					case piecesdata.Rook:
+					case chess.Rook:
 						piece = set.Rook
 					}
 
@@ -216,7 +215,7 @@ func run() {
 							valid := false
 							if whitesMove && occupant.Color == chess.PlayerWhite {
 								// Are there valid moves for the piece?
-								if occupant.Type == piecesdata.Pawn {
+								if occupant.Piece == chess.Pawn {
 									// TODO has the pawn moved yet?
 									// pawn can move one or two spaces ahead on first move
 									// pawn can move one space ahead on moves after first
