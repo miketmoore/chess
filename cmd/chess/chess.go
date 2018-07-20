@@ -267,13 +267,16 @@ func run() {
 					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						fmt.Printf("moveDestinationCoord: %s\n", squareName)
-						// TODO add validation
 						_, isOccupied := model.OnBoard[squareName]
 						if !isOccupied {
 							fmt.Println("No occupant at destination")
 							model.moveDestinationCoord = squareName
-							model.currentState = chess.StateDrawMove
+							model.currentState = chess.StateDraw
 							model.draw = true
+
+							// update model.OnBoard
+							model.OnBoard[squareName] = model.pieceToMove
+							delete(model.OnBoard, model.moveStartCoord)
 						} else {
 							fmt.Println("Destination is occupied :(")
 						}
