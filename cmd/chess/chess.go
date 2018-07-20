@@ -6,14 +6,17 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/BurntSushi/toml"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
 	"github.com/miketmoore/chess"
-	"github.com/nicksnyder/go-i18n/i18n"
+	"github.com/miketmoore/zelduh"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
+	"golang.org/x/text/language"
 )
 
 const screenW = 600
@@ -26,15 +29,27 @@ const lang = "en-US"
 
 func run() {
 	// i18n
-	i18n.MustLoadTranslationFile(translationFile)
-	T, err := i18n.Tfunc(lang)
-	if err != nil {
-		panic(err)
-	}
+	bundle := &i18n.Bundle{DefaultLanguage: language.English}
+
+	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	bundle.MustLoadMessageFile(zelduh.TranslationFile)
+
+	localizer := i18n.NewLocalizer(bundle, "en")
+
+	i18nTitle := localizer.MustLocalize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "Title",
+		},
+	})
+	i18nPressAnyKey := localizer.MustLocalize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID: "PressAnyKey",
+		},
+	})
 
 	// Setup GUI window
 	cfg := pixelgl.WindowConfig{
-		Title:  T("title"),
+		Title:  i18nTitle,
 		Bounds: pixel.R(0, 0, screenW, screenH),
 		VSync:  true,
 	}
@@ -69,7 +84,7 @@ func run() {
 	fmt.Fprintln(displayTxt, titleStr)
 
 	// Sub-title
-	pressAnyKeyStr := T("title_pressAnyKey")
+	pressAnyKeyStr := i18nPressAnyKey
 	fmt.Fprintln(bodyTxt, pressAnyKeyStr)
 
 	// Make board
