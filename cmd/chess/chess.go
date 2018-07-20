@@ -25,6 +25,7 @@ const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
 
 type gameModel struct {
+	History              []HistoryEntry
 	BoardState           chess.BoardState
 	pieceToMove          chess.OnBoardData
 	moveStartCoord       string
@@ -56,6 +57,13 @@ func initialOnBoardState() chess.BoardState {
 	}
 }
 
+type HistoryEntry struct {
+	WhitesMove bool
+	Piece      chess.Piece
+	FromCoord  string
+	ToCoord    string
+}
+
 func run() {
 	// i18n
 	bundle := &i18n.Bundle{DefaultLanguage: language.English}
@@ -78,6 +86,7 @@ func run() {
 
 	// Game data
 	model := gameModel{
+		History:      []HistoryEntry{},
 		BoardState:   initialOnBoardState(),
 		draw:         true,
 		whitesMove:   true,
@@ -226,7 +235,7 @@ func run() {
 				if square != nil {
 					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
-						fmt.Printf("moveStartCoord: %s\n", squareName)
+						// fmt.Printf("moveStartCoord: %s\n", squareName)
 						// Is there a piece on this square?
 						occupant, isOccupied := model.BoardState[squareName]
 						if isOccupied {
@@ -248,7 +257,7 @@ func run() {
 							}
 							if valid {
 								model.pieceToMove = occupant
-								fmt.Printf("pieceToMove: %v\n", model.pieceToMove)
+								// fmt.Printf("pieceToMove: %v\n", model.pieceToMove)
 								model.moveStartCoord = squareName
 								model.currentState = chess.StateSelectDestination
 							}
@@ -266,19 +275,24 @@ func run() {
 				if square != nil {
 					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
-						fmt.Printf("moveDestinationCoord: %s\n", squareName)
+						// fmt.Printf("moveDestinationCoord: %s\n", squareName)
 						_, isOccupied := model.BoardState[squareName]
 						if !isOccupied {
-							fmt.Println("No occupant at destination")
+							// fmt.Println("No occupant at destination")
 							model.moveDestinationCoord = squareName
 							model.currentState = chess.StateDraw
 							model.draw = true
 
-							fmt.Printf("Drawing move %v from %s to %s\n", model.pieceToMove, model.moveStartCoord, model.moveDestinationCoord)
-
+							model.History = append(model.History, HistoryEntry{
+								WhitesMove: model.whitesMove,
+								Piece:      model.pieceToMove.Piece,
+								FromCoord:  model.moveStartCoord,
+								ToCoord:    model.moveDestinationCoord,
+							})
 							model.BoardState[squareName] = model.pieceToMove
 							delete(model.BoardState, model.moveStartCoord)
 							model.whitesMove = !model.whitesMove
+							fmt.Println(model.History[len(model.History)-1])
 						} else {
 							fmt.Println("Destination is occupied :(")
 						}
