@@ -3,19 +3,16 @@ package main
 import (
 	"fmt"
 	_ "image/png"
-	"io/ioutil"
 	"os"
 
 	"github.com/BurntSushi/toml"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	"github.com/golang/freetype/truetype"
 	"github.com/miketmoore/chess"
 	"github.com/miketmoore/zelduh"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
-	"golang.org/x/image/font"
 	"golang.org/x/text/language"
 )
 
@@ -99,7 +96,7 @@ func run() {
 	}
 
 	// Prepare display text
-	displayFace, err := loadTTF(displayFontPath, 80)
+	displayFace, err := chess.LoadTTF(displayFontPath, 80)
 	if err != nil {
 		panic(err)
 	}
@@ -109,7 +106,7 @@ func run() {
 	displayTxt := text.New(displayOrig, displayAtlas)
 
 	// Prepare body text
-	bodyFace, err := loadTTF(bodyFontPath, 12)
+	bodyFace, err := chess.LoadTTF(bodyFontPath, 12)
 	if err != nil {
 		panic(err)
 	}
@@ -321,27 +318,4 @@ func center(a, b float64) float64 {
 
 func main() {
 	pixelgl.Run(run)
-}
-
-func loadTTF(path string, size float64) (font.Face, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	bytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, err
-	}
-
-	font, err := truetype.Parse(bytes)
-	if err != nil {
-		return nil, err
-	}
-
-	return truetype.NewFace(font, &truetype.Options{
-		Size:              size,
-		GlyphCacheEntries: 1,
-	}), nil
 }
