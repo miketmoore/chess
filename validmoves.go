@@ -35,6 +35,7 @@ type Direction string
 
 const (
 	North Direction = "north"
+	South Direction = "south"
 )
 
 var ranks = []int{1, 2, 3, 4, 5, 6, 7, 8}
@@ -130,13 +131,21 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
 		return coord, ok
+	case South:
+		fmt.Println("SOUTH")
+		// n ranks south
+		newRank := rankInt - n
+		coord := coordFromRankFile(newRank, file)
+		_, ok := validCoords[coord]
+		fmt.Println("south", newRank, coord, ok)
+		return coord, ok
 	}
 	return "", false
 }
 
-// GetRankAndFileFromSquareName converts a square name (example: d3) to rank (3)
+// getRankAndFileFromSquareName converts a square name (example: d3) to rank (3)
 // and file(d) strings
-func GetRankAndFileFromSquareName(squareName string) (rank, file string) {
+func getRankAndFileFromSquareName(squareName string) (rank, file string) {
 	return string(squareName[1]), string(squareName[0])
 }
 
@@ -144,24 +153,31 @@ func GetRankAndFileFromSquareName(squareName string) (rank, file string) {
 // If a pawn is on it's starting square, then it is elligible to move one or two spaces forward.
 // A pawn can move if an opposing piece is NW or NE.
 func CanPawnMove(model Model, squareName string) []string {
-	rank, file := GetRankAndFileFromSquareName(squareName)
+	fmt.Println("can pawn move ", squareName)
+	rank, file := getRankAndFileFromSquareName(squareName)
 
 	// if pawn is on starting square, it is elligible for moving one or two spaces
 	playerColor := model.CurrentPlayerColor()
 
 	// build hash of valid board destinations
 	valid := []string{}
+
 	if isCoordStartPosition(playerColor, Pawn, rank, file) {
 
+		direction := North
+		if playerColor == PlayerBlack {
+			direction = South
+		}
+
 		// is one space ahead vacant?
-		if coord, ok := getRelativeCoord(rank, file, North, 1); ok {
+		if coord, ok := getRelativeCoord(rank, file, direction, 1); ok {
 			if _, isOccupied := model.BoardState[coord]; !isOccupied {
 				valid = append(valid, coord)
 			}
 		}
 
 		// is two spaces ahead vacant?
-		if coord, ok := getRelativeCoord(rank, file, North, 2); ok {
+		if coord, ok := getRelativeCoord(rank, file, direction, 2); ok {
 			if _, isOccupied := model.BoardState[coord]; !isOccupied {
 				valid = append(valid, coord)
 			}

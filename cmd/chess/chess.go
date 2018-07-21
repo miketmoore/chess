@@ -191,38 +191,21 @@ func run() {
 		case chess.StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
-
-				// What square was clicked?
 				square := chess.FindSquareByVec(squares, mpos)
 				if square != nil {
 					squareName := chess.GetSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
-						// fmt.Printf("moveStartCoord: %s\n", squareName)
-						// Is there a piece on this square?
 						occupant, isOccupied := model.BoardState[squareName]
 						if isOccupied {
-							// TODO
-							// Is this a valid piece to move?
 							valid := false
-							if model.WhitesMove && occupant.Color == chess.PlayerWhite {
-								// Are there valid moves for the piece?
-								if occupant.Piece == chess.Pawn {
-									// TODO has the pawn moved yet?
-									// pawn can move one or two spaces ahead on first move
-									// pawn can move one space ahead on moves after first
-									// pawn can capture a piece by moving diagonal ahead, if it puts it behind an enemy piece
-									validDestinations = chess.CanPawnMove(model, squareName)
-									if len(validDestinations) > 0 {
-										valid = true
-									}
+							if occupant.Piece == chess.Pawn {
+								validDestinations = chess.CanPawnMove(model, squareName)
+								if len(validDestinations) > 0 {
+									valid = true
 								}
-							} else if !model.WhitesMove && occupant.Color == chess.PlayerBlack {
-								// Are there valid moves for the piece?
-								valid = true
 							}
 							if valid {
 								model.PieceToMove = occupant
-								// fmt.Printf("pieceToMove: %v\n", model.PieceToMove)
 								model.MoveStartCoord = squareName
 								model.CurrentState = chess.StateSelectDestination
 							}
@@ -235,17 +218,13 @@ func run() {
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 
-				// What square was clicked?
 				square := chess.FindSquareByVec(squares, mpos)
 				if square != nil {
 					squareName := chess.GetSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
-						// fmt.Printf("moveDestinationCoord: %s\n", squareName)
 						_, isOccupied := model.BoardState[squareName]
 						if !isOccupied {
-							// is the destination in the valid destinations list?
 							if chess.FindInSliceString(validDestinations, squareName) {
-								// fmt.Println("No occupant at destination")
 								model.MoveDestinationCoord = squareName
 								model.CurrentState = chess.StateDraw
 								model.Draw = true
@@ -261,9 +240,6 @@ func run() {
 								model.WhitesMove = !model.WhitesMove
 								fmt.Println(model.History[len(model.History)-1])
 							}
-
-						} else {
-							fmt.Println("Destination is occupied :(")
 						}
 					}
 
