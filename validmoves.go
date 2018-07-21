@@ -294,24 +294,20 @@ func CanKingMove(model Model, squareName string) []string {
 	return valid
 }
 
-func GetNextRanks(rank string) []string {
-	var rankInt int
-	var err error
-	if rankInt, err = strconv.Atoi(rank); err != nil {
-		return []string{}
-	}
-	i := rankInt
+// GetNextRanks gets the series of ranks after
+func GetNextRanks(rankStr string) []string {
 	resp := []string{}
-	for nextRank, ok := getRankAhead(rank, i); ok && i < 9; {
-		fmt.Println("next rank: ", nextRank, i)
-		resp = append(resp, nextRank)
-		i++
+	if rankInt, err := strconv.Atoi(rankStr); err == nil {
+		collect := false
+		for _, r := range ranks {
+			if !collect && r == rankInt {
+				collect = true
+			} else if collect {
+				resp = append(resp, fmt.Sprintf("%d", r))
+			}
+		}
+		return resp
 	}
-	// for nextRank, err := getRankAhead(rank, i); nextRank; err != nil; {
-	// 	resp = append(resp, nextRank)
-	// 	i++
-	// }
-	fmt.Println("returning next ranks: ", resp)
 	return resp
 }
 
