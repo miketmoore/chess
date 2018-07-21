@@ -286,13 +286,29 @@ func CanKingMove(model Model, squareName string) []string {
 	fmt.Println("can king move ", squareName)
 	rank, file := getRankAndFileFromSquareName(squareName)
 
-	// build hash of valid board destinations
 	valid := []string{}
 
-	// King can move any direction, so color does not matter (like it does with pawns)
-	// is NW occupied by the enemy? if so, it is a valid move
 	directions := []Direction{North, South, East, West}
 	for _, direction := range directions {
+		if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
+			valid = append(valid, coord)
+		}
+	}
+
+	return valid
+}
+
+// CanRookMove determines all valid moves for the Rook
+func CanRookMove(model Model, squareName string) []string {
+	fmt.Println("can rook move ", squareName)
+	rank, file := getRankAndFileFromSquareName(squareName)
+
+	valid := []string{}
+
+	directions := []Direction{North, South, East, West}
+	for _, direction := range directions {
+		// keep incrementing until an occupied space is encountered
+		// TODO
 		if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
 			valid = append(valid, coord)
 		}
