@@ -128,8 +128,8 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		// n ranks north
 		newRank := rankInt + n
 		coord := coordFromRankFile(newRank, file)
-		_, isValid := validCoords[coord]
-		return coord, isValid
+		_, ok := validCoords[coord]
+		return coord, ok
 	}
 	return "", false
 }
@@ -150,23 +150,23 @@ func CanPawnMove(model Model, squareName string) []string {
 	playerColor := model.CurrentPlayerColor()
 
 	// build hash of valid board destinations
-	validDestinations := []string{}
+	valid := []string{}
 	if isCoordStartPosition(playerColor, Pawn, rank, file) {
 
 		// is one space ahead vacant?
-		if relCoord, isValid := getRelativeCoord(rank, file, North, 1); isValid {
-			if _, isOccupied := model.BoardState[relCoord]; !isOccupied {
-				validDestinations = append(validDestinations, relCoord)
+		if coord, ok := getRelativeCoord(rank, file, North, 1); ok {
+			if _, isOccupied := model.BoardState[coord]; !isOccupied {
+				valid = append(valid, coord)
 			}
 		}
 
 		// is two spaces ahead vacant?
-		if relCoord, isValid := getRelativeCoord(rank, file, North, 2); isValid {
-			if _, isOccupied := model.BoardState[relCoord]; !isOccupied {
-				validDestinations = append(validDestinations, relCoord)
+		if coord, ok := getRelativeCoord(rank, file, North, 2); ok {
+			if _, isOccupied := model.BoardState[coord]; !isOccupied {
+				valid = append(valid, coord)
 			}
 		}
 	}
-	fmt.Println(validDestinations)
-	return validDestinations
+	fmt.Println(valid)
+	return valid
 }
