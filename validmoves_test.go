@@ -66,6 +66,7 @@ func TestGetNextRanks(t *testing.T) {
 		expectedRanks []string
 		matches       int
 	}{
+		{"0", []string{}, 0},
 		{"1", []string{"2", "3", "4", "5", "6", "7", "8"}, 7},
 		{"2", []string{"3", "4", "5", "6", "7", "8"}, 6},
 		{"3", []string{"4", "5", "6", "7", "8"}, 5},
@@ -73,6 +74,7 @@ func TestGetNextRanks(t *testing.T) {
 		{"5", []string{"6", "7", "8"}, 3},
 		{"6", []string{"7", "8"}, 2},
 		{"7", []string{"8"}, 1},
+		{"8", []string{}, 0},
 	}
 	for _, test := range tests {
 		t.Run(test.inputRank, func(t *testing.T) {
