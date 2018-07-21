@@ -6,6 +6,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 const totalSquares = 64
@@ -49,7 +50,10 @@ var BoardColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 // on a chess boardview. The size argument defines the width and height of each square.
 // The blackFill and whiteFill arguments define what colors are used for the "black"
 // and "white" squares.
-func NewBoardView(originX, originY, size float64, blackFill, whiteFill color.RGBA) (BoardMap, map[string][]float64) {
+func NewBoardView(
+	originX, originY, size float64,
+	blackFill, whiteFill color.RGBA,
+) (BoardMap, map[string][]float64) {
 	var squareW = size
 	var squareH = size
 	var r, c float64
@@ -95,4 +99,39 @@ func NewBoardView(originX, originY, size float64, blackFill, whiteFill color.RGB
 		yInc += size
 	}
 	return squares, squareOriginByCoords
+}
+
+// DrawPiece draws a chess piece on the board
+func DrawPiece(win *pixelgl.Window, squares BoardMap, piece *pixel.Sprite, coord string) {
+	square := squares[coord]
+	x := square.OriginX + 25
+	y := square.OriginY + 25
+	piece.Draw(win, pixel.IM.Moved(pixel.V(x, y)))
+}
+
+// FindSquareByVec finds a square from the board map by it's (x,y) coordinate
+func FindSquareByVec(squares BoardMap, vec pixel.Vec) *Square {
+	for _, square := range squares {
+		if vec.X > square.OriginX &&
+			vec.X < (square.OriginX+50) &&
+			vec.Y > square.OriginY &&
+			vec.Y < (square.OriginY+50) {
+			return &square
+		}
+	}
+	return nil
+}
+
+// GetSquareAlgebraicNotationByOriginCoords gets algebraic notation for a set of
+// rank (y) and file (x) coordinates
+func GetSquareAlgebraicNotationByOriginCoords(
+	squareOriginByCoords map[string][]float64,
+	x, y float64,
+) string {
+	for squareName, originCoords := range squareOriginByCoords {
+		if originCoords[0] == x && originCoords[1] == y {
+			return squareName
+		}
+	}
+	return ""
 }

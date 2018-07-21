@@ -182,7 +182,7 @@ func run() {
 						piece = set.Rook
 					}
 
-					placePiece(win, squares, piece, coord)
+					chess.DrawPiece(win, squares, piece, coord)
 				}
 
 				model.Draw = false
@@ -193,9 +193,9 @@ func run() {
 				mpos := win.MousePosition()
 
 				// What square was clicked?
-				square := findSquareByVec(squares, mpos)
+				square := chess.FindSquareByVec(squares, mpos)
 				if square != nil {
-					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
+					squareName := chess.GetSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						// fmt.Printf("moveStartCoord: %s\n", squareName)
 						// Is there a piece on this square?
@@ -236,15 +236,15 @@ func run() {
 				mpos := win.MousePosition()
 
 				// What square was clicked?
-				square := findSquareByVec(squares, mpos)
+				square := chess.FindSquareByVec(squares, mpos)
 				if square != nil {
-					squareName := getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
+					squareName := chess.GetSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						// fmt.Printf("moveDestinationCoord: %s\n", squareName)
 						_, isOccupied := model.BoardState[squareName]
 						if !isOccupied {
 							// is the destination in the valid destinations list?
-							if inSliceString(validDestinations, squareName) {
+							if chess.FindInSliceString(validDestinations, squareName) {
 								// fmt.Println("No occupant at destination")
 								model.MoveDestinationCoord = squareName
 								model.CurrentState = chess.StateDraw
@@ -275,45 +275,6 @@ func run() {
 	}
 }
 
-func getSquareAlgebraicNotationByOriginCoords(squareOriginByCoords map[string][]float64, x, y float64) string {
-	for squareName, originCoords := range squareOriginByCoords {
-		if originCoords[0] == x && originCoords[1] == y {
-			return squareName
-		}
-	}
-	return ""
-}
-
-func findSquareByVec(squares chess.BoardMap, vec pixel.Vec) *chess.Square {
-	for _, square := range squares {
-		if vec.X > square.OriginX && vec.X < (square.OriginX+50) && vec.Y > square.OriginY && vec.Y < (square.OriginY+50) {
-			return &square
-		}
-	}
-	return nil
-}
-
-func placePiece(win *pixelgl.Window, squares chess.BoardMap, piece *pixel.Sprite, coord string) {
-	square := squares[coord]
-	x := square.OriginX + 25
-	y := square.OriginY + 25
-	piece.Draw(win, pixel.IM.Moved(pixel.V(x, y)))
-}
-
-func center(a, b float64) float64 {
-	margin := (squareSize - a) / 2
-	return b + margin
-}
-
 func main() {
 	pixelgl.Run(run)
-}
-
-func inSliceString(slice []string, needle string) bool {
-	for i := 0; i < len(slice); i++ {
-		if slice[i] == needle {
-			return true
-		}
-	}
-	return false
 }
