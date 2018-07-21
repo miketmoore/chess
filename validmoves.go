@@ -148,7 +148,6 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 	}
 	switch direction {
 	case North:
-		// n ranks north
 		newRank := rankInt + n
 		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
@@ -170,12 +169,9 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 			return coord, ok
 		}
 	case South:
-		fmt.Println("SOUTH")
-		// n ranks south
 		newRank := rankInt - n
 		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
-		fmt.Println("south", newRank, coord, ok)
 		return coord, ok
 	case SouthWest:
 		newRank := rankInt - n
@@ -222,51 +218,48 @@ func CanPawnMove(model Model, squareName string) []string {
 	}
 
 	// is one space ahead vacant?
-	if coord, ok := getRelativeCoord(rank, file, direction, 1); ok {
-		if _, isOccupied := model.BoardState[coord]; !isOccupied {
-			valid = append(valid, coord)
-		}
+	if coord, ok := isRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
+		valid = append(valid, coord)
 	}
 
 	if isCoordStartPosition(playerColor, Pawn, rank, file) {
 
 		// is two spaces ahead vacant?
-		if coord, ok := getRelativeCoord(rank, file, direction, 2); ok {
-			if _, isOccupied := model.BoardState[coord]; !isOccupied {
-				valid = append(valid, coord)
-			}
+		if coord, ok := isRelCoordValid(model.BoardState, rank, file, direction, 2); ok {
+			valid = append(valid, coord)
 		}
 
 	}
 
 	if playerColor == PlayerWhite {
 		// is NW occupied by the enemy? if so, it is a valid move
-		if coord, ok := getRelativeCoord(rank, file, NorthWest, 1); ok {
-			if _, isOccupied := model.BoardState[coord]; !isOccupied {
-				valid = append(valid, coord)
-			}
+		if coord, ok := isRelCoordValid(model.BoardState, rank, file, NorthWest, 1); ok {
+			valid = append(valid, coord)
 		}
 		// is NE occupied by the enemy? if so, it is a valid move
-		if coord, ok := getRelativeCoord(rank, file, NorthEast, 1); ok {
-			if _, isOccupied := model.BoardState[coord]; !isOccupied {
-				valid = append(valid, coord)
-			}
+		if coord, ok := isRelCoordValid(model.BoardState, rank, file, NorthEast, 1); ok {
+			valid = append(valid, coord)
 		}
 	} else {
 		// is SW occupied by the enemy? if so, it is a valid move
-		if coord, ok := getRelativeCoord(rank, file, SouthWest, 1); ok {
-			if _, isOccupied := model.BoardState[coord]; !isOccupied {
-				valid = append(valid, coord)
-			}
+		if coord, ok := isRelCoordValid(model.BoardState, rank, file, SouthWest, 1); ok {
+			valid = append(valid, coord)
 		}
 		// is SE occupied by the enemy? if so, it is a valid move
-		if coord, ok := getRelativeCoord(rank, file, SouthEast, 1); ok {
-			if _, isOccupied := model.BoardState[coord]; !isOccupied {
-				valid = append(valid, coord)
-			}
+		if coord, ok := isRelCoordValid(model.BoardState, rank, file, SouthEast, 1); ok {
+			valid = append(valid, coord)
 		}
 	}
 
 	fmt.Println(valid)
 	return valid
+}
+
+func isRelCoordValid(boardState BoardState, rank, file string, direction Direction, n int) (string, bool) {
+	if coord, ok := getRelativeCoord(rank, file, direction, n); ok {
+		if _, isOccupied := boardState[coord]; !isOccupied {
+			return coord, true
+		}
+	}
+	return "", false
 }
