@@ -61,19 +61,37 @@ func TestGetPreviousFile(t *testing.T) {
 }
 
 func TestGetNextRanks(t *testing.T) {
-	inputRank := "1"
-	expected := []string{"2", "3", "4", "5", "6", "7", "8"}
-	got := chess.GetNextRanks(inputRank)
-	if len(got) != len(expected) {
-		t.Fatal(fmt.Sprintf("length is wrong - got %d expected %d", len(got), len(expected)))
+	tests := []struct {
+		inputRank     string
+		expectedRanks []string
+		matches       int
+	}{
+		{"1", []string{"2", "3", "4", "5", "6", "7", "8"}, 7},
+		{"2", []string{"3", "4", "5", "6", "7", "8"}, 6},
+		{"3", []string{"4", "5", "6", "7", "8"}, 5},
+		{"4", []string{"5", "6", "7", "8"}, 4},
+		{"5", []string{"6", "7", "8"}, 3},
+		{"6", []string{"7", "8"}, 2},
+		{"7", []string{"8"}, 1},
 	}
-	matches := 0
-	for i, rank := range got {
-		if rank == expected[i] {
-			matches++
-		}
+	for _, test := range tests {
+		t.Run(test.inputRank, func(t *testing.T) {
+			got := chess.GetNextRanks(test.inputRank)
+			if len(got) != len(test.expectedRanks) {
+				t.Fatal(fmt.Sprintf("length is wrong - got %d expected %d", len(got), len(test.expectedRanks)))
+			}
+			matches := 0
+			for i, rank := range got {
+				if rank == test.expectedRanks[i] {
+					matches++
+				}
+			}
+			if matches != test.matches {
+				t.Fatal(fmt.Sprintf("result is unexpected - got %d matches but expected %d", matches, test.matches))
+			}
+		})
+
 	}
-	assertOk(t, matches == 7)
 }
 
 func assertOk(t *testing.T, b bool) {
