@@ -223,7 +223,9 @@ func run() {
 					squareName := chess.GetSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						_, isOccupied := model.BoardState[squareName]
-						if !isOccupied {
+						if isOccupied {
+							model.CurrentState = chess.StateSelectPiece
+						} else {
 							if chess.FindInSliceString(validDestinations, squareName) {
 								model.MoveDestinationCoord = squareName
 								model.CurrentState = chess.StateDraw
