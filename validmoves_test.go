@@ -51,9 +51,28 @@ func TestGetPreviousFile(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.in, func(t *testing.T) {
-			next, ok := chess.GetPreviousFile(test.in)
-			assertOk(t, ok == test.pass)
+			next, _ := chess.GetPreviousFile(test.in)
 			assertOk(t, next == test.out)
+		})
+
+	}
+
+}
+
+func TestCoordFromRankFile(t *testing.T) {
+	tests := []struct {
+		rank int
+		file string
+		out  string
+		pass bool
+	}{
+		{1, "a", "a1", true},
+	}
+	for _, test := range tests {
+		t.Run(test.out, func(t *testing.T) {
+			coord := chess.CoordFromRankFile(test.rank, test.file)
+			// assertOk(t, ok == test.pass)
+			assertOk(t, coord == test.out)
 		})
 
 	}
