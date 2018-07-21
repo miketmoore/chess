@@ -104,8 +104,8 @@ func TestGetRelativeCoord(t *testing.T) {
 		distance  int
 		expected  string
 	}{
-		// {"2", "a", chess.East, 1, "b2"},
-		// {"2", "b", chess.West, 1, "a2"},
+		{"2", "a", chess.East, 1, "b2"},
+		{"2", "b", chess.West, 1, "a2"},
 		{"2", "b", chess.NorthWest, 1, "a3"},
 		{"2", "a", chess.North, 1, "a3"},
 		{"2", "a", chess.NorthEast, 1, "b3"},
@@ -115,14 +115,13 @@ func TestGetRelativeCoord(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v", test), func(t *testing.T) {
-			got, _ := chess.GetRelativeCoord(
+			got, ok := chess.GetRelativeCoord(
 				test.rank,
 				test.file,
 				test.direction,
 				test.distance,
 			)
-			// assertOk(t, ok)
-			fmt.Println(got)
+			assertOk(t, ok)
 			assertOk(t, got == test.expected)
 		})
 	}

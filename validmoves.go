@@ -179,6 +179,20 @@ func GetRelativeCoord(rank, file string, direction Direction, distance int) (str
 		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
 		return coord, ok
+	case East:
+		newFile, ok := GetNextFile(file)
+		if ok {
+			coord := coordFromRankFile(rankInt, newFile)
+			_, ok := validCoords[coord]
+			return coord, ok
+		}
+	case West:
+		newFile, ok := GetPreviousFile(file)
+		if ok {
+			coord := coordFromRankFile(rankInt, newFile)
+			_, ok := validCoords[coord]
+			return coord, ok
+		}
 	case SouthWest:
 		newRank := rankInt - distance
 		newFile, ok := GetPreviousFile(file)
