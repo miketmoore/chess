@@ -145,7 +145,8 @@ func GetNextFile(file string) (string, bool) {
 	return "", false
 }
 
-func getRelativeCoord(rank, file string, direction Direction, n int) (string, bool) {
+// GetRelativeCoord gets a rank+file coordinate relative to specified by direction and distance
+func GetRelativeCoord(rank, file string, direction Direction, distance int) (string, bool) {
 	var rankInt int
 	var err error
 	if rankInt, err = strconv.Atoi(rank); err != nil {
@@ -153,12 +154,12 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 	}
 	switch direction {
 	case North:
-		newRank := rankInt + n
+		newRank := rankInt + distance
 		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
 		return coord, ok
 	case NorthWest:
-		newRank := rankInt + n
+		newRank := rankInt + distance
 		newFile, ok := GetPreviousFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
@@ -166,7 +167,7 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 			return coord, ok
 		}
 	case NorthEast:
-		newRank := rankInt + n
+		newRank := rankInt + distance
 		newFile, ok := GetNextFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
@@ -174,12 +175,12 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 			return coord, ok
 		}
 	case South:
-		newRank := rankInt - n
+		newRank := rankInt - distance
 		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
 		return coord, ok
 	case SouthWest:
-		newRank := rankInt - n
+		newRank := rankInt - distance
 		newFile, ok := GetPreviousFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
@@ -187,7 +188,7 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 			return coord, ok
 		}
 	case SouthEast:
-		newRank := rankInt - n
+		newRank := rankInt - distance
 		newFile, ok := GetNextFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
@@ -239,7 +240,7 @@ func CanPawnMove(model Model, squareName string) []string {
 	// pawn attack moves
 	if playerColor == PlayerWhite {
 		// is NW occupied by the enemy? if so, it is a valid move
-		if coord, ok := getRelativeCoord(rank, file, NorthWest, 1); ok {
+		if coord, ok := GetRelativeCoord(rank, file, NorthWest, 1); ok {
 			if occupant, isOccupied := model.BoardState[coord]; isOccupied {
 				if occupant.Color == PlayerBlack {
 					valid = append(valid, coord)
@@ -247,7 +248,7 @@ func CanPawnMove(model Model, squareName string) []string {
 			}
 		}
 		// // is NE occupied by the enemy? if so, it is a valid move
-		if coord, ok := getRelativeCoord(rank, file, NorthEast, 1); ok {
+		if coord, ok := GetRelativeCoord(rank, file, NorthEast, 1); ok {
 			if occupant, isOccupied := model.BoardState[coord]; isOccupied {
 				if occupant.Color == PlayerBlack {
 					valid = append(valid, coord)
@@ -256,7 +257,7 @@ func CanPawnMove(model Model, squareName string) []string {
 		}
 	} else {
 		// is SW occupied by the enemy? if so, it is a valid move
-		if coord, ok := getRelativeCoord(rank, file, SouthWest, 1); ok {
+		if coord, ok := GetRelativeCoord(rank, file, SouthWest, 1); ok {
 			if occupant, isOccupied := model.BoardState[coord]; isOccupied {
 				if occupant.Color == PlayerWhite {
 					valid = append(valid, coord)
@@ -264,7 +265,7 @@ func CanPawnMove(model Model, squareName string) []string {
 			}
 		}
 		// is SE occupied by the enemy? if so, it is a valid move
-		if coord, ok := getRelativeCoord(rank, file, SouthEast, 1); ok {
+		if coord, ok := GetRelativeCoord(rank, file, SouthEast, 1); ok {
 			if occupant, isOccupied := model.BoardState[coord]; isOccupied {
 				if occupant.Color == PlayerWhite {
 					valid = append(valid, coord)
@@ -329,7 +330,7 @@ func CanRookMove(model Model, squareName string) []string {
 }
 
 func isRelCoordValid(boardState BoardState, rank, file string, direction Direction, n int) (string, bool, OnBoardData) {
-	if coord, ok := getRelativeCoord(rank, file, direction, n); ok {
+	if coord, ok := GetRelativeCoord(rank, file, direction, n); ok {
 		if occupant, isOccupied := boardState[coord]; !isOccupied {
 			return coord, true, occupant
 		}

@@ -96,6 +96,38 @@ func TestGetNextRanks(t *testing.T) {
 	}
 }
 
+func TestGetRelativeCoord(t *testing.T) {
+	tests := []struct {
+		rank      string
+		file      string
+		direction chess.Direction
+		distance  int
+		expected  string
+	}{
+		// {"2", "a", chess.East, 1, "b2"},
+		// {"2", "b", chess.West, 1, "a2"},
+		{"2", "b", chess.NorthWest, 1, "a3"},
+		{"2", "a", chess.North, 1, "a3"},
+		{"2", "a", chess.NorthEast, 1, "b3"},
+		{"2", "a", chess.SouthEast, 1, "b1"},
+		{"3", "a", chess.South, 1, "a2"},
+		{"3", "b", chess.SouthWest, 1, "a2"},
+	}
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%v", test), func(t *testing.T) {
+			got, _ := chess.GetRelativeCoord(
+				test.rank,
+				test.file,
+				test.direction,
+				test.distance,
+			)
+			// assertOk(t, ok)
+			fmt.Println(got)
+			assertOk(t, got == test.expected)
+		})
+	}
+}
+
 func assertOk(t *testing.T, b bool) {
 	if b == false {
 		t.Fatal("not ok")
