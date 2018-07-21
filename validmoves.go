@@ -40,6 +40,8 @@ const (
 	South     Direction = "south"
 	SouthWest Direction = "southwest"
 	SouthEast Direction = "southeast"
+	East      Direction = "east"
+	West      Direction = "west"
 )
 
 var ranks = []int{1, 2, 3, 4, 5, 6, 7, 8}
@@ -269,6 +271,26 @@ func CanPawnMove(model Model, squareName string) []string {
 	}
 
 	fmt.Println(valid)
+	return valid
+}
+
+// CanKingMove determines all valid moves for the King
+func CanKingMove(model Model, squareName string) []string {
+	fmt.Println("can king move ", squareName)
+	rank, file := getRankAndFileFromSquareName(squareName)
+
+	// build hash of valid board destinations
+	valid := []string{}
+
+	// King can move any direction, so color does not matter (like it does with pawns)
+	// is NW occupied by the enemy? if so, it is a valid move
+	directions := []Direction{North, South, East, West}
+	for _, direction := range directions {
+		if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
+			valid = append(valid, coord)
+		}
+	}
+
 	return valid
 }
 

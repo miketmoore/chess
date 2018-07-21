@@ -205,6 +205,11 @@ func run() {
 								if len(validDestinations) > 0 {
 									valid = true
 								}
+							} else if occupant.Piece == chess.King {
+								validDestinations = chess.CanKingMove(model, squareName)
+								if len(validDestinations) > 0 {
+									valid = true
+								}
 							}
 							if valid {
 								model.PieceToMove = occupant
