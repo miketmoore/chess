@@ -195,7 +195,7 @@ func run() {
 				mpos := win.MousePosition()
 				square := chess.FindSquareByVec(squares, mpos)
 				if square != nil {
-					squareName := chess.GetSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
+					squareName := chess.GetNotationByCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						occupant, isOccupied := model.BoardState[squareName]
 						if isOccupied {
@@ -221,7 +221,7 @@ func run() {
 				mpos := win.MousePosition()
 				square := chess.FindSquareByVec(squares, mpos)
 				if square != nil {
-					squareName := chess.GetSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
+					squareName := chess.GetNotationByCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						occupant, isOccupied := model.BoardState[squareName]
 						isValid := chess.FindInSliceString(validDestinations, squareName)

@@ -122,9 +122,9 @@ func FindSquareByVec(squares BoardMap, vec pixel.Vec) *Square {
 	return nil
 }
 
-// GetSquareAlgebraicNotationByOriginCoords gets algebraic notation for a set of
+// GetNotationByCoords gets algebraic notation for a set of
 // rank (y) and file (x) coordinates
-func GetSquareAlgebraicNotationByOriginCoords(
+func GetNotationByCoords(
 	squareOriginByCoords map[string][]float64,
 	x, y float64,
 ) string {
