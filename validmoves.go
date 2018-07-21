@@ -38,6 +38,8 @@ const (
 	NorthWest Direction = "northwest"
 	NorthEast Direction = "northeast"
 	South     Direction = "south"
+	SouthWest Direction = "southwest"
+	SouthEast Direction = "southeast"
 )
 
 var ranks = []int{1, 2, 3, 4, 5, 6, 7, 8}
@@ -175,6 +177,22 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		_, ok := validCoords[coord]
 		fmt.Println("south", newRank, coord, ok)
 		return coord, ok
+	case SouthWest:
+		newRank := rankInt - n
+		newFile, ok := getPreviousFile(file)
+		if ok {
+			coord := coordFromRankFile(newRank, newFile)
+			_, ok := validCoords[coord]
+			return coord, ok
+		}
+	case SouthEast:
+		newRank := rankInt - n
+		newFile, ok := getNextFile(file)
+		if ok {
+			coord := coordFromRankFile(newRank, newFile)
+			_, ok := validCoords[coord]
+			return coord, ok
+		}
 	}
 	return "", false
 }
@@ -230,6 +248,19 @@ func CanPawnMove(model Model, squareName string) []string {
 		}
 		// is NE occupied by the enemy? if so, it is a valid move
 		if coord, ok := getRelativeCoord(rank, file, NorthEast, 1); ok {
+			if _, isOccupied := model.BoardState[coord]; !isOccupied {
+				valid = append(valid, coord)
+			}
+		}
+	} else {
+		// is SW occupied by the enemy? if so, it is a valid move
+		if coord, ok := getRelativeCoord(rank, file, SouthWest, 1); ok {
+			if _, isOccupied := model.BoardState[coord]; !isOccupied {
+				valid = append(valid, coord)
+			}
+		}
+		// is SE occupied by the enemy? if so, it is a valid move
+		if coord, ok := getRelativeCoord(rank, file, SouthEast, 1); ok {
 			if _, isOccupied := model.BoardState[coord]; !isOccupied {
 				valid = append(valid, coord)
 			}
