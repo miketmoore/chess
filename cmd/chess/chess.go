@@ -4,7 +4,6 @@ import (
 	"fmt"
 	_ "image/png"
 	"os"
-	"strconv"
 
 	"github.com/BurntSushi/toml"
 	"github.com/faiface/pixel"
@@ -24,53 +23,6 @@ const displayFontPath = "assets/kenney_fontpackage/Fonts/Kenney Future Narrow.tt
 const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/chess/en-US.all.json"
 const lang = "en-US"
-
-type gameModel struct {
-	History              []HistoryEntry
-	BoardState           chess.BoardState
-	pieceToMove          chess.OnBoardData
-	moveStartCoord       string
-	moveDestinationCoord string
-	draw                 bool
-	whitesMove           bool
-	currentState         chess.State
-}
-
-func (m *gameModel) CurrentPlayerColor() chess.PlayerColor {
-	if m.whitesMove {
-		return chess.PlayerWhite
-	}
-	return chess.PlayerBlack
-}
-
-func initialOnBoardState() chess.BoardState {
-	return chess.BoardState{
-		"a8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Rook},
-		"b8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Knight},
-		"c8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Bishop},
-		"d8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Queen},
-		"e8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.King},
-		"f8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Bishop},
-		"g8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Knight},
-		"h8": chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Rook},
-
-		"a1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Rook},
-		"b1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Knight},
-		"c1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Bishop},
-		"d1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Queen},
-		"e1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.King},
-		"f1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Bishop},
-		"g1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Knight},
-		"h1": chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Rook},
-	}
-}
-
-type HistoryEntry struct {
-	WhitesMove bool
-	Piece      chess.Piece
-	FromCoord  string
-	ToCoord    string
-}
 
 func run() {
 	// i18n
@@ -93,12 +45,12 @@ func run() {
 	})
 
 	// Game data
-	model := gameModel{
-		History:      []HistoryEntry{},
-		BoardState:   initialOnBoardState(),
-		draw:         true,
-		whitesMove:   true,
-		currentState: chess.StateTitle,
+	model := chess.Model{
+		History:      []chess.HistoryEntry{},
+		BoardState:   chess.InitialOnBoardState(),
+		Draw:         true,
+		WhitesMove:   true,
+		CurrentState: chess.StateTitle,
 	}
 
 	// Setup GUI window
@@ -174,9 +126,9 @@ func run() {
 			os.Exit(0)
 		}
 
-		switch model.currentState {
+		switch model.CurrentState {
 		case chess.StateTitle:
-			if model.draw {
+			if model.Draw {
 				fmt.Printf("Drawing title State..\n")
 				win.Clear(colornames.Black)
 
@@ -190,16 +142,16 @@ func run() {
 				bodyTxt.Color = colornames.White
 				bodyTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(bodyTxt.Bounds().Center())))
 
-				model.draw = false
+				model.Draw = false
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				model.currentState = chess.StateDraw
+				model.CurrentState = chess.StateDraw
 				win.Clear(colornames.Black)
-				model.draw = true
+				model.Draw = true
 			}
 		case chess.StateDraw:
-			if model.draw {
+			if model.Draw {
 				// Draw board
 				for _, square := range squares {
 					square.Shape.Draw(win)
@@ -233,8 +185,8 @@ func run() {
 					placePiece(win, squares, piece, coord)
 				}
 
-				model.draw = false
-				model.currentState = chess.StateSelectPiece
+				model.Draw = false
+				model.CurrentState = chess.StateSelectPiece
 			}
 		case chess.StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
@@ -252,27 +204,27 @@ func run() {
 							// TODO
 							// Is this a valid piece to move?
 							valid := false
-							if model.whitesMove && occupant.Color == chess.PlayerWhite {
+							if model.WhitesMove && occupant.Color == chess.PlayerWhite {
 								// Are there valid moves for the piece?
 								if occupant.Piece == chess.Pawn {
 									// TODO has the pawn moved yet?
 									// pawn can move one or two spaces ahead on first move
 									// pawn can move one space ahead on moves after first
 									// pawn can capture a piece by moving diagonal ahead, if it puts it behind an enemy piece
-									validDestinations = canPawnMove(model, squareName)
+									validDestinations = chess.CanPawnMove(model, squareName)
 									if len(validDestinations) > 0 {
 										valid = true
 									}
 								}
-							} else if !model.whitesMove && occupant.Color == chess.PlayerBlack {
+							} else if !model.WhitesMove && occupant.Color == chess.PlayerBlack {
 								// Are there valid moves for the piece?
 								valid = true
 							}
 							if valid {
-								model.pieceToMove = occupant
-								// fmt.Printf("pieceToMove: %v\n", model.pieceToMove)
-								model.moveStartCoord = squareName
-								model.currentState = chess.StateSelectDestination
+								model.PieceToMove = occupant
+								// fmt.Printf("pieceToMove: %v\n", model.PieceToMove)
+								model.MoveStartCoord = squareName
+								model.CurrentState = chess.StateSelectDestination
 							}
 						}
 					}
@@ -294,19 +246,19 @@ func run() {
 							// is the destination in the valid destinations list?
 							if inSliceString(validDestinations, squareName) {
 								// fmt.Println("No occupant at destination")
-								model.moveDestinationCoord = squareName
-								model.currentState = chess.StateDraw
-								model.draw = true
+								model.MoveDestinationCoord = squareName
+								model.CurrentState = chess.StateDraw
+								model.Draw = true
 
-								model.History = append(model.History, HistoryEntry{
-									WhitesMove: model.whitesMove,
-									Piece:      model.pieceToMove.Piece,
-									FromCoord:  model.moveStartCoord,
-									ToCoord:    model.moveDestinationCoord,
+								model.History = append(model.History, chess.HistoryEntry{
+									WhitesMove: model.WhitesMove,
+									Piece:      model.PieceToMove.Piece,
+									FromCoord:  model.MoveStartCoord,
+									ToCoord:    model.MoveDestinationCoord,
 								})
-								model.BoardState[squareName] = model.pieceToMove
-								delete(model.BoardState, model.moveStartCoord)
-								model.whitesMove = !model.whitesMove
+								model.BoardState[squareName] = model.PieceToMove
+								delete(model.BoardState, model.MoveStartCoord)
+								model.WhitesMove = !model.WhitesMove
 								fmt.Println(model.History[len(model.History)-1])
 							}
 
@@ -355,71 +307,6 @@ func center(a, b float64) float64 {
 
 func main() {
 	pixelgl.Run(run)
-}
-
-func isCoordStartPosition(playerColor chess.PlayerColor, piece chess.Piece, rank, file string) bool {
-
-	if playerColor == chess.PlayerWhite {
-		// white
-		if piece == chess.Pawn {
-			return rank == "2"
-		}
-	} else {
-		// black
-		if piece == chess.Pawn {
-			return rank == "7"
-		}
-	}
-
-	return false
-}
-
-func getRankAhead(rank string, n int) (string, bool) {
-	if s, err := strconv.Atoi(rank); err == nil {
-		fmt.Printf("%T, %v", s, s)
-		return fmt.Sprintf("%d", s+n), true
-	}
-	return "", false
-}
-
-func canPawnMove(model gameModel, squareName string) []string {
-	rank := string(squareName[1])
-	file := string(squareName[0])
-	fmt.Printf("canPawnMove from %s\n", squareName)
-	// if pawn is on starting square, it is elligible for moving one or two spaces
-	playerColor := model.CurrentPlayerColor()
-	onStart := isCoordStartPosition(playerColor, chess.Pawn, rank, file)
-	fmt.Printf("\tisStart:%v\n", onStart)
-
-	// build hash of valid spaces to move
-	validDestinations := []string{}
-	if onStart {
-
-		// is one space ahead vacant?
-		rankOneAhead, oneAheadExists := getRankAhead(rank, 1)
-		if oneAheadExists {
-			fmt.Printf("rank ahead: %s\n", rankOneAhead)
-			// is rankOneAhead occupied?
-			_, isOccupied := model.BoardState[file+rankOneAhead]
-			fmt.Printf("is occupied: %t\n", isOccupied)
-			if !isOccupied {
-				validDestinations = append(validDestinations, file+rankOneAhead)
-			}
-		}
-
-		// is two spaces ahead vacant?
-		rankTwoAhead, twoAheadExists := getRankAhead(rank, 2)
-		if twoAheadExists {
-			fmt.Printf("rank two ahead: %s\n", rankTwoAhead)
-			_, isOccupied := model.BoardState[file+rankTwoAhead]
-			fmt.Printf("is occupied: %t\n", isOccupied)
-			if !isOccupied {
-				validDestinations = append(validDestinations, file+rankTwoAhead)
-			}
-		}
-	}
-	fmt.Println(validDestinations)
-	return validDestinations
 }
 
 func inSliceString(slice []string, needle string) bool {
