@@ -138,12 +138,10 @@ func getPreviousFile(file string) (string, bool) {
 	return "", false
 }
 
-func getNextFile(file string) (string, bool) {
+// GetNextFile gets the next file as a string
+func GetNextFile(file string) (string, bool) {
 	for i, f := range files {
-		if f == file {
-			if file == "h" {
-				return files[i], true
-			}
+		if f == file && len(files) > i+1 {
 			return files[i+1], true
 		}
 	}
@@ -151,9 +149,10 @@ func getNextFile(file string) (string, bool) {
 }
 
 func getRelativeCoord(rank, file string, direction Direction, n int) (string, bool) {
-	rankInt, err := strconv.Atoi(rank)
-	if err != nil {
-		panic(err)
+	var rankInt int
+	var err error
+	if rankInt, err = strconv.Atoi(rank); err != nil {
+		return "", false
 	}
 	switch direction {
 	case North:
@@ -171,7 +170,7 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		}
 	case NorthEast:
 		newRank := rankInt + n
-		newFile, ok := getNextFile(file)
+		newFile, ok := GetNextFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
 			_, ok := validCoords[coord]
@@ -192,7 +191,7 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		}
 	case SouthEast:
 		newRank := rankInt - n
-		newFile, ok := getNextFile(file)
+		newFile, ok := GetNextFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
 			_, ok := validCoords[coord]
@@ -298,6 +297,27 @@ func CanKingMove(model Model, squareName string) []string {
 	return valid
 }
 
+func GetNextRanks(rank string) []string {
+	var rankInt int
+	var err error
+	if rankInt, err = strconv.Atoi(rank); err != nil {
+		return []string{}
+	}
+	i := rankInt
+	resp := []string{}
+	for nextRank, ok := getRankAhead(rank, i); ok && i < 9; {
+		fmt.Println("next rank: ", nextRank, i)
+		resp = append(resp, nextRank)
+		i++
+	}
+	// for nextRank, err := getRankAhead(rank, i); nextRank; err != nil; {
+	// 	resp = append(resp, nextRank)
+	// 	i++
+	// }
+	fmt.Println("returning next ranks: ", resp)
+	return resp
+}
+
 // CanRookMove determines all valid moves for the Rook
 func CanRookMove(model Model, squareName string) []string {
 	fmt.Println("can rook move ", squareName)
@@ -305,13 +325,11 @@ func CanRookMove(model Model, squareName string) []string {
 
 	valid := []string{}
 
-	directions := []Direction{North, South, East, West}
-	for _, direction := range directions {
-		// keep incrementing until an occupied space is encountered
-		// TODO
-		if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
-			valid = append(valid, coord)
-		}
+	ranks := GetNextRanks(rank)
+	fmt.Println("Next ranks: ", ranks)
+
+	if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, North, 1); ok {
+		valid = append(valid, coord)
 	}
 
 	return valid
