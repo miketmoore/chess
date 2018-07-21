@@ -12,6 +12,7 @@ import (
 	"github.com/miketmoore/chess"
 	"github.com/miketmoore/zelduh"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/olekukonko/tablewriter"
 	"golang.org/x/image/colornames"
 	"golang.org/x/text/language"
 )
@@ -123,6 +124,7 @@ func run() {
 
 		if win.JustPressed(pixelgl.KeyQ) {
 			fmt.Printf("Exiting...\n")
+			printHistory(model.History)
 			os.Exit(0)
 		}
 
@@ -225,6 +227,7 @@ func run() {
 						isValid := chess.FindInSliceString(validDestinations, squareName)
 						if isValid && isDestinationValid(&model, squareName, isOccupied, occupant) {
 							move(&model, squareName)
+							printHistory(model.History)
 						} else {
 							model.CurrentState = chess.StateSelectPiece
 						}
@@ -245,7 +248,6 @@ func isDestinationValid(model *chess.Model, squareName string, isOccupied bool, 
 			return true
 		}
 	} else {
-		// move(model, squareName)
 		return true
 	}
 	return false
@@ -255,12 +257,22 @@ func move(model *chess.Model, destCoord string) {
 	model.CurrentState = chess.StateDraw
 	model.Draw = true
 	model.MoveDestinationCoord = destCoord
-	model.History = append(model.History, chess.HistoryEntry{
+
+	entry := chess.HistoryEntry{
 		WhitesMove: model.WhitesMove,
 		Piece:      model.PieceToMove.Piece,
 		FromCoord:  model.MoveStartCoord,
 		ToCoord:    model.MoveDestinationCoord,
-	})
+	}
+
+	captor, ok := model.BoardState[destCoord]
+	if ok {
+		// record capture
+		entry.CapturedPiece = captor.Piece
+	}
+
+	model.History = append(model.History, entry)
+
 	model.BoardState[destCoord] = model.PieceToMove
 	delete(model.BoardState, model.MoveStartCoord)
 	model.WhitesMove = !model.WhitesMove
@@ -268,4 +280,24 @@ func move(model *chess.Model, destCoord string) {
 
 func main() {
 	pixelgl.Run(run)
+}
+
+func printHistory(history []chess.HistoryEntry) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Player Color", "From", "To", "Captured"})
+	for _, entry := range history {
+
+		var playerColor = "white"
+		if !entry.WhitesMove {
+			playerColor = "black"
+		}
+
+		table.Append([]string{
+			playerColor,
+			entry.FromCoord,
+			entry.ToCoord,
+			string(entry.CapturedPiece),
+		})
+	}
+	table.Render()
 }
