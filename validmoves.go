@@ -34,8 +34,10 @@ func getRankAhead(rank string, n int) (string, bool) {
 type Direction string
 
 const (
-	North Direction = "north"
-	South Direction = "south"
+	North     Direction = "north"
+	NorthWest Direction = "northwest"
+	NorthEast Direction = "northeast"
+	South     Direction = "south"
 )
 
 var ranks = []int{1, 2, 3, 4, 5, 6, 7, 8}
@@ -119,6 +121,24 @@ func coordFromRankFile(rank int, file string) string {
 	return fmt.Sprintf("%s%d", file, rank)
 }
 
+func getPreviousFile(file string) (string, bool) {
+	for i, f := range files {
+		if f == file {
+			return files[i-1], true
+		}
+	}
+	return "", false
+}
+
+func getNextFile(file string) (string, bool) {
+	for i, f := range files {
+		if f == file {
+			return files[i+1], true
+		}
+	}
+	return "", false
+}
+
 func getRelativeCoord(rank, file string, direction Direction, n int) (string, bool) {
 	rankInt, err := strconv.Atoi(rank)
 	if err != nil {
@@ -131,6 +151,22 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
 		return coord, ok
+	case NorthWest:
+		newRank := rankInt + n
+		newFile, ok := getPreviousFile(file)
+		if ok {
+			coord := coordFromRankFile(newRank, newFile)
+			_, ok := validCoords[coord]
+			return coord, ok
+		}
+	case NorthEast:
+		newRank := rankInt + n
+		newFile, ok := getNextFile(file)
+		if ok {
+			coord := coordFromRankFile(newRank, newFile)
+			_, ok := validCoords[coord]
+			return coord, ok
+		}
 	case South:
 		fmt.Println("SOUTH")
 		// n ranks south
@@ -184,6 +220,22 @@ func CanPawnMove(model Model, squareName string) []string {
 		}
 
 	}
+
+	if playerColor == PlayerWhite {
+		// is NW occupied by the enemy? if so, it is a valid move
+		if coord, ok := getRelativeCoord(rank, file, NorthWest, 1); ok {
+			if _, isOccupied := model.BoardState[coord]; !isOccupied {
+				valid = append(valid, coord)
+			}
+		}
+		// is NE occupied by the enemy? if so, it is a valid move
+		if coord, ok := getRelativeCoord(rank, file, NorthEast, 1); ok {
+			if _, isOccupied := model.BoardState[coord]; !isOccupied {
+				valid = append(valid, coord)
+			}
+		}
+	}
+
 	fmt.Println(valid)
 	return valid
 }
