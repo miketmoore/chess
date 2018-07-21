@@ -125,10 +125,10 @@ func coordFromRankFile(rank int, file string) string {
 	return fmt.Sprintf("%s%d", file, rank)
 }
 
-func getPreviousFile(file string) (string, bool) {
+// GetPreviousFile gets the previous file as a string
+func GetPreviousFile(file string) (string, bool) {
 	for i, f := range files {
 		if f == file {
-			fmt.Println(f, file, i)
 			if i == 0 {
 				return files[0], true
 			}
@@ -162,7 +162,7 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		return coord, ok
 	case NorthWest:
 		newRank := rankInt + n
-		newFile, ok := getPreviousFile(file)
+		newFile, ok := GetPreviousFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
 			_, ok := validCoords[coord]
@@ -183,7 +183,7 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		return coord, ok
 	case SouthWest:
 		newRank := rankInt - n
-		newFile, ok := getPreviousFile(file)
+		newFile, ok := GetPreviousFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
 			_, ok := validCoords[coord]
