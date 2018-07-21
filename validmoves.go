@@ -30,27 +30,30 @@ func getRankAhead(rank string, n int) (string, bool) {
 	return "", false
 }
 
+// GetRankAndFileFromSquareName converts a square name (example: d3) to rank (3)
+// and file(d) strings
+func GetRankAndFileFromSquareName(squareName string) (rank, file string) {
+	return string(squareName[1]), string(squareName[0])
+}
+
 // CanPawnMove checks if a pawn can move given a board state
+// If a pawn is on it's starting square, then it is elligible to move one or two spaces forward.
+// A pawn can move if an opposing piece is NW or NE.
 func CanPawnMove(model Model, squareName string) []string {
-	rank := string(squareName[1])
-	file := string(squareName[0])
-	fmt.Printf("CanPawnMove from %s\n", squareName)
+	rank, file := GetRankAndFileFromSquareName(squareName)
+
 	// if pawn is on starting square, it is elligible for moving one or two spaces
 	playerColor := model.CurrentPlayerColor()
-	onStart := isCoordStartPosition(playerColor, Pawn, rank, file)
-	fmt.Printf("\tisStart:%v\n", onStart)
 
-	// build hash of valid spaces to move
+	// build hash of valid board destinations
 	validDestinations := []string{}
-	if onStart {
+	if isCoordStartPosition(playerColor, Pawn, rank, file) {
 
 		// is one space ahead vacant?
 		rankOneAhead, oneAheadExists := getRankAhead(rank, 1)
 		if oneAheadExists {
-			fmt.Printf("rank ahead: %s\n", rankOneAhead)
 			// is rankOneAhead occupied?
 			_, isOccupied := model.BoardState[file+rankOneAhead]
-			fmt.Printf("is occupied: %t\n", isOccupied)
 			if !isOccupied {
 				validDestinations = append(validDestinations, file+rankOneAhead)
 			}
@@ -59,9 +62,7 @@ func CanPawnMove(model Model, squareName string) []string {
 		// is two spaces ahead vacant?
 		rankTwoAhead, twoAheadExists := getRankAhead(rank, 2)
 		if twoAheadExists {
-			fmt.Printf("rank two ahead: %s\n", rankTwoAhead)
 			_, isOccupied := model.BoardState[file+rankTwoAhead]
-			fmt.Printf("is occupied: %t\n", isOccupied)
 			if !isOccupied {
 				validDestinations = append(validDestinations, file+rankTwoAhead)
 			}
