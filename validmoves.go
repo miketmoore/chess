@@ -128,6 +128,10 @@ func coordFromRankFile(rank int, file string) string {
 func getPreviousFile(file string) (string, bool) {
 	for i, f := range files {
 		if f == file {
+			fmt.Println(f, file, i)
+			if i == 0 {
+				return files[0], true
+			}
 			return files[i-1], true
 		}
 	}
@@ -137,6 +141,9 @@ func getPreviousFile(file string) (string, bool) {
 func getNextFile(file string) (string, bool) {
 	for i, f := range files {
 		if f == file {
+			if file == "h" {
+				return files[i], true
+			}
 			return files[i+1], true
 		}
 	}
