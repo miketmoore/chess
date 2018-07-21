@@ -59,26 +59,6 @@ func TestGetPreviousFile(t *testing.T) {
 
 }
 
-func TestCoordFromRankFile(t *testing.T) {
-	tests := []struct {
-		rank int
-		file string
-		out  string
-		pass bool
-	}{
-		{1, "a", "a1", true},
-	}
-	for _, test := range tests {
-		t.Run(test.out, func(t *testing.T) {
-			coord := chess.CoordFromRankFile(test.rank, test.file)
-			// assertOk(t, ok == test.pass)
-			assertOk(t, coord == test.out)
-		})
-
-	}
-
-}
-
 func assertOk(t *testing.T, b bool) {
 	if b == false {
 		t.Fatal("not ok")

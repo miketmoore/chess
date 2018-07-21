@@ -121,8 +121,7 @@ var validCoords = map[string]bool{
 	"h8": true,
 }
 
-// CoordFromRankFile returns the coordinate string from a separate rank and file
-func CoordFromRankFile(rank int, file string) string {
+func coordFromRankFile(rank int, file string) string {
 	return fmt.Sprintf("%s%d", file, rank)
 }
 
@@ -155,14 +154,14 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 	switch direction {
 	case North:
 		newRank := rankInt + n
-		coord := CoordFromRankFile(newRank, file)
+		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
 		return coord, ok
 	case NorthWest:
 		newRank := rankInt + n
 		newFile, ok := GetPreviousFile(file)
 		if ok {
-			coord := CoordFromRankFile(newRank, newFile)
+			coord := coordFromRankFile(newRank, newFile)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
@@ -170,20 +169,20 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		newRank := rankInt + n
 		newFile, ok := GetNextFile(file)
 		if ok {
-			coord := CoordFromRankFile(newRank, newFile)
+			coord := coordFromRankFile(newRank, newFile)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
 	case South:
 		newRank := rankInt - n
-		coord := CoordFromRankFile(newRank, file)
+		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
 		return coord, ok
 	case SouthWest:
 		newRank := rankInt - n
 		newFile, ok := GetPreviousFile(file)
 		if ok {
-			coord := CoordFromRankFile(newRank, newFile)
+			coord := coordFromRankFile(newRank, newFile)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
@@ -191,7 +190,7 @@ func getRelativeCoord(rank, file string, direction Direction, n int) (string, bo
 		newRank := rankInt - n
 		newFile, ok := GetNextFile(file)
 		if ok {
-			coord := CoordFromRankFile(newRank, newFile)
+			coord := coordFromRankFile(newRank, newFile)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
