@@ -217,50 +217,53 @@ func run() {
 		case chess.StateSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
-
 				square := chess.FindSquareByVec(squares, mpos)
 				if square != nil {
 					squareName := chess.GetSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						occupant, isOccupied := model.BoardState[squareName]
 						isValid := chess.FindInSliceString(validDestinations, squareName)
-						if isValid {
-							if isOccupied {
-								if model.WhitesMove && occupant.Color == chess.PlayerBlack {
-									// valid attack
-									fmt.Println("Valid attack white to black!")
-								} else if !model.WhitesMove && occupant.Color == chess.PlayerWhite {
-									// valid attack
-									fmt.Println("Valid attack black to white!")
-								} else {
-									model.CurrentState = chess.StateSelectPiece
-								}
-							} else if chess.FindInSliceString(validDestinations, squareName) {
-								model.MoveDestinationCoord = squareName
-								model.CurrentState = chess.StateDraw
-								model.Draw = true
-
-								model.History = append(model.History, chess.HistoryEntry{
-									WhitesMove: model.WhitesMove,
-									Piece:      model.PieceToMove.Piece,
-									FromCoord:  model.MoveStartCoord,
-									ToCoord:    model.MoveDestinationCoord,
-								})
-								model.BoardState[squareName] = model.PieceToMove
-								delete(model.BoardState, model.MoveStartCoord)
-								model.WhitesMove = !model.WhitesMove
-								fmt.Println(model.History[len(model.History)-1])
-							}
+						if isValid && isDestinationValid(&model, squareName, isOccupied, occupant) {
+							move(&model, squareName)
+						} else {
+							model.CurrentState = chess.StateSelectPiece
 						}
-
 					}
-
 				}
 			}
 		}
 
 		win.Update()
 	}
+}
+
+func isDestinationValid(model *chess.Model, squareName string, isOccupied bool, occupant chess.OnBoardData) bool {
+	if isOccupied {
+		if model.WhitesMove && occupant.Color == chess.PlayerBlack {
+			return true
+		} else if !model.WhitesMove && occupant.Color == chess.PlayerWhite {
+			return true
+		}
+	} else {
+		// move(model, squareName)
+		return true
+	}
+	return false
+}
+
+func move(model *chess.Model, destCoord string) {
+	model.CurrentState = chess.StateDraw
+	model.Draw = true
+	model.MoveDestinationCoord = destCoord
+	model.History = append(model.History, chess.HistoryEntry{
+		WhitesMove: model.WhitesMove,
+		Piece:      model.PieceToMove.Piece,
+		FromCoord:  model.MoveStartCoord,
+		ToCoord:    model.MoveDestinationCoord,
+	})
+	model.BoardState[destCoord] = model.PieceToMove
+	delete(model.BoardState, model.MoveStartCoord)
+	model.WhitesMove = !model.WhitesMove
 }
 
 func main() {
