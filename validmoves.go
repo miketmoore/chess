@@ -162,19 +162,19 @@ func CanPawnMove(model Model, squareName string) []string {
 	// build hash of valid board destinations
 	valid := []string{}
 
+	direction := North
+	if playerColor == PlayerBlack {
+		direction = South
+	}
+
+	// is one space ahead vacant?
+	if coord, ok := getRelativeCoord(rank, file, direction, 1); ok {
+		if _, isOccupied := model.BoardState[coord]; !isOccupied {
+			valid = append(valid, coord)
+		}
+	}
+
 	if isCoordStartPosition(playerColor, Pawn, rank, file) {
-
-		direction := North
-		if playerColor == PlayerBlack {
-			direction = South
-		}
-
-		// is one space ahead vacant?
-		if coord, ok := getRelativeCoord(rank, file, direction, 1); ok {
-			if _, isOccupied := model.BoardState[coord]; !isOccupied {
-				valid = append(valid, coord)
-			}
-		}
 
 		// is two spaces ahead vacant?
 		if coord, ok := getRelativeCoord(rank, file, direction, 2); ok {
@@ -182,6 +182,7 @@ func CanPawnMove(model Model, squareName string) []string {
 				valid = append(valid, coord)
 			}
 		}
+
 	}
 	fmt.Println(valid)
 	return valid
