@@ -222,11 +222,20 @@ func run() {
 				if square != nil {
 					squareName := chess.GetSquareAlgebraicNotationByOriginCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
-						_, isOccupied := model.BoardState[squareName]
-						if isOccupied {
-							model.CurrentState = chess.StateSelectPiece
-						} else {
-							if chess.FindInSliceString(validDestinations, squareName) {
+						occupant, isOccupied := model.BoardState[squareName]
+						isValid := chess.FindInSliceString(validDestinations, squareName)
+						if isValid {
+							if isOccupied {
+								if model.WhitesMove && occupant.Color == chess.PlayerBlack {
+									// valid attack
+									fmt.Println("Valid attack white to black!")
+								} else if !model.WhitesMove && occupant.Color == chess.PlayerWhite {
+									// valid attack
+									fmt.Println("Valid attack black to white!")
+								} else {
+									model.CurrentState = chess.StateSelectPiece
+								}
+							} else if chess.FindInSliceString(validDestinations, squareName) {
 								model.MoveDestinationCoord = squareName
 								model.CurrentState = chess.StateDraw
 								model.Draw = true
@@ -243,6 +252,7 @@ func run() {
 								fmt.Println(model.History[len(model.History)-1])
 							}
 						}
+
 					}
 
 				}
