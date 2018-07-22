@@ -9,22 +9,22 @@ import (
 
 func TestGetNextFile(t *testing.T) {
 	tests := []struct {
-		in   string
-		out  string
+		in   chess.File
+		out  chess.File
 		pass bool
 	}{
-		{"invalidinput", "", false},
-		{"a", "b", true},
-		{"b", "c", true},
-		{"c", "d", true},
-		{"d", "e", true},
-		{"e", "f", true},
-		{"f", "g", true},
-		{"g", "h", true},
-		{"h", "", false},
+		{chess.FileNone, chess.FileNone, false},
+		{chess.FileA, chess.FileB, true},
+		{chess.FileB, chess.FileC, true},
+		{chess.FileC, chess.FileD, true},
+		{chess.FileD, chess.FileE, true},
+		{chess.FileE, chess.FileF, true},
+		{chess.FileF, chess.FileG, true},
+		{chess.FileG, chess.FileH, true},
+		{chess.FileH, chess.FileNone, false},
 	}
 	for _, test := range tests {
-		t.Run(test.in, func(t *testing.T) {
+		t.Run(string(test.in), func(t *testing.T) {
 			next, ok := chess.GetNextFile(test.in)
 			assertOk(t, ok == test.pass)
 			assertOk(t, next == test.out)
@@ -36,22 +36,22 @@ func TestGetNextFile(t *testing.T) {
 
 func TestGetPreviousFile(t *testing.T) {
 	tests := []struct {
-		in   string
-		out  string
+		in   chess.File
+		out  chess.File
 		pass bool
 	}{
-		{"", "", false},
-		{"h", "g", true},
-		{"g", "f", true},
-		{"f", "e", true},
-		{"e", "d", true},
-		{"d", "c", true},
-		{"c", "b", true},
-		{"b", "a", true},
-		{"a", "", false},
+		// {"", "", false},
+		{chess.FileH, chess.FileG, true},
+		{chess.FileG, chess.FileF, true},
+		{chess.FileF, chess.FileE, true},
+		{chess.FileE, chess.FileD, true},
+		{chess.FileD, chess.FileC, true},
+		{chess.FileC, chess.FileB, true},
+		{chess.FileB, chess.FileA, true},
+		{chess.FileA, chess.FileNone, false},
 	}
 	for _, test := range tests {
-		t.Run(test.in, func(t *testing.T) {
+		t.Run(string(test.in), func(t *testing.T) {
 			next, _ := chess.GetPreviousFile(test.in)
 			assertOk(t, next == test.out)
 		})
@@ -62,22 +62,22 @@ func TestGetPreviousFile(t *testing.T) {
 
 func TestGetNextRanks(t *testing.T) {
 	tests := []struct {
-		inputRank     string
-		expectedRanks []string
+		inputRank     chess.Rank
+		expectedRanks []chess.Rank
 		matches       int
 	}{
-		{"0", []string{}, 0},
-		{"1", []string{"2", "3", "4", "5", "6", "7", "8"}, 7},
-		{"2", []string{"3", "4", "5", "6", "7", "8"}, 6},
-		{"3", []string{"4", "5", "6", "7", "8"}, 5},
-		{"4", []string{"5", "6", "7", "8"}, 4},
-		{"5", []string{"6", "7", "8"}, 3},
-		{"6", []string{"7", "8"}, 2},
-		{"7", []string{"8"}, 1},
-		{"8", []string{}, 0},
+		{chess.RankNone, []chess.Rank{}, 0},
+		{chess.Rank1, []chess.Rank{chess.Rank2, chess.Rank3, chess.Rank4, chess.Rank5, chess.Rank6, chess.Rank7, chess.Rank8}, 7},
+		{chess.Rank2, []chess.Rank{chess.Rank3, chess.Rank4, chess.Rank5, chess.Rank6, chess.Rank7, chess.Rank8}, 6},
+		{chess.Rank3, []chess.Rank{chess.Rank4, chess.Rank5, chess.Rank6, chess.Rank7, chess.Rank8}, 5},
+		{chess.Rank4, []chess.Rank{chess.Rank5, chess.Rank6, chess.Rank7, chess.Rank8}, 4},
+		{chess.Rank5, []chess.Rank{chess.Rank6, chess.Rank7, chess.Rank8}, 3},
+		{chess.Rank6, []chess.Rank{chess.Rank7, chess.Rank8}, 2},
+		{chess.Rank7, []chess.Rank{chess.Rank8}, 1},
+		{chess.Rank8, []chess.Rank{}, 0},
 	}
 	for _, test := range tests {
-		t.Run(test.inputRank, func(t *testing.T) {
+		t.Run(string(test.inputRank), func(t *testing.T) {
 			got := chess.GetNextRanks(test.inputRank)
 			if len(got) != len(test.expectedRanks) {
 				t.Fatal(fmt.Sprintf("length is wrong - got %d expected %d", len(got), len(test.expectedRanks)))
@@ -98,26 +98,26 @@ func TestGetNextRanks(t *testing.T) {
 
 func TestGetRelativeCoord(t *testing.T) {
 	tests := []struct {
-		rank      string
-		file      string
+		rank      chess.Rank
+		file      chess.File
 		direction chess.Direction
 		distance  int
 		expected  string
 	}{
 		// 1 in every direction
-		{"2", "b", chess.West, 1, "a2"},
-		{"2", "b", chess.NorthWest, 1, "a3"},
-		{"2", "a", chess.North, 1, "a3"},
-		{"2", "a", chess.NorthEast, 1, "b3"},
-		{"2", "a", chess.East, 1, "b2"},
-		{"2", "a", chess.SouthEast, 1, "b1"},
-		{"3", "a", chess.South, 1, "a2"},
-		{"3", "b", chess.SouthWest, 1, "a2"},
+		{chess.Rank2, chess.FileB, chess.West, 1, "a2"},
+		{chess.Rank2, chess.FileB, chess.NorthWest, 1, "a3"},
+		{chess.Rank2, chess.FileA, chess.North, 1, "a3"},
+		{chess.Rank2, chess.FileA, chess.NorthEast, 1, "b3"},
+		{chess.Rank2, chess.FileA, chess.East, 1, "b2"},
+		{chess.Rank2, chess.FileA, chess.SouthEast, 1, "b1"},
+		{chess.Rank3, chess.FileA, chess.South, 1, "a2"},
+		{chess.Rank3, chess.FileB, chess.SouthWest, 1, "a2"},
 
-		{"2", "a", chess.North, 2, "a4"},
-		{"5", "a", chess.South, 2, "a3"},
-		{"2", "a", chess.East, 2, "c2"},
-		{"2", "c", chess.West, 2, "a2"},
+		{chess.Rank2, chess.FileA, chess.North, 2, "a4"},
+		{chess.Rank5, chess.FileA, chess.South, 2, "a3"},
+		{chess.Rank2, chess.FileA, chess.East, 2, "c2"},
+		{chess.Rank2, chess.FileC, chess.West, 2, "a2"},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v", test), func(t *testing.T) {
@@ -127,6 +127,7 @@ func TestGetRelativeCoord(t *testing.T) {
 				test.direction,
 				test.distance,
 			)
+			fmt.Println(got)
 			assertOk(t, ok)
 			assertOk(t, got == test.expected)
 		})

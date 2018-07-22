@@ -5,17 +5,17 @@ import (
 	"strconv"
 )
 
-func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank, file string) bool {
+func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank, file File) bool {
 
 	if playerColor == PlayerWhite {
 		// white
 		if piece == Pawn {
-			return rank == "2"
+			return rank == Rank2
 		}
 	} else {
 		// black
 		if piece == Pawn {
-			return rank == "7"
+			return rank == Rank7
 		}
 	}
 
@@ -43,8 +43,33 @@ const (
 	West      Direction = "west"
 )
 
-var ranks = []int{1, 2, 3, 4, 5, 6, 7, 8}
-var files = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
+type Rank int
+type File int
+
+const (
+	RankNone Rank = 0
+	Rank1    Rank = 1
+	Rank2    Rank = 2
+	Rank3    Rank = 3
+	Rank4    Rank = 4
+	Rank5    Rank = 5
+	Rank6    Rank = 6
+	Rank7    Rank = 7
+	Rank8    Rank = 8
+
+	FileNone File = 0
+	FileA    File = 1
+	FileB    File = 2
+	FileC    File = 3
+	FileD    File = 4
+	FileE    File = 5
+	FileF    File = 6
+	FileG    File = 7
+	FileH    File = 8
+)
+
+var ranks = []Rank{Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8}
+var files = []File{FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH}
 
 var validCoords = map[string]bool{
 	"a1": true,
@@ -120,45 +145,62 @@ var validCoords = map[string]bool{
 	"h8": true,
 }
 
-func coordFromRankFile(rank int, file string) string {
-	return fmt.Sprintf("%s%d", file, rank)
+var rankByRankView = map[Rank]string{
+	Rank1: "1",
+	Rank2: "2",
+	Rank3: "3",
+	Rank4: "4",
+	Rank5: "5",
+	Rank6: "6",
+	Rank7: "7",
+	Rank8: "8",
+}
+
+var fileByFileView = map[File]string{
+	FileA: "a",
+	FileB: "b",
+	FileC: "c",
+	FileD: "d",
+	FileE: "e",
+	FileF: "f",
+	FileG: "g",
+	FileH: "h",
+}
+
+func coordFromRankFile(rank Rank, file File) string {
+	return fmt.Sprintf("%s%s", fileByFileView[file], rankByRankView[rank])
 }
 
 // GetPreviousFile gets the previous file as a string
-func GetPreviousFile(file string) (string, bool) {
+func GetPreviousFile(file File) (File, bool) {
 	for i, f := range files {
 		if f == file && i-1 >= 0 {
 			return files[i-1], true
 		}
 	}
-	return "", false
+	return FileNone, false
 }
 
 // GetNextFile gets the next file as a string
-func GetNextFile(file string) (string, bool) {
+func GetNextFile(file File) (File, bool) {
 	for i, f := range files {
 		if f == file && len(files) > i+1 {
 			return files[i+1], true
 		}
 	}
-	return "", false
+	return FileNone, false
 }
 
 // GetRelativeCoord gets a rank+file coordinate relative to specified by direction and distance
-func GetRelativeCoord(rank, file string, direction Direction, distance int) (string, bool) {
-	var rankInt int
-	var err error
-	if rankInt, err = strconv.Atoi(rank); err != nil {
-		return "", false
-	}
+func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (string, bool) {
 	switch direction {
 	case North:
-		newRank := rankInt + distance
+		newRank := rank + Rank(distance)
 		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
 		return coord, ok
 	case NorthWest:
-		newRank := rankInt + distance
+		newRank := rank + Rank(distance)
 		newFile, ok := GetPreviousFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
@@ -166,7 +208,7 @@ func GetRelativeCoord(rank, file string, direction Direction, distance int) (str
 			return coord, ok
 		}
 	case NorthEast:
-		newRank := rankInt + distance
+		newRank := rank + Rank(distance)
 		newFile, ok := GetNextFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
@@ -174,7 +216,7 @@ func GetRelativeCoord(rank, file string, direction Direction, distance int) (str
 			return coord, ok
 		}
 	case South:
-		newRank := rankInt - distance
+		newRank := rank - Rank(distance)
 		coord := coordFromRankFile(newRank, file)
 		_, ok := validCoords[coord]
 		return coord, ok
@@ -185,7 +227,7 @@ func GetRelativeCoord(rank, file string, direction Direction, distance int) (str
 			newFile, ok = GetNextFile(newFile)
 		}
 		if ok {
-			coord := coordFromRankFile(rankInt, newFile)
+			coord := coordFromRankFile(rank, newFile)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
@@ -196,12 +238,12 @@ func GetRelativeCoord(rank, file string, direction Direction, distance int) (str
 			newFile, ok = GetPreviousFile(newFile)
 		}
 		if ok {
-			coord := coordFromRankFile(rankInt, newFile)
+			coord := coordFromRankFile(rank, newFile)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
 	case SouthWest:
-		newRank := rankInt - distance
+		newRank := rank - Rank(distance)
 		newFile, ok := GetPreviousFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
@@ -209,7 +251,7 @@ func GetRelativeCoord(rank, file string, direction Direction, distance int) (str
 			return coord, ok
 		}
 	case SouthEast:
-		newRank := rankInt - distance
+		newRank := rank - Rank(distance)
 		newFile, ok := GetNextFile(file)
 		if ok {
 			coord := coordFromRankFile(newRank, newFile)
@@ -220,17 +262,41 @@ func GetRelativeCoord(rank, file string, direction Direction, distance int) (str
 	return "", false
 }
 
+var rankViewByRank = map[string]Rank{
+	"1": Rank1,
+	"2": Rank2,
+	"3": Rank3,
+	"4": Rank4,
+	"5": Rank5,
+	"6": Rank6,
+	"7": Rank7,
+	"8": Rank8,
+}
+
+var fileViewByFile = map[string]File{
+	"a": FileA,
+	"b": FileB,
+	"c": FileC,
+	"d": FileD,
+	"e": FileE,
+	"f": FileF,
+	"g": FileG,
+	"h": FileH,
+}
+
 // getRankAndFileFromSquareName converts a square name (example: d3) to rank (3)
 // and file(d) strings
-func getRankAndFileFromSquareName(squareName string) (rank, file string) {
-	return string(squareName[1]), string(squareName[0])
+func getRankAndFileFromSquareName(squareName string) (Rank, File) {
+	rankStr := string(squareName[1])
+	fileStr := string(squareName[0])
+
+	return rankViewByRank[rankStr], fileViewByFile[fileStr]
 }
 
 // GetValidMoves returns a list of valid coordinates the piece can be moved to
 func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, squareName string) []string {
 	switch piece {
 	case Pawn:
-		fmt.Println("pawn case ", playerColor, squareName)
 		return canPawnMove(playerColor, boardState, squareName)
 	case King:
 		return canKingMove(boardState, squareName)
@@ -396,7 +462,7 @@ func canKnightMove(boardState BoardState, squareName string) []string {
 	return valid
 }
 
-func checkKnightMove(boardState BoardState, rank, file string, moves []pieceMove) (string, bool) {
+func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceMove) (string, bool) {
 	if coord, ok := GetRelativeCoord(rank, file, moves[0].Direction, moves[0].Distance); ok {
 		rank, file := getRankAndFileFromSquareName(coord)
 		if coord, ok, _ := IsRelCoordValid(boardState, rank, file, moves[1].Direction, moves[1].Distance); ok {
@@ -407,25 +473,22 @@ func checkKnightMove(boardState BoardState, rank, file string, moves []pieceMove
 }
 
 // GetNextRanks gets the series of ranks after
-func GetNextRanks(rankStr string) []string {
-	resp := []string{}
-	if rankInt, err := strconv.Atoi(rankStr); err == nil {
-		collect := false
-		for _, r := range ranks {
-			if !collect && r == rankInt {
-				collect = true
-			} else if collect {
-				resp = append(resp, fmt.Sprintf("%d", r))
-			}
+func GetNextRanks(rank Rank) []Rank {
+	resp := []Rank{}
+	collect := false
+	for _, r := range ranks {
+		if !collect && r == rank {
+			collect = true
+		} else if collect {
+			resp = append(resp, r)
 		}
-		return resp
 	}
 	return resp
 }
 
 // IsRelCoordValid checks if the specified coordinate is valid
 // It is valid if it exists and not occupied
-func IsRelCoordValid(boardState BoardState, rank, file string, direction Direction, n int) (string, bool, OnBoardData) {
+func IsRelCoordValid(boardState BoardState, rank Rank, file File, direction Direction, n int) (string, bool, OnBoardData) {
 	if coord, ok := GetRelativeCoord(rank, file, direction, n); ok {
 		occupant, isOccupied := boardState[coord]
 		if !isOccupied {
