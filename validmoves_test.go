@@ -104,11 +104,12 @@ func TestGetRelativeCoord(t *testing.T) {
 		distance  int
 		expected  string
 	}{
-		{"2", "a", chess.East, 1, "b2"},
+		// 1 in every direction
 		{"2", "b", chess.West, 1, "a2"},
 		{"2", "b", chess.NorthWest, 1, "a3"},
 		{"2", "a", chess.North, 1, "a3"},
 		{"2", "a", chess.NorthEast, 1, "b3"},
+		{"2", "a", chess.East, 1, "b2"},
 		{"2", "a", chess.SouthEast, 1, "b1"},
 		{"3", "a", chess.South, 1, "a2"},
 		{"3", "b", chess.SouthWest, 1, "a2"},
