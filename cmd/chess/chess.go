@@ -304,7 +304,7 @@ func main() {
 
 func printHistory(history []chess.HistoryEntry) {
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Player Color", "From", "To", "Captured"})
+	table.SetHeader([]string{"Player Color", "Piece", "From", "To", "Captured"})
 	for _, entry := range history {
 
 		var playerColor = "white"
@@ -314,6 +314,7 @@ func printHistory(history []chess.HistoryEntry) {
 
 		table.Append([]string{
 			playerColor,
+			string(entry.Piece),
 			entry.FromCoord,
 			entry.ToCoord,
 			string(entry.CapturedPiece),
