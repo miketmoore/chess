@@ -298,7 +298,7 @@ func CanKingMove(model Model, squareName string) []string {
 
 	valid := []string{}
 
-	directions := []Direction{North, South, East, West}
+	directions := []Direction{North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest}
 	for _, direction := range directions {
 		if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
 			valid = append(valid, coord)
