@@ -1,11 +1,6 @@
 package chess
 
-import (
-	"fmt"
-	"strconv"
-)
-
-func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank, file File) bool {
+func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank) bool {
 
 	if playerColor == PlayerWhite {
 		// white
@@ -20,14 +15,6 @@ func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank, file 
 	}
 
 	return false
-}
-
-// Is the rank n spaces north a real board location?
-func getRankAhead(rank string, n int) (string, bool) {
-	if s, err := strconv.Atoi(rank); err == nil {
-		return fmt.Sprintf("%d", s+n), true
-	}
-	return "", false
 }
 
 // Direction is a custom type used to describe a direction from a square on the board
@@ -212,11 +199,6 @@ var validCoords = map[Coord]bool{
 	Coord{Rank8, FileH}: true,
 }
 
-func coordFromRankFile(rank Rank, file File) Coord {
-	// return fmt.Sprintf("%s%s", fileByFileView[file], rankByRankView[rank])
-	return Coord{rank, file}
-}
-
 // GetPreviousFile gets the previous file as a string
 func GetPreviousFile(file File) (File, bool) {
 	for i, f := range FilesOrder {
@@ -242,14 +224,14 @@ func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (
 	switch direction {
 	case North:
 		newRank := rank + Rank(distance)
-		coord := coordFromRankFile(newRank, file)
+		coord := NewCoord(file, newRank)
 		_, ok := validCoords[coord]
 		return coord, ok
 	case NorthWest:
 		newRank := rank + Rank(distance)
 		newFile, ok := GetPreviousFile(file)
 		if ok {
-			coord := coordFromRankFile(newRank, newFile)
+			coord := NewCoord(newFile, newRank)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
@@ -257,13 +239,13 @@ func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (
 		newRank := rank + Rank(distance)
 		newFile, ok := GetNextFile(file)
 		if ok {
-			coord := coordFromRankFile(newRank, newFile)
+			coord := NewCoord(newFile, newRank)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
 	case South:
 		newRank := rank - Rank(distance)
-		coord := coordFromRankFile(newRank, file)
+		coord := NewCoord(file, newRank)
 		_, ok := validCoords[coord]
 		return coord, ok
 	case East:
@@ -273,7 +255,7 @@ func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (
 			newFile, ok = GetNextFile(newFile)
 		}
 		if ok {
-			coord := coordFromRankFile(rank, newFile)
+			coord := NewCoord(newFile, rank)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
@@ -284,7 +266,7 @@ func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (
 			newFile, ok = GetPreviousFile(newFile)
 		}
 		if ok {
-			coord := coordFromRankFile(rank, newFile)
+			coord := NewCoord(newFile, rank)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
@@ -292,7 +274,7 @@ func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (
 		newRank := rank - Rank(distance)
 		newFile, ok := GetPreviousFile(file)
 		if ok {
-			coord := coordFromRankFile(newRank, newFile)
+			coord := NewCoord(newFile, newRank)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
@@ -300,7 +282,7 @@ func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (
 		newRank := rank - Rank(distance)
 		newFile, ok := GetNextFile(file)
 		if ok {
-			coord := coordFromRankFile(newRank, newFile)
+			coord := NewCoord(newFile, newRank)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
@@ -341,7 +323,7 @@ func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord
 		valid = append(valid, coord)
 	}
 
-	if isCoordStartPosition(playerColor, Pawn, rank, file) {
+	if isCoordStartPosition(playerColor, Pawn, currCoord.Rank) {
 
 		// is two spaces ahead vacant?
 		if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 2); ok {
