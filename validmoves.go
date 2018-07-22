@@ -222,12 +222,11 @@ func getRankAndFileFromSquareName(squareName string) (rank, file string) {
 // CanPawnMove checks if a pawn can move given a board state
 // If a pawn is on it's starting square, then it is elligible to move one or two spaces forward.
 // A pawn can move if an opposing piece is NW or NE.
-func CanPawnMove(model Model, squareName string) []string {
+func CanPawnMove(playerColor PlayerColor, boardState BoardState, squareName string) []string {
 	fmt.Println("can pawn move ", squareName)
 	rank, file := getRankAndFileFromSquareName(squareName)
 
 	// if pawn is on starting square, it is elligible for moving one or two spaces
-	playerColor := model.CurrentPlayerColor()
 
 	// build hash of valid board destinations
 	valid := []string{}
@@ -238,14 +237,14 @@ func CanPawnMove(model Model, squareName string) []string {
 	}
 
 	// is one space ahead vacant?
-	if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
+	if coord, ok, _ := isRelCoordValid(boardState, rank, file, direction, 1); ok {
 		valid = append(valid, coord)
 	}
 
 	if isCoordStartPosition(playerColor, Pawn, rank, file) {
 
 		// is two spaces ahead vacant?
-		if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, direction, 2); ok {
+		if coord, ok, _ := isRelCoordValid(boardState, rank, file, direction, 2); ok {
 			valid = append(valid, coord)
 		}
 
@@ -255,7 +254,7 @@ func CanPawnMove(model Model, squareName string) []string {
 	if playerColor == PlayerWhite {
 		// is NW occupied by the enemy? if so, it is a valid move
 		if coord, ok := GetRelativeCoord(rank, file, NorthWest, 1); ok {
-			if occupant, isOccupied := model.BoardState[coord]; isOccupied {
+			if occupant, isOccupied := boardState[coord]; isOccupied {
 				if occupant.Color == PlayerBlack {
 					valid = append(valid, coord)
 				}
@@ -263,7 +262,7 @@ func CanPawnMove(model Model, squareName string) []string {
 		}
 		// // is NE occupied by the enemy? if so, it is a valid move
 		if coord, ok := GetRelativeCoord(rank, file, NorthEast, 1); ok {
-			if occupant, isOccupied := model.BoardState[coord]; isOccupied {
+			if occupant, isOccupied := boardState[coord]; isOccupied {
 				if occupant.Color == PlayerBlack {
 					valid = append(valid, coord)
 				}
@@ -272,7 +271,7 @@ func CanPawnMove(model Model, squareName string) []string {
 	} else {
 		// is SW occupied by the enemy? if so, it is a valid move
 		if coord, ok := GetRelativeCoord(rank, file, SouthWest, 1); ok {
-			if occupant, isOccupied := model.BoardState[coord]; isOccupied {
+			if occupant, isOccupied := boardState[coord]; isOccupied {
 				if occupant.Color == PlayerWhite {
 					valid = append(valid, coord)
 				}
@@ -280,7 +279,7 @@ func CanPawnMove(model Model, squareName string) []string {
 		}
 		// is SE occupied by the enemy? if so, it is a valid move
 		if coord, ok := GetRelativeCoord(rank, file, SouthEast, 1); ok {
-			if occupant, isOccupied := model.BoardState[coord]; isOccupied {
+			if occupant, isOccupied := boardState[coord]; isOccupied {
 				if occupant.Color == PlayerWhite {
 					valid = append(valid, coord)
 				}

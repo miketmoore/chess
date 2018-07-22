@@ -201,7 +201,11 @@ func run() {
 						if isOccupied {
 							valid := false
 							if occupant.Piece == chess.Pawn {
-								validDestinations = chess.CanPawnMove(model, squareName)
+								validDestinations = chess.CanPawnMove(
+									model.CurrentPlayerColor(),
+									model.BoardState,
+									squareName,
+								)
 								if len(validDestinations) > 0 {
 									valid = true
 								}
