@@ -410,47 +410,30 @@ type pieceMove struct {
 	Distance  int
 }
 
+func newMove(direction Direction, distance int) pieceMove {
+	return pieceMove{
+		direction,
+		distance,
+	}
+}
+
+var knightMoves = [][]pieceMove{
+	[]pieceMove{newMove(North, 2), newMove(West, 1)},
+	[]pieceMove{newMove(North, 2), newMove(East, 1)},
+	[]pieceMove{newMove(East, 2), newMove(North, 1)},
+	[]pieceMove{newMove(East, 2), newMove(South, 1)},
+	[]pieceMove{newMove(South, 2), newMove(East, 1)},
+	[]pieceMove{newMove(South, 2), newMove(West, 1)},
+	[]pieceMove{newMove(West, 2), newMove(South, 1)},
+	[]pieceMove{newMove(West, 2), newMove(North, 1)},
+}
+
 func canKnightMove(boardState BoardState, currCoord Coord) []Coord {
 	rank, file := currCoord.GetRankFile()
 
 	valid := []Coord{}
 
-	all := [][]pieceMove{
-		[]pieceMove{
-			pieceMove{North, 2},
-			pieceMove{West, 1},
-		},
-		[]pieceMove{
-			pieceMove{North, 2},
-			pieceMove{East, 1},
-		},
-		[]pieceMove{
-			pieceMove{East, 2},
-			pieceMove{North, 1},
-		},
-		[]pieceMove{
-			pieceMove{East, 2},
-			pieceMove{South, 1},
-		},
-		[]pieceMove{
-			pieceMove{South, 2},
-			pieceMove{East, 1},
-		},
-		[]pieceMove{
-			pieceMove{South, 2},
-			pieceMove{West, 1},
-		},
-		[]pieceMove{
-			pieceMove{West, 2},
-			pieceMove{South, 1},
-		},
-		[]pieceMove{
-			pieceMove{West, 2},
-			pieceMove{North, 1},
-		},
-	}
-
-	for _, moves := range all {
+	for _, moves := range knightMoves {
 		if coord, ok := checkKnightMove(boardState, rank, file, moves); ok {
 			valid = append(valid, coord)
 		}
@@ -460,10 +443,13 @@ func canKnightMove(boardState BoardState, currCoord Coord) []Coord {
 }
 
 func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceMove) (Coord, bool) {
-	if coord, ok := GetRelativeCoord(rank, file, moves[0].Direction, moves[0].Distance); ok {
-		if coord, ok, _ := IsRelCoordValid(boardState, coord.Rank, coord.File, moves[1].Direction, moves[1].Distance); ok {
-			return coord, true
-		}
+	coord, ok := GetRelativeCoord(rank, file, moves[0].Direction, moves[0].Distance)
+	if !ok {
+		return Coord{}, false
+	}
+	coord, ok, _ = IsRelCoordValid(boardState, coord.Rank, coord.File, moves[1].Direction, moves[1].Distance)
+	if ok {
+		return coord, true
 	}
 	return Coord{}, false
 }
@@ -485,7 +471,8 @@ func GetNextRanks(rank Rank) []Rank {
 // IsRelCoordValid checks if the specified coordinate is valid
 // It is valid if it exists and not occupied
 func IsRelCoordValid(boardState BoardState, rank Rank, file File, direction Direction, n int) (Coord, bool, OnBoardData) {
-	if coord, ok := GetRelativeCoord(rank, file, direction, n); ok {
+	coord, ok := GetRelativeCoord(rank, file, direction, n)
+	if ok {
 		occupant, isOccupied := boardState[coord]
 		if !isOccupied {
 			return coord, true, occupant
