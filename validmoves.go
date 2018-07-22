@@ -125,6 +125,11 @@ type Coord struct {
 	File File
 }
 
+// GetRankFile returns the rank and file
+func (c Coord) GetRankFile() (Rank, File) {
+	return c.Rank, c.File
+}
+
 // NewCoord returns a new rank and file coordinate
 func NewCoord(file File, rank Rank) Coord {
 	return Coord{
@@ -319,8 +324,7 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 }
 
 func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
-	rank := currCoord.Rank
-	file := currCoord.File
+	rank, file := currCoord.GetRankFile()
 
 	// if pawn is on starting square, it is elligible for moving one or two spaces
 
@@ -387,8 +391,7 @@ func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord
 }
 
 func canKingMove(boardState BoardState, currCoord Coord) []Coord {
-	rank := currCoord.Rank
-	file := currCoord.File
+	rank, file := currCoord.GetRankFile()
 
 	valid := []Coord{}
 
@@ -403,8 +406,7 @@ func canKingMove(boardState BoardState, currCoord Coord) []Coord {
 }
 
 func canRookMove(boardState BoardState, currCoord Coord) []Coord {
-	rank := currCoord.Rank
-	file := currCoord.File
+	rank, file := currCoord.GetRankFile()
 	valid := []Coord{}
 
 	directions := []Direction{North, East, South, West}
@@ -427,8 +429,7 @@ type pieceMove struct {
 }
 
 func canKnightMove(boardState BoardState, currCoord Coord) []Coord {
-	rank := currCoord.Rank
-	file := currCoord.File
+	rank, file := currCoord.GetRankFile()
 
 	valid := []Coord{}
 
