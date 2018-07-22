@@ -235,7 +235,7 @@ func run() {
 					if squareName != "" {
 						occupant, isOccupied := model.BoardState[squareName]
 						isValid := chess.FindInSliceString(validDestinations, squareName)
-						if isValid && isDestinationValid(&model, squareName, isOccupied, occupant) {
+						if isValid && isDestinationValid(model.WhitesMove, squareName, isOccupied, occupant) {
 							move(&model, squareName)
 							printHistory(model.History)
 						} else {
@@ -250,11 +250,11 @@ func run() {
 	}
 }
 
-func isDestinationValid(model *chess.Model, squareName string, isOccupied bool, occupant chess.OnBoardData) bool {
+func isDestinationValid(whitesMove bool, squareName string, isOccupied bool, occupant chess.OnBoardData) bool {
 	if isOccupied {
-		if model.WhitesMove && occupant.Color == chess.PlayerBlack {
+		if whitesMove && occupant.Color == chess.PlayerBlack {
 			return true
-		} else if !model.WhitesMove && occupant.Color == chess.PlayerWhite {
+		} else if !whitesMove && occupant.Color == chess.PlayerWhite {
 			return true
 		}
 	} else {
