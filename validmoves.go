@@ -226,10 +226,23 @@ func getRankAndFileFromSquareName(squareName string) (rank, file string) {
 	return string(squareName[1]), string(squareName[0])
 }
 
-// CanPawnMove checks if a pawn can move given a board state
-// If a pawn is on it's starting square, then it is elligible to move one or two spaces forward.
-// A pawn can move if an opposing piece is NW or NE.
-func CanPawnMove(playerColor PlayerColor, boardState BoardState, squareName string) []string {
+// GetValidMoves returns a list of valid coordinates the piece can be moved to
+func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, squareName string) []string {
+	switch piece {
+	case Pawn:
+		fmt.Println("pawn case ", playerColor, squareName)
+		return canPawnMove(playerColor, boardState, squareName)
+	case King:
+		return canKingMove(boardState, squareName)
+	case Knight:
+		return canKnightMove(boardState, squareName)
+	case Rook:
+		return canRookMove(boardState, squareName)
+	}
+	return []string{}
+}
+
+func canPawnMove(playerColor PlayerColor, boardState BoardState, squareName string) []string {
 	rank, file := getRankAndFileFromSquareName(squareName)
 
 	// if pawn is on starting square, it is elligible for moving one or two spaces
@@ -296,15 +309,14 @@ func CanPawnMove(playerColor PlayerColor, boardState BoardState, squareName stri
 	return valid
 }
 
-// CanKingMove determines all valid moves for the King
-func CanKingMove(model Model, squareName string) []string {
+func canKingMove(boardState BoardState, squareName string) []string {
 	rank, file := getRankAndFileFromSquareName(squareName)
 
 	valid := []string{}
 
 	directions := []Direction{North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest}
 	for _, direction := range directions {
-		if coord, ok, _ := IsRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
+		if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 1); ok {
 			valid = append(valid, coord)
 		}
 	}
@@ -312,13 +324,16 @@ func CanKingMove(model Model, squareName string) []string {
 	return valid
 }
 
+func canRookMove(boardState BoardState, squareName string) []string {
+	return []string{}
+}
+
 type knightMove struct {
 	Direction Direction
 	Distance  int
 }
 
-// CanKnightMove determines all valid moves for the Knight
-func CanKnightMove(model Model, squareName string) []string {
+func canKnightMove(boardState BoardState, squareName string) []string {
 	rank, file := getRankAndFileFromSquareName(squareName)
 
 	valid := []string{}
@@ -359,7 +374,7 @@ func CanKnightMove(model Model, squareName string) []string {
 	}
 
 	for _, moves := range all {
-		if coord, ok := checkKnightMove(model.BoardState, rank, file, moves); ok {
+		if coord, ok := checkKnightMove(boardState, rank, file, moves); ok {
 			valid = append(valid, coord)
 		}
 	}

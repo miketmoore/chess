@@ -160,42 +160,27 @@ func run() {
 			}
 		case chess.StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				mpos := win.MousePosition()
-				square := chess.FindSquareByVec(squares, mpos)
+				square := chess.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					squareName := chess.GetNotationByCoords(squareOriginByCoords, square.OriginX, square.OriginY)
+					squareName := chess.GetNotationByCoords(
+						squareOriginByCoords,
+						square.OriginX,
+						square.OriginY,
+					)
 					if squareName != "" {
 						occupant, isOccupied := model.BoardState[squareName]
-						if occupant.Color == model.CurrentPlayerColor() {
-							if isOccupied {
-								valid := false
-								if occupant.Piece == chess.Pawn {
-									validDestinations = chess.CanPawnMove(
-										model.CurrentPlayerColor(),
-										model.BoardState,
-										squareName,
-									)
-									if len(validDestinations) > 0 {
-										valid = true
-									}
-								} else if occupant.Piece == chess.King {
-									validDestinations = chess.CanKingMove(model, squareName)
-									if len(validDestinations) > 0 {
-										valid = true
-									}
-								} else if occupant.Piece == chess.Knight {
-									fmt.Println("knight")
-									validDestinations = chess.CanKnightMove(model, squareName)
-									if len(validDestinations) > 0 {
-										valid = true
-									}
-								}
-								if valid {
-									model.PieceToMove = occupant
-									model.MoveStartCoord = squareName
-									model.CurrentState = chess.DrawValidMoves
-									model.Draw = true
-								}
+						if occupant.Color == model.CurrentPlayerColor() && isOccupied {
+							validDestinations = chess.GetValidMoves(
+								model.CurrentPlayerColor(),
+								occupant.Piece,
+								model.BoardState,
+								squareName,
+							)
+							if len(validDestinations) > 0 {
+								model.PieceToMove = occupant
+								model.MoveStartCoord = squareName
+								model.CurrentState = chess.DrawValidMoves
+								model.Draw = true
 							}
 						}
 
