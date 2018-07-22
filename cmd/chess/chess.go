@@ -98,7 +98,6 @@ func run() {
 	boardThemeName := "sandcastle"
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
-	fmt.Printf("board origin x: %d\n", boardOriginX)
 	squares, squareOriginByCoords := chess.NewBoardView(
 		float64(boardOriginX),
 		150,
@@ -115,7 +114,6 @@ func run() {
 	for !win.Closed() {
 
 		if win.JustPressed(pixelgl.KeyQ) {
-			fmt.Printf("Exiting...\n")
 			printHistory(model.History)
 			os.Exit(0)
 		}
@@ -123,7 +121,6 @@ func run() {
 		switch model.CurrentState {
 		case chess.StateTitle:
 			if model.Draw {
-				fmt.Printf("Drawing title State..\n")
 				win.Clear(colornames.Black)
 
 				// Draw title text
