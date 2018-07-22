@@ -4,12 +4,9 @@ package chess
 type State string
 
 const (
-	// StateTitle is the title screen state
-	StateTitle State = "title"
-	// StateDraw is the "draw current board state" state
-	StateDraw State = "draw"
-	// StateSelectPiece is the "select piece to move" state
-	StateSelectPiece State = "selectSpace"
-	// StateSelectDestination is the "select destination for piece to move" state
+	StateTitle             State = "title"
+	StateDraw              State = "draw"
+	StateSelectPiece       State = "selectSpace"
 	StateSelectDestination State = "selectDestination"
+	DrawValidMoves         State = "drawValidMoves"
 )

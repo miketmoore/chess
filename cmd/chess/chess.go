@@ -154,39 +154,7 @@ func run() {
 			}
 		case chess.StateDraw:
 			if model.Draw {
-				// Draw board
-				for _, square := range squares {
-					square.Shape.Draw(win)
-				}
-
-				// Draw pieces in the correct position
-				for coord, livePieceData := range model.BoardState {
-					var set chess.PieceSpriteSet
-					if livePieceData.Color == chess.PlayerBlack {
-						set = drawer.Black
-					} else {
-						set = drawer.White
-					}
-
-					var piece *pixel.Sprite
-					switch livePieceData.Piece {
-					case chess.Bishop:
-						piece = set.Bishop
-					case chess.King:
-						piece = set.King
-					case chess.Knight:
-						piece = set.Knight
-					case chess.Pawn:
-						piece = set.Pawn
-					case chess.Queen:
-						piece = set.Queen
-					case chess.Rook:
-						piece = set.Rook
-					}
-
-					chess.DrawPiece(win, squares, piece, coord)
-				}
-
+				draw(win, model.BoardState, drawer, squares)
 				model.Draw = false
 				model.CurrentState = chess.StateSelectPiece
 			}
@@ -229,12 +197,20 @@ func run() {
 							if valid {
 								model.PieceToMove = occupant
 								model.MoveStartCoord = squareName
-								model.CurrentState = chess.StateSelectDestination
+								model.CurrentState = chess.DrawValidMoves
+								model.Draw = true
 							}
 						}
 					}
 
 				}
+			}
+		case chess.DrawValidMoves:
+			if model.Draw {
+				draw(win, model.BoardState, drawer, squares)
+				chess.HighlightSquares(win, squares, validDestinations, colornames.Greenyellow)
+				model.Draw = false
+				model.CurrentState = chess.StateSelectDestination
 			}
 		case chess.StateSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
@@ -322,3 +298,47 @@ func printHistory(history []chess.HistoryEntry) {
 	}
 	table.Render()
 }
+
+func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer, squares chess.BoardMap) {
+	// Draw board
+	fmt.Println("Draw board")
+	for _, square := range squares {
+		square.Shape.Draw(win)
+	}
+
+	// Draw pieces in the correct position
+	for coord, livePieceData := range boardState {
+		var set chess.PieceSpriteSet
+		if livePieceData.Color == chess.PlayerBlack {
+			set = drawer.Black
+		} else {
+			set = drawer.White
+		}
+
+		var piece *pixel.Sprite
+		switch livePieceData.Piece {
+		case chess.Bishop:
+			piece = set.Bishop
+		case chess.King:
+			piece = set.King
+		case chess.Knight:
+			piece = set.Knight
+		case chess.Pawn:
+			piece = set.Pawn
+		case chess.Queen:
+			piece = set.Queen
+		case chess.Rook:
+			piece = set.Rook
+		}
+
+		chess.DrawPiece(win, squares, piece, coord)
+	}
+}
+
+// func drawValidMoves(win *pixelgl.Window, valid []string, squares chess.BoardMap) {
+// 	for _, coord := range valid {
+
+// 		chess.HighlightSquares(win, squares, coord)
+
+// 	}
+// }
