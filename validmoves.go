@@ -30,6 +30,7 @@ func getRankAhead(rank string, n int) (string, bool) {
 	return "", false
 }
 
+// Direction is a custom type used to describe a direction from a square on the board
 type Direction string
 
 const (
@@ -43,7 +44,10 @@ const (
 	West      Direction = "west"
 )
 
+// Rank is a custom type that represents a horizontal row (rank) on the chess board
 type Rank int
+
+// File is a custom type that represents a vertical column (file) on the chess board
 type File int
 
 const (
@@ -70,6 +74,50 @@ const (
 
 var ranks = []Rank{Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8}
 var files = []File{FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH}
+
+var rankByRankView = map[Rank]string{
+	Rank1: "1",
+	Rank2: "2",
+	Rank3: "3",
+	Rank4: "4",
+	Rank5: "5",
+	Rank6: "6",
+	Rank7: "7",
+	Rank8: "8",
+}
+
+var fileByFileView = map[File]string{
+	FileA: "a",
+	FileB: "b",
+	FileC: "c",
+	FileD: "d",
+	FileE: "e",
+	FileF: "f",
+	FileG: "g",
+	FileH: "h",
+}
+
+var rankViewByRank = map[string]Rank{
+	"1": Rank1,
+	"2": Rank2,
+	"3": Rank3,
+	"4": Rank4,
+	"5": Rank5,
+	"6": Rank6,
+	"7": Rank7,
+	"8": Rank8,
+}
+
+var fileViewByFile = map[string]File{
+	"a": FileA,
+	"b": FileB,
+	"c": FileC,
+	"d": FileD,
+	"e": FileE,
+	"f": FileF,
+	"g": FileG,
+	"h": FileH,
+}
 
 var validCoords = map[string]bool{
 	"a1": true,
@@ -143,28 +191,6 @@ var validCoords = map[string]bool{
 	"h6": true,
 	"h7": true,
 	"h8": true,
-}
-
-var rankByRankView = map[Rank]string{
-	Rank1: "1",
-	Rank2: "2",
-	Rank3: "3",
-	Rank4: "4",
-	Rank5: "5",
-	Rank6: "6",
-	Rank7: "7",
-	Rank8: "8",
-}
-
-var fileByFileView = map[File]string{
-	FileA: "a",
-	FileB: "b",
-	FileC: "c",
-	FileD: "d",
-	FileE: "e",
-	FileF: "f",
-	FileG: "g",
-	FileH: "h",
 }
 
 func coordFromRankFile(rank Rank, file File) string {
@@ -260,28 +286,6 @@ func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (
 		}
 	}
 	return "", false
-}
-
-var rankViewByRank = map[string]Rank{
-	"1": Rank1,
-	"2": Rank2,
-	"3": Rank3,
-	"4": Rank4,
-	"5": Rank5,
-	"6": Rank6,
-	"7": Rank7,
-	"8": Rank8,
-}
-
-var fileViewByFile = map[string]File{
-	"a": FileA,
-	"b": FileB,
-	"c": FileC,
-	"d": FileD,
-	"e": FileE,
-	"f": FileF,
-	"g": FileG,
-	"h": FileH,
 }
 
 // getRankAndFileFromSquareName converts a square name (example: d3) to rank (3)
