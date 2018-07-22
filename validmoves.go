@@ -72,8 +72,8 @@ const (
 	FileH    File = 8
 )
 
-var ranks = []Rank{Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8}
-var files = []File{FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH}
+var ranksOrder = []Rank{Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8}
+var filesOrder = []File{FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH}
 
 var rankByRankView = map[Rank]string{
 	Rank1: "1",
@@ -199,9 +199,9 @@ func coordFromRankFile(rank Rank, file File) string {
 
 // GetPreviousFile gets the previous file as a string
 func GetPreviousFile(file File) (File, bool) {
-	for i, f := range files {
+	for i, f := range filesOrder {
 		if f == file && i-1 >= 0 {
-			return files[i-1], true
+			return filesOrder[i-1], true
 		}
 	}
 	return FileNone, false
@@ -209,9 +209,9 @@ func GetPreviousFile(file File) (File, bool) {
 
 // GetNextFile gets the next file as a string
 func GetNextFile(file File) (File, bool) {
-	for i, f := range files {
-		if f == file && len(files) > i+1 {
-			return files[i+1], true
+	for i, f := range filesOrder {
+		if f == file && len(filesOrder) > i+1 {
+			return filesOrder[i+1], true
 		}
 	}
 	return FileNone, false
@@ -476,11 +476,11 @@ func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceM
 	return "", false
 }
 
-// GetNextRanks gets the series of ranks after
+// GetNextRanks gets the series of ranksOrder after
 func GetNextRanks(rank Rank) []Rank {
 	resp := []Rank{}
 	collect := false
-	for _, r := range ranks {
+	for _, r := range ranksOrder {
 		if !collect && r == rank {
 			collect = true
 		} else if collect {
