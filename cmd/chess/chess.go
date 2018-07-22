@@ -111,12 +111,12 @@ func run() {
 	drawer := chess.NewSpriteByColor()
 
 	for _, file := range chess.FilesOrder {
-		coord := chess.Coord{chess.Rank7, file}
+		coord := chess.NewCoord(file, chess.Rank7)
 		model.BoardState[coord] = chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Pawn}
 	}
 
 	for _, file := range chess.FilesOrder {
-		coord := chess.Coord{chess.Rank2, file}
+		coord := chess.NewCoord(file, chess.Rank2)
 		model.BoardState[coord] = chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Pawn}
 	}
 
@@ -286,7 +286,6 @@ func printHistory(history []chess.HistoryEntry) {
 
 func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer, squares chess.BoardMap) {
 	// Draw board
-	fmt.Println("Draw board")
 	for _, square := range squares {
 		square.Shape.Draw(win)
 	}
@@ -319,11 +318,3 @@ func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer,
 		chess.DrawPiece(win, squares, piece, coord)
 	}
 }
-
-// func drawValidMoves(win *pixelgl.Window, valid []string, squares chess.BoardMap) {
-// 	for _, coord := range valid {
-
-// 		chess.HighlightSquares(win, squares, coord)
-
-// 	}
-// }
