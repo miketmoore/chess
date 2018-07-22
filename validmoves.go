@@ -327,14 +327,18 @@ func canKingMove(boardState BoardState, squareName string) []string {
 func canRookMove(boardState BoardState, squareName string) []string {
 	rank, file := getRankAndFileFromSquareName(squareName)
 	valid := []string{}
-	for i := 0; i < 8; i++ {
-		directions := []Direction{North, East, South, West}
-		for _, direction := range directions {
+
+	directions := []Direction{North, East, South, West}
+	for _, direction := range directions {
+		for i := 0; i < 8; i++ {
 			if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, i+1); ok {
 				valid = append(valid, coord)
+			} else {
+				break
 			}
 		}
 	}
+
 	return valid
 }
 
