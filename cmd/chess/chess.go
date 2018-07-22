@@ -166,36 +166,39 @@ func run() {
 					squareName := chess.GetNotationByCoords(squareOriginByCoords, square.OriginX, square.OriginY)
 					if squareName != "" {
 						occupant, isOccupied := model.BoardState[squareName]
-						if isOccupied {
-							valid := false
-							if occupant.Piece == chess.Pawn {
-								validDestinations = chess.CanPawnMove(
-									model.CurrentPlayerColor(),
-									model.BoardState,
-									squareName,
-								)
-								if len(validDestinations) > 0 {
-									valid = true
+						if occupant.Color == model.CurrentPlayerColor() {
+							if isOccupied {
+								valid := false
+								if occupant.Piece == chess.Pawn {
+									validDestinations = chess.CanPawnMove(
+										model.CurrentPlayerColor(),
+										model.BoardState,
+										squareName,
+									)
+									if len(validDestinations) > 0 {
+										valid = true
+									}
+								} else if occupant.Piece == chess.King {
+									validDestinations = chess.CanKingMove(model, squareName)
+									if len(validDestinations) > 0 {
+										valid = true
+									}
+								} else if occupant.Piece == chess.Knight {
+									fmt.Println("knight")
+									validDestinations = chess.CanKnightMove(model, squareName)
+									if len(validDestinations) > 0 {
+										valid = true
+									}
 								}
-							} else if occupant.Piece == chess.King {
-								validDestinations = chess.CanKingMove(model, squareName)
-								if len(validDestinations) > 0 {
-									valid = true
+								if valid {
+									model.PieceToMove = occupant
+									model.MoveStartCoord = squareName
+									model.CurrentState = chess.DrawValidMoves
+									model.Draw = true
 								}
-							} else if occupant.Piece == chess.Knight {
-								fmt.Println("knight")
-								validDestinations = chess.CanKnightMove(model, squareName)
-								if len(validDestinations) > 0 {
-									valid = true
-								}
-							}
-							if valid {
-								model.PieceToMove = occupant
-								model.MoveStartCoord = squareName
-								model.CurrentState = chess.DrawValidMoves
-								model.Draw = true
 							}
 						}
+
 					}
 
 				}
