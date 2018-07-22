@@ -328,7 +328,7 @@ func canRookMove(boardState BoardState, squareName string) []string {
 	return []string{}
 }
 
-type knightMove struct {
+type pieceMove struct {
 	Direction Direction
 	Distance  int
 }
@@ -338,38 +338,38 @@ func canKnightMove(boardState BoardState, squareName string) []string {
 
 	valid := []string{}
 
-	all := [][]knightMove{
-		[]knightMove{
-			knightMove{North, 2},
-			knightMove{West, 1},
+	all := [][]pieceMove{
+		[]pieceMove{
+			pieceMove{North, 2},
+			pieceMove{West, 1},
 		},
-		[]knightMove{
-			knightMove{North, 2},
-			knightMove{East, 1},
+		[]pieceMove{
+			pieceMove{North, 2},
+			pieceMove{East, 1},
 		},
-		[]knightMove{
-			knightMove{East, 2},
-			knightMove{North, 1},
+		[]pieceMove{
+			pieceMove{East, 2},
+			pieceMove{North, 1},
 		},
-		[]knightMove{
-			knightMove{East, 2},
-			knightMove{South, 1},
+		[]pieceMove{
+			pieceMove{East, 2},
+			pieceMove{South, 1},
 		},
-		[]knightMove{
-			knightMove{South, 2},
-			knightMove{East, 1},
+		[]pieceMove{
+			pieceMove{South, 2},
+			pieceMove{East, 1},
 		},
-		[]knightMove{
-			knightMove{South, 2},
-			knightMove{West, 1},
+		[]pieceMove{
+			pieceMove{South, 2},
+			pieceMove{West, 1},
 		},
-		[]knightMove{
-			knightMove{West, 2},
-			knightMove{South, 1},
+		[]pieceMove{
+			pieceMove{West, 2},
+			pieceMove{South, 1},
 		},
-		[]knightMove{
-			knightMove{West, 2},
-			knightMove{North, 1},
+		[]pieceMove{
+			pieceMove{West, 2},
+			pieceMove{North, 1},
 		},
 	}
 
@@ -382,7 +382,7 @@ func canKnightMove(boardState BoardState, squareName string) []string {
 	return valid
 }
 
-func checkKnightMove(boardState BoardState, rank, file string, moves []knightMove) (string, bool) {
+func checkKnightMove(boardState BoardState, rank, file string, moves []pieceMove) (string, bool) {
 	if coord, ok := GetRelativeCoord(rank, file, moves[0].Direction, moves[0].Distance); ok {
 		rank, file := getRankAndFileFromSquareName(coord)
 		if coord, ok, _ := IsRelCoordValid(boardState, rank, file, moves[1].Direction, moves[1].Distance); ok {
