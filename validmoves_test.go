@@ -113,6 +113,9 @@ func TestGetRelativeCoord(t *testing.T) {
 		{"2", "a", chess.SouthEast, 1, "b1"},
 		{"3", "a", chess.South, 1, "a2"},
 		{"3", "b", chess.SouthWest, 1, "a2"},
+
+		{"2", "a", chess.East, 2, "c2"},
+		{"2", "c", chess.West, 2, "a2"},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v", test), func(t *testing.T) {

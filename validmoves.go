@@ -180,14 +180,22 @@ func GetRelativeCoord(rank, file string, direction Direction, distance int) (str
 		_, ok := validCoords[coord]
 		return coord, ok
 	case East:
-		newFile, ok := GetNextFile(file)
+		var newFile = file
+		var ok bool
+		for i := 0; i < distance; i++ {
+			newFile, ok = GetNextFile(newFile)
+		}
 		if ok {
 			coord := coordFromRankFile(rankInt, newFile)
 			_, ok := validCoords[coord]
 			return coord, ok
 		}
 	case West:
-		newFile, ok := GetPreviousFile(file)
+		var newFile = file
+		var ok bool
+		for i := distance; i > 0; i-- {
+			newFile, ok = GetPreviousFile(newFile)
+		}
 		if ok {
 			coord := coordFromRankFile(rankInt, newFile)
 			_, ok := validCoords[coord]
@@ -306,6 +314,57 @@ func CanKingMove(model Model, squareName string) []string {
 	}
 
 	return valid
+}
+
+type knightMove struct {
+	Direction Direction
+	Distance  int
+}
+
+// CanKnightMove determines all valid moves for the Knight
+func CanKnightMove(model Model, squareName string) []string {
+	rank, file := getRankAndFileFromSquareName(squareName)
+
+	valid := []string{}
+
+	all := [][]knightMove{
+		[]knightMove{
+			knightMove{North, 2},
+			knightMove{West, 1},
+		},
+		[]knightMove{
+			knightMove{North, 2},
+			knightMove{East, 1},
+		},
+		[]knightMove{
+			knightMove{East, 2},
+			knightMove{North, 1},
+		},
+	}
+
+	for _, moves := range all {
+		if coord, ok := checkKnightMove(model.BoardState, rank, file, moves); ok {
+			fmt.Println("valid knight move ", coord)
+			valid = append(valid, coord)
+		}
+	}
+
+	return valid
+}
+
+func checkKnightMove(boardState BoardState, rank, file string, moves []knightMove) (string, bool) {
+	// 2 north, 1 east
+	if coordA, okA, _ := isRelCoordValid(boardState, rank, file, moves[0].Direction, moves[0].Distance); okA {
+		fmt.Println("first: ", coordA)
+		rankB, fileB := getRankAndFileFromSquareName(coordA)
+		if coordB, okB, _ := isRelCoordValid(boardState, rankB, fileB, moves[1].Direction, moves[1].Distance); okB {
+			fmt.Println("second: ", coordB)
+			// fmt.Println(coord)
+			// valid = append(valid, coord)
+			return coordB, true
+		}
+	}
+	return "", false
 }
 
 // GetNextRanks gets the series of ranks after
