@@ -25,4 +25,4 @@ type OnBoardData struct {
 }
 
 // BoardState is a data structure used to track pieces currently on the board
-type BoardState map[string]OnBoardData
+type BoardState map[Coord]OnBoardData

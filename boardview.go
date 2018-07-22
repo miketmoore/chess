@@ -1,7 +1,6 @@
 package chess
 
 import (
-	"fmt"
 	"image/color"
 
 	"github.com/faiface/pixel"
@@ -34,7 +33,7 @@ var BoardThemes = map[string]map[string]color.RGBA{
 }
 
 // BoardMap is the type used to describe the map of board squares/shapes
-type BoardMap map[string]Square
+type BoardMap map[Coord]Square
 
 // Square represents one square of the board
 type Square struct {
@@ -44,7 +43,7 @@ type Square struct {
 }
 
 // BoardColNames is the list of column names in algebraic notation
-var BoardColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
+// var BoardColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 
 // NewBoardView returns an array of *imdraw.IMDraw instances, each representing one square
 // on a chess boardview. The size argument defines the width and height of each square.
@@ -53,7 +52,7 @@ var BoardColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 func NewBoardView(
 	originX, originY, size float64,
 	blackFill, whiteFill color.RGBA,
-) (BoardMap, map[string][]float64) {
+) (BoardMap, map[Coord][]float64) {
 	var squareW = size
 	var squareH = size
 	var r, c float64
@@ -63,7 +62,7 @@ func NewBoardView(
 	i := 0
 	squares := BoardMap{}
 
-	squareOriginByCoords := map[string][]float64{}
+	squareOriginByCoords := map[Coord][]float64{}
 
 	for r = 0; r < totalRows; r++ {
 		for c = 0; c < totalCols; c++ {
@@ -81,15 +80,16 @@ func NewBoardView(
 			shape.Push(pixel.V(xInc, yInc))
 			shape.Push(pixel.V(squareW+xInc, squareH+yInc))
 			shape.Rectangle(0)
-			name := BoardColNames[int(c)] + fmt.Sprintf("%d", int(r)+1)
+			// TODO
+			coord := Coord{Rank(int(r) + 1), FilesOrder[int(c)]}
 
-			squares[name] = Square{
+			squares[coord] = Square{
 				Shape:   shape,
 				OriginX: xInc,
 				OriginY: yInc,
 			}
 
-			squareOriginByCoords[name] = []float64{xInc, yInc}
+			squareOriginByCoords[coord] = []float64{xInc, yInc}
 
 			xInc += size
 			i++
@@ -102,7 +102,7 @@ func NewBoardView(
 }
 
 // DrawPiece draws a chess piece on the board
-func DrawPiece(win *pixelgl.Window, squares BoardMap, piece *pixel.Sprite, coord string) {
+func DrawPiece(win *pixelgl.Window, squares BoardMap, piece *pixel.Sprite, coord Coord) {
 	square := squares[coord]
 	x := square.OriginX + 25
 	y := square.OriginY + 25
@@ -110,7 +110,7 @@ func DrawPiece(win *pixelgl.Window, squares BoardMap, piece *pixel.Sprite, coord
 }
 
 // HighlightSquares adds a visual marker to the list of board squares
-func HighlightSquares(win *pixelgl.Window, squares BoardMap, coords []string, color color.RGBA) {
+func HighlightSquares(win *pixelgl.Window, squares BoardMap, coords []Coord, color color.RGBA) {
 	for _, coord := range coords {
 
 		square := squares[coord]
@@ -139,16 +139,16 @@ func FindSquareByVec(squares BoardMap, vec pixel.Vec) *Square {
 	return nil
 }
 
-// GetNotationByCoords gets algebraic notation for a set of
+// GetCoordByXY gets algebraic notation for a set of
 // rank (y) and file (x) coordinates
-func GetNotationByCoords(
-	squareOriginByCoords map[string][]float64,
+func GetCoordByXY(
+	squareOriginByCoords map[Coord][]float64,
 	x, y float64,
-) string {
-	for squareName, originCoords := range squareOriginByCoords {
-		if originCoords[0] == x && originCoords[1] == y {
-			return squareName
+) (Coord, bool) {
+	for coord, xy := range squareOriginByCoords {
+		if xy[0] == x && xy[1] == y {
+			return coord, true
 		}
 	}
-	return ""
+	return Coord{}, false
 }

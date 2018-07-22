@@ -5,8 +5,8 @@ type Model struct {
 	History              []HistoryEntry
 	BoardState           BoardState
 	PieceToMove          OnBoardData
-	MoveStartCoord       string
-	MoveDestinationCoord string
+	MoveStartCoord       Coord
+	MoveDestinationCoord Coord
 	Draw                 bool
 	WhitesMove           bool
 	CurrentState         State

@@ -110,15 +110,17 @@ func run() {
 	// Make pieces
 	drawer := chess.NewSpriteByColor()
 
-	for _, name := range chess.BoardColNames {
-		model.BoardState[fmt.Sprintf("%s7", name)] = chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Pawn}
+	for _, file := range chess.FilesOrder {
+		coord := chess.Coord{chess.Rank7, file}
+		model.BoardState[coord] = chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Pawn}
 	}
 
-	for _, name := range chess.BoardColNames {
-		model.BoardState[fmt.Sprintf("%s2", name)] = chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Pawn}
+	for _, file := range chess.FilesOrder {
+		coord := chess.Coord{chess.Rank2, file}
+		model.BoardState[coord] = chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Pawn}
 	}
 
-	validDestinations := []string{}
+	validDestinations := []chess.Coord{}
 
 	for !win.Closed() {
 
@@ -162,23 +164,23 @@ func run() {
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				square := chess.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					squareName := chess.GetNotationByCoords(
+					coord, ok := chess.GetCoordByXY(
 						squareOriginByCoords,
 						square.OriginX,
 						square.OriginY,
 					)
-					if squareName != "" {
-						occupant, isOccupied := model.BoardState[squareName]
+					if ok {
+						occupant, isOccupied := model.BoardState[coord]
 						if occupant.Color == model.CurrentPlayerColor() && isOccupied {
 							validDestinations = chess.GetValidMoves(
 								model.CurrentPlayerColor(),
 								occupant.Piece,
 								model.BoardState,
-								squareName,
+								coord,
 							)
 							if len(validDestinations) > 0 {
 								model.PieceToMove = occupant
-								model.MoveStartCoord = squareName
+								model.MoveStartCoord = coord
 								model.CurrentState = chess.DrawValidMoves
 								model.Draw = true
 							}
@@ -200,12 +202,12 @@ func run() {
 				mpos := win.MousePosition()
 				square := chess.FindSquareByVec(squares, mpos)
 				if square != nil {
-					squareName := chess.GetNotationByCoords(squareOriginByCoords, square.OriginX, square.OriginY)
-					if squareName != "" {
-						occupant, isOccupied := model.BoardState[squareName]
-						isValid := chess.FindInSliceString(validDestinations, squareName)
-						if isValid && isDestinationValid(model.WhitesMove, squareName, isOccupied, occupant) {
-							move(&model, squareName)
+					coord, ok := chess.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
+					if ok {
+						occupant, isOccupied := model.BoardState[coord]
+						isValid := chess.FindInSliceCoord(validDestinations, coord)
+						if isValid && isDestinationValid(model.WhitesMove, isOccupied, occupant) {
+							move(&model, coord)
 							printHistory(model.History)
 						} else {
 							model.CurrentState = chess.StateSelectPiece
@@ -219,7 +221,7 @@ func run() {
 	}
 }
 
-func isDestinationValid(whitesMove bool, squareName string, isOccupied bool, occupant chess.OnBoardData) bool {
+func isDestinationValid(whitesMove bool, isOccupied bool, occupant chess.OnBoardData) bool {
 	if isOccupied {
 		if whitesMove && occupant.Color == chess.PlayerBlack {
 			return true
@@ -232,7 +234,7 @@ func isDestinationValid(whitesMove bool, squareName string, isOccupied bool, occ
 	return false
 }
 
-func move(model *chess.Model, destCoord string) {
+func move(model *chess.Model, destCoord chess.Coord) {
 	model.CurrentState = chess.StateDraw
 	model.Draw = true
 	model.MoveDestinationCoord = destCoord
@@ -274,8 +276,8 @@ func printHistory(history []chess.HistoryEntry) {
 		table.Append([]string{
 			playerColor,
 			string(entry.Piece),
-			entry.FromCoord,
-			entry.ToCoord,
+			entry.FromCoordString(),
+			entry.ToCoordString(),
 			string(entry.CapturedPiece),
 		})
 	}

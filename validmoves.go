@@ -73,7 +73,7 @@ const (
 )
 
 var ranksOrder = []Rank{Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8}
-var filesOrder = []File{FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH}
+var FilesOrder = []File{FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH}
 
 var rankByRankView = map[Rank]string{
 	Rank1: "1",
@@ -119,89 +119,104 @@ var fileViewByFile = map[string]File{
 	"h": FileH,
 }
 
-var validCoords = map[string]bool{
-	"a1": true,
-	"a2": true,
-	"a3": true,
-	"a4": true,
-	"a5": true,
-	"a6": true,
-	"a7": true,
-	"a8": true,
-
-	"b1": true,
-	"b2": true,
-	"b3": true,
-	"b4": true,
-	"b5": true,
-	"b6": true,
-	"b7": true,
-	"b8": true,
-
-	"c1": true,
-	"c2": true,
-	"c3": true,
-	"c4": true,
-	"c5": true,
-	"c6": true,
-	"c7": true,
-	"c8": true,
-
-	"d1": true,
-	"d2": true,
-	"d3": true,
-	"d4": true,
-	"d5": true,
-	"d6": true,
-	"d7": true,
-	"d8": true,
-
-	"e1": true,
-	"e2": true,
-	"e3": true,
-	"e4": true,
-	"e5": true,
-	"e6": true,
-	"e7": true,
-	"e8": true,
-
-	"f1": true,
-	"f2": true,
-	"f3": true,
-	"f4": true,
-	"f5": true,
-	"f6": true,
-	"f7": true,
-	"f8": true,
-
-	"g1": true,
-	"g2": true,
-	"g3": true,
-	"g4": true,
-	"g5": true,
-	"g6": true,
-	"g7": true,
-	"g8": true,
-
-	"h1": true,
-	"h2": true,
-	"h3": true,
-	"h4": true,
-	"h5": true,
-	"h6": true,
-	"h7": true,
-	"h8": true,
+// Coord represents a board square by rank and file
+type Coord struct {
+	Rank Rank
+	File File
 }
 
-func coordFromRankFile(rank Rank, file File) string {
-	return fmt.Sprintf("%s%s", fileByFileView[file], rankByRankView[rank])
+// NewCoord returns a new rank and file coordinate
+func NewCoord(file File, rank Rank) Coord {
+	return Coord{
+		File: file,
+		Rank: rank,
+	}
+}
+
+var validCoords = map[Coord]bool{
+	Coord{Rank1, FileA}: true,
+	Coord{Rank2, FileA}: true,
+	Coord{Rank3, FileA}: true,
+	Coord{Rank4, FileA}: true,
+	Coord{Rank5, FileA}: true,
+	Coord{Rank6, FileA}: true,
+	Coord{Rank7, FileA}: true,
+	Coord{Rank8, FileA}: true,
+
+	Coord{Rank1, FileB}: true,
+	Coord{Rank2, FileB}: true,
+	Coord{Rank3, FileB}: true,
+	Coord{Rank4, FileB}: true,
+	Coord{Rank5, FileB}: true,
+	Coord{Rank6, FileB}: true,
+	Coord{Rank7, FileB}: true,
+	Coord{Rank8, FileB}: true,
+
+	Coord{Rank1, FileC}: true,
+	Coord{Rank2, FileC}: true,
+	Coord{Rank3, FileC}: true,
+	Coord{Rank4, FileC}: true,
+	Coord{Rank5, FileC}: true,
+	Coord{Rank6, FileC}: true,
+	Coord{Rank7, FileC}: true,
+	Coord{Rank8, FileC}: true,
+
+	Coord{Rank1, FileD}: true,
+	Coord{Rank2, FileD}: true,
+	Coord{Rank3, FileD}: true,
+	Coord{Rank4, FileD}: true,
+	Coord{Rank5, FileD}: true,
+	Coord{Rank6, FileD}: true,
+	Coord{Rank7, FileD}: true,
+	Coord{Rank8, FileD}: true,
+
+	Coord{Rank1, FileE}: true,
+	Coord{Rank2, FileE}: true,
+	Coord{Rank3, FileE}: true,
+	Coord{Rank4, FileE}: true,
+	Coord{Rank5, FileE}: true,
+	Coord{Rank6, FileE}: true,
+	Coord{Rank7, FileE}: true,
+	Coord{Rank8, FileE}: true,
+
+	Coord{Rank1, FileF}: true,
+	Coord{Rank2, FileF}: true,
+	Coord{Rank3, FileF}: true,
+	Coord{Rank4, FileF}: true,
+	Coord{Rank5, FileF}: true,
+	Coord{Rank6, FileF}: true,
+	Coord{Rank7, FileF}: true,
+	Coord{Rank8, FileF}: true,
+
+	Coord{Rank1, FileG}: true,
+	Coord{Rank2, FileG}: true,
+	Coord{Rank3, FileG}: true,
+	Coord{Rank4, FileG}: true,
+	Coord{Rank5, FileG}: true,
+	Coord{Rank6, FileG}: true,
+	Coord{Rank7, FileG}: true,
+	Coord{Rank8, FileG}: true,
+
+	Coord{Rank1, FileH}: true,
+	Coord{Rank2, FileH}: true,
+	Coord{Rank3, FileH}: true,
+	Coord{Rank4, FileH}: true,
+	Coord{Rank5, FileH}: true,
+	Coord{Rank6, FileH}: true,
+	Coord{Rank7, FileH}: true,
+	Coord{Rank8, FileH}: true,
+}
+
+func coordFromRankFile(rank Rank, file File) Coord {
+	// return fmt.Sprintf("%s%s", fileByFileView[file], rankByRankView[rank])
+	return Coord{rank, file}
 }
 
 // GetPreviousFile gets the previous file as a string
 func GetPreviousFile(file File) (File, bool) {
-	for i, f := range filesOrder {
+	for i, f := range FilesOrder {
 		if f == file && i-1 >= 0 {
-			return filesOrder[i-1], true
+			return FilesOrder[i-1], true
 		}
 	}
 	return FileNone, false
@@ -209,16 +224,16 @@ func GetPreviousFile(file File) (File, bool) {
 
 // GetNextFile gets the next file as a string
 func GetNextFile(file File) (File, bool) {
-	for i, f := range filesOrder {
-		if f == file && len(filesOrder) > i+1 {
-			return filesOrder[i+1], true
+	for i, f := range FilesOrder {
+		if f == file && len(FilesOrder) > i+1 {
+			return FilesOrder[i+1], true
 		}
 	}
 	return FileNone, false
 }
 
 // GetRelativeCoord gets a rank+file coordinate relative to specified by direction and distance
-func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (string, bool) {
+func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (Coord, bool) {
 	switch direction {
 	case North:
 		newRank := rank + Rank(distance)
@@ -285,40 +300,32 @@ func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (
 			return coord, ok
 		}
 	}
-	return "", false
-}
-
-// getRankAndFileFromSquareName converts a square name (example: d3) to rank (3)
-// and file(d) strings
-func getRankAndFileFromSquareName(squareName string) (Rank, File) {
-	rankStr := string(squareName[1])
-	fileStr := string(squareName[0])
-
-	return rankViewByRank[rankStr], fileViewByFile[fileStr]
+	return Coord{}, false
 }
 
 // GetValidMoves returns a list of valid coordinates the piece can be moved to
-func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, squareName string) []string {
+func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, coord Coord) []Coord {
 	switch piece {
 	case Pawn:
-		return canPawnMove(playerColor, boardState, squareName)
+		return canPawnMove(playerColor, boardState, coord)
 	case King:
-		return canKingMove(boardState, squareName)
+		return canKingMove(boardState, coord)
 	case Knight:
-		return canKnightMove(boardState, squareName)
+		return canKnightMove(boardState, coord)
 	case Rook:
-		return canRookMove(boardState, squareName)
+		return canRookMove(boardState, coord)
 	}
-	return []string{}
+	return []Coord{}
 }
 
-func canPawnMove(playerColor PlayerColor, boardState BoardState, squareName string) []string {
-	rank, file := getRankAndFileFromSquareName(squareName)
+func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+	rank := currCoord.Rank
+	file := currCoord.File
 
 	// if pawn is on starting square, it is elligible for moving one or two spaces
 
 	// build hash of valid board destinations
-	valid := []string{}
+	valid := []Coord{}
 
 	direction := North
 	if playerColor == PlayerBlack {
@@ -379,10 +386,11 @@ func canPawnMove(playerColor PlayerColor, boardState BoardState, squareName stri
 	return valid
 }
 
-func canKingMove(boardState BoardState, squareName string) []string {
-	rank, file := getRankAndFileFromSquareName(squareName)
+func canKingMove(boardState BoardState, currCoord Coord) []Coord {
+	rank := currCoord.Rank
+	file := currCoord.File
 
-	valid := []string{}
+	valid := []Coord{}
 
 	directions := []Direction{North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest}
 	for _, direction := range directions {
@@ -394,9 +402,10 @@ func canKingMove(boardState BoardState, squareName string) []string {
 	return valid
 }
 
-func canRookMove(boardState BoardState, squareName string) []string {
-	rank, file := getRankAndFileFromSquareName(squareName)
-	valid := []string{}
+func canRookMove(boardState BoardState, currCoord Coord) []Coord {
+	rank := currCoord.Rank
+	file := currCoord.File
+	valid := []Coord{}
 
 	directions := []Direction{North, East, South, West}
 	for _, direction := range directions {
@@ -417,10 +426,11 @@ type pieceMove struct {
 	Distance  int
 }
 
-func canKnightMove(boardState BoardState, squareName string) []string {
-	rank, file := getRankAndFileFromSquareName(squareName)
+func canKnightMove(boardState BoardState, currCoord Coord) []Coord {
+	rank := currCoord.Rank
+	file := currCoord.File
 
-	valid := []string{}
+	valid := []Coord{}
 
 	all := [][]pieceMove{
 		[]pieceMove{
@@ -466,14 +476,13 @@ func canKnightMove(boardState BoardState, squareName string) []string {
 	return valid
 }
 
-func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceMove) (string, bool) {
+func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceMove) (Coord, bool) {
 	if coord, ok := GetRelativeCoord(rank, file, moves[0].Direction, moves[0].Distance); ok {
-		rank, file := getRankAndFileFromSquareName(coord)
-		if coord, ok, _ := IsRelCoordValid(boardState, rank, file, moves[1].Direction, moves[1].Distance); ok {
+		if coord, ok, _ := IsRelCoordValid(boardState, coord.Rank, coord.File, moves[1].Direction, moves[1].Distance); ok {
 			return coord, true
 		}
 	}
-	return "", false
+	return Coord{}, false
 }
 
 // GetNextRanks gets the series of ranksOrder after
@@ -492,12 +501,12 @@ func GetNextRanks(rank Rank) []Rank {
 
 // IsRelCoordValid checks if the specified coordinate is valid
 // It is valid if it exists and not occupied
-func IsRelCoordValid(boardState BoardState, rank Rank, file File, direction Direction, n int) (string, bool, OnBoardData) {
+func IsRelCoordValid(boardState BoardState, rank Rank, file File, direction Direction, n int) (Coord, bool, OnBoardData) {
 	if coord, ok := GetRelativeCoord(rank, file, direction, n); ok {
 		occupant, isOccupied := boardState[coord]
 		if !isOccupied {
 			return coord, true, occupant
 		}
 	}
-	return "", false, OnBoardData{}
+	return Coord{}, false, OnBoardData{}
 }

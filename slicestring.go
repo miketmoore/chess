@@ -1,7 +1,7 @@
 package chess
 
-// FindInSliceString finds a string in a slice of strings
-func FindInSliceString(slice []string, needle string) bool {
+// FindInSliceCoord finds a Coord in a slice
+func FindInSliceCoord(slice []Coord, needle Coord) bool {
 	for i := 0; i < len(slice); i++ {
 		if slice[i] == needle {
 			return true

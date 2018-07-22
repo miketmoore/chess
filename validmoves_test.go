@@ -102,22 +102,22 @@ func TestGetRelativeCoord(t *testing.T) {
 		file      chess.File
 		direction chess.Direction
 		distance  int
-		expected  string
+		expected  chess.Coord
 	}{
 		// 1 in every direction
-		{chess.Rank2, chess.FileB, chess.West, 1, "a2"},
-		{chess.Rank2, chess.FileB, chess.NorthWest, 1, "a3"},
-		{chess.Rank2, chess.FileA, chess.North, 1, "a3"},
-		{chess.Rank2, chess.FileA, chess.NorthEast, 1, "b3"},
-		{chess.Rank2, chess.FileA, chess.East, 1, "b2"},
-		{chess.Rank2, chess.FileA, chess.SouthEast, 1, "b1"},
-		{chess.Rank3, chess.FileA, chess.South, 1, "a2"},
-		{chess.Rank3, chess.FileB, chess.SouthWest, 1, "a2"},
+		{chess.Rank2, chess.FileB, chess.West, 1, chess.NewCoord(chess.FileA, chess.Rank2)},
+		{chess.Rank2, chess.FileB, chess.NorthWest, 1, chess.NewCoord(chess.FileA, chess.Rank3)},
+		{chess.Rank2, chess.FileA, chess.North, 1, chess.NewCoord(chess.FileA, chess.Rank3)},
+		{chess.Rank2, chess.FileA, chess.NorthEast, 1, chess.NewCoord(chess.FileB, chess.Rank3)},
+		{chess.Rank2, chess.FileA, chess.East, 1, chess.NewCoord(chess.FileB, chess.Rank2)},
+		{chess.Rank2, chess.FileA, chess.SouthEast, 1, chess.NewCoord(chess.FileB, chess.Rank1)},
+		{chess.Rank3, chess.FileA, chess.South, 1, chess.NewCoord(chess.FileA, chess.Rank2)},
+		{chess.Rank3, chess.FileB, chess.SouthWest, 1, chess.NewCoord(chess.FileA, chess.Rank2)},
 
-		{chess.Rank2, chess.FileA, chess.North, 2, "a4"},
-		{chess.Rank5, chess.FileA, chess.South, 2, "a3"},
-		{chess.Rank2, chess.FileA, chess.East, 2, "c2"},
-		{chess.Rank2, chess.FileC, chess.West, 2, "a2"},
+		{chess.Rank2, chess.FileA, chess.North, 2, chess.NewCoord(chess.FileA, chess.Rank4)},
+		{chess.Rank5, chess.FileA, chess.South, 2, chess.NewCoord(chess.FileA, chess.Rank3)},
+		{chess.Rank2, chess.FileA, chess.East, 2, chess.NewCoord(chess.FileC, chess.Rank2)},
+		{chess.Rank2, chess.FileC, chess.West, 2, chess.NewCoord(chess.FileA, chess.Rank2)},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%v", test), func(t *testing.T) {
@@ -127,7 +127,6 @@ func TestGetRelativeCoord(t *testing.T) {
 				test.direction,
 				test.distance,
 			)
-			fmt.Println(got)
 			assertOk(t, ok)
 			assertOk(t, got == test.expected)
 		})
