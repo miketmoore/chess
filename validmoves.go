@@ -245,14 +245,14 @@ func CanPawnMove(playerColor PlayerColor, boardState BoardState, squareName stri
 	}
 
 	// is one space ahead vacant?
-	if coord, ok, _ := isRelCoordValid(boardState, rank, file, direction, 1); ok {
+	if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 1); ok {
 		valid = append(valid, coord)
 	}
 
 	if isCoordStartPosition(playerColor, Pawn, rank, file) {
 
 		// is two spaces ahead vacant?
-		if coord, ok, _ := isRelCoordValid(boardState, rank, file, direction, 2); ok {
+		if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 2); ok {
 			valid = append(valid, coord)
 		}
 
@@ -308,7 +308,7 @@ func CanKingMove(model Model, squareName string) []string {
 
 	directions := []Direction{North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest}
 	for _, direction := range directions {
-		if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
+		if coord, ok, _ := IsRelCoordValid(model.BoardState, rank, file, direction, 1); ok {
 			valid = append(valid, coord)
 		}
 	}
@@ -340,11 +340,33 @@ func CanKnightMove(model Model, squareName string) []string {
 			knightMove{East, 2},
 			knightMove{North, 1},
 		},
+		[]knightMove{
+			knightMove{East, 2},
+			knightMove{South, 1},
+		},
+		[]knightMove{
+			knightMove{South, 2},
+			knightMove{East, 1},
+		},
+		[]knightMove{
+			knightMove{South, 2},
+			knightMove{West, 1},
+		},
+		[]knightMove{
+			knightMove{West, 2},
+			knightMove{South, 1},
+		},
+		[]knightMove{
+			knightMove{West, 2},
+			knightMove{North, 1},
+		},
 	}
 
 	for _, moves := range all {
-		if coord, ok := checkKnightMove(model.BoardState, rank, file, moves); ok {
-			fmt.Println("valid knight move ", coord)
+		fmt.Println("checking ", moves)
+		coord, ok := checkKnightMove(model.BoardState, rank, file, moves)
+		if ok {
+			fmt.Println("valid knight move ", file, rank, coord)
 			valid = append(valid, coord)
 		}
 	}
@@ -353,18 +375,24 @@ func CanKnightMove(model Model, squareName string) []string {
 }
 
 func checkKnightMove(boardState BoardState, rank, file string, moves []knightMove) (string, bool) {
-	// 2 north, 1 east
-	if coordA, okA, _ := isRelCoordValid(boardState, rank, file, moves[0].Direction, moves[0].Distance); okA {
-		fmt.Println("first: ", coordA)
+	if coordA, okA, _ := IsRelCoordValid(boardState, rank, file, moves[0].Direction, moves[0].Distance); okA {
 		rankB, fileB := getRankAndFileFromSquareName(coordA)
-		if coordB, okB, _ := isRelCoordValid(boardState, rankB, fileB, moves[1].Direction, moves[1].Distance); okB {
-			fmt.Println("second: ", coordB)
-			// fmt.Println(coord)
-			// valid = append(valid, coord)
+		if coordB, okB, _ := IsRelCoordValid(boardState, rankB, fileB, moves[1].Direction, moves[1].Distance); okB {
 			return coordB, true
 		}
 	}
 	return "", false
+	// coordA, okA, _ := IsRelCoordValid(boardState, rank, file, moves[0].Direction, moves[0].Distance)
+	// if !okA {
+	// 	return "", false
+	// }
+	// fmt.Println("FIRST Coord ", coordA)
+	// rankB, fileB := getRankAndFileFromSquareName(coordA)
+	// coordB, okB, _ := IsRelCoordValid(boardState, rankB, fileB, moves[1].Direction, moves[1].Distance)
+	// if okB {
+	// 	return coordB, okB
+	// }
+	// return "", false
 }
 
 // GetNextRanks gets the series of ranks after
@@ -394,18 +422,26 @@ func CanRookMove(model Model, squareName string) []string {
 	ranks := GetNextRanks(rank)
 	fmt.Println("Next ranks: ", ranks)
 
-	if coord, ok, _ := isRelCoordValid(model.BoardState, rank, file, North, 1); ok {
+	if coord, ok, _ := IsRelCoordValid(model.BoardState, rank, file, North, 1); ok {
 		valid = append(valid, coord)
 	}
 
 	return valid
 }
 
-func isRelCoordValid(boardState BoardState, rank, file string, direction Direction, n int) (string, bool, OnBoardData) {
+// IsRelCoordValid checks if the specified coordinate is valid
+// It is valid if it exists
+func IsRelCoordValid(boardState BoardState, rank, file string, direction Direction, n int) (string, bool, OnBoardData) {
+	// fmt.Println(">>>>>>>>>> a.0 ", rank, file)
 	if coord, ok := GetRelativeCoord(rank, file, direction, n); ok {
-		if occupant, isOccupied := boardState[coord]; !isOccupied {
+		// fmt.Println(">>>>>>>>>> a")
+		occupant, isOccupied := boardState[coord]
+		if !isOccupied {
+			// fmt.Println(">>>>>>>>>> b")
 			return coord, true, occupant
 		}
+		// why is this a white bishop when it should be vacant?
+		fmt.Println(">>>>>>>>>> c ", occupant)
 	}
 	return "", false, OnBoardData{}
 }

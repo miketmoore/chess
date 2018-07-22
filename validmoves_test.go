@@ -114,6 +114,8 @@ func TestGetRelativeCoord(t *testing.T) {
 		{"3", "a", chess.South, 1, "a2"},
 		{"3", "b", chess.SouthWest, 1, "a2"},
 
+		{"2", "a", chess.North, 2, "a4"},
+		{"5", "a", chess.South, 2, "a3"},
 		{"2", "a", chess.East, 2, "c2"},
 		{"2", "c", chess.West, 2, "a2"},
 	}
