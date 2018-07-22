@@ -1,24 +1,40 @@
 package chess
 
+func newOnBoardData(color PlayerColor, piece Piece) OnBoardData {
+	return OnBoardData{color, piece}
+}
+
 // InitialOnBoardState returns the board state for a new game of chess
 func InitialOnBoardState() BoardState {
-	return BoardState{
-		Coord{Rank8, FileA}: OnBoardData{Color: PlayerBlack, Piece: Rook},
-		Coord{Rank8, FileB}: OnBoardData{Color: PlayerBlack, Piece: Knight},
-		Coord{Rank8, FileC}: OnBoardData{Color: PlayerBlack, Piece: Bishop},
-		Coord{Rank8, FileD}: OnBoardData{Color: PlayerBlack, Piece: Queen},
-		Coord{Rank8, FileE}: OnBoardData{Color: PlayerBlack, Piece: King},
-		Coord{Rank8, FileF}: OnBoardData{Color: PlayerBlack, Piece: Bishop},
-		Coord{Rank8, FileG}: OnBoardData{Color: PlayerBlack, Piece: Knight},
-		Coord{Rank8, FileH}: OnBoardData{Color: PlayerBlack, Piece: Rook},
+	boardState := BoardState{
+		NewCoord(FileA, Rank8): newOnBoardData(PlayerBlack, Rook),
+		NewCoord(FileB, Rank8): newOnBoardData(PlayerBlack, Knight),
+		NewCoord(FileC, Rank8): newOnBoardData(PlayerBlack, Bishop),
+		NewCoord(FileD, Rank8): newOnBoardData(PlayerBlack, Queen),
+		NewCoord(FileE, Rank8): newOnBoardData(PlayerBlack, King),
+		NewCoord(FileF, Rank8): newOnBoardData(PlayerBlack, Bishop),
+		NewCoord(FileG, Rank8): newOnBoardData(PlayerBlack, Knight),
+		NewCoord(FileH, Rank8): newOnBoardData(PlayerBlack, Rook),
 
-		Coord{Rank1, FileA}: OnBoardData{Color: PlayerWhite, Piece: Rook},
-		Coord{Rank1, FileB}: OnBoardData{Color: PlayerWhite, Piece: Knight},
-		Coord{Rank1, FileC}: OnBoardData{Color: PlayerWhite, Piece: Bishop},
-		Coord{Rank1, FileD}: OnBoardData{Color: PlayerWhite, Piece: Queen},
-		Coord{Rank1, FileE}: OnBoardData{Color: PlayerWhite, Piece: King},
-		Coord{Rank1, FileF}: OnBoardData{Color: PlayerWhite, Piece: Bishop},
-		Coord{Rank1, FileG}: OnBoardData{Color: PlayerWhite, Piece: Knight},
-		Coord{Rank1, FileH}: OnBoardData{Color: PlayerWhite, Piece: Rook},
+		NewCoord(FileA, Rank1): newOnBoardData(PlayerWhite, Rook),
+		NewCoord(FileB, Rank1): newOnBoardData(PlayerWhite, Knight),
+		NewCoord(FileC, Rank1): newOnBoardData(PlayerWhite, Bishop),
+		NewCoord(FileD, Rank1): newOnBoardData(PlayerWhite, Queen),
+		NewCoord(FileE, Rank1): newOnBoardData(PlayerWhite, King),
+		NewCoord(FileF, Rank1): newOnBoardData(PlayerWhite, Bishop),
+		NewCoord(FileG, Rank1): newOnBoardData(PlayerWhite, Knight),
+		NewCoord(FileH, Rank1): newOnBoardData(PlayerWhite, Rook),
 	}
+
+	for _, file := range FilesOrder {
+		coord := NewCoord(file, Rank7)
+		boardState[coord] = newOnBoardData(PlayerBlack, Pawn)
+	}
+
+	for _, file := range FilesOrder {
+		coord := NewCoord(file, Rank2)
+		boardState[coord] = newOnBoardData(PlayerWhite, Pawn)
+	}
+
+	return boardState
 }

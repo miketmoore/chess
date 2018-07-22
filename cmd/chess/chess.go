@@ -110,16 +110,6 @@ func run() {
 	// Make pieces
 	drawer := chess.NewSpriteByColor()
 
-	for _, file := range chess.FilesOrder {
-		coord := chess.NewCoord(file, chess.Rank7)
-		model.BoardState[coord] = chess.OnBoardData{Color: chess.PlayerBlack, Piece: chess.Pawn}
-	}
-
-	for _, file := range chess.FilesOrder {
-		coord := chess.NewCoord(file, chess.Rank2)
-		model.BoardState[coord] = chess.OnBoardData{Color: chess.PlayerWhite, Piece: chess.Pawn}
-	}
-
 	validDestinations := []chess.Coord{}
 
 	for !win.Closed() {
