@@ -182,11 +182,6 @@ func run() {
 								if len(validDestinations) > 0 {
 									valid = true
 								}
-							} else if occupant.Piece == chess.Rook {
-								validDestinations = chess.CanRookMove(model, squareName)
-								if len(validDestinations) > 0 {
-									valid = true
-								}
 							} else if occupant.Piece == chess.Knight {
 								fmt.Println("knight")
 								validDestinations = chess.CanKnightMove(model, squareName)

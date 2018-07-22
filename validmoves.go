@@ -25,7 +25,6 @@ func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank, file strin
 // Is the rank n spaces north a real board location?
 func getRankAhead(rank string, n int) (string, bool) {
 	if s, err := strconv.Atoi(rank); err == nil {
-		fmt.Printf("%T, %v", s, s)
 		return fmt.Sprintf("%d", s+n), true
 	}
 	return "", false
@@ -231,7 +230,6 @@ func getRankAndFileFromSquareName(squareName string) (rank, file string) {
 // If a pawn is on it's starting square, then it is elligible to move one or two spaces forward.
 // A pawn can move if an opposing piece is NW or NE.
 func CanPawnMove(playerColor PlayerColor, boardState BoardState, squareName string) []string {
-	fmt.Println("can pawn move ", squareName)
 	rank, file := getRankAndFileFromSquareName(squareName)
 
 	// if pawn is on starting square, it is elligible for moving one or two spaces
@@ -295,13 +293,11 @@ func CanPawnMove(playerColor PlayerColor, boardState BoardState, squareName stri
 		}
 	}
 
-	fmt.Println(valid)
 	return valid
 }
 
 // CanKingMove determines all valid moves for the King
 func CanKingMove(model Model, squareName string) []string {
-	fmt.Println("can king move ", squareName)
 	rank, file := getRankAndFileFromSquareName(squareName)
 
 	valid := []string{}
@@ -363,10 +359,7 @@ func CanKnightMove(model Model, squareName string) []string {
 	}
 
 	for _, moves := range all {
-		fmt.Println("checking ", moves)
-		coord, ok := checkKnightMove(model.BoardState, rank, file, moves)
-		if ok {
-			fmt.Println("valid knight move ", file, rank, coord)
+		if coord, ok := checkKnightMove(model.BoardState, rank, file, moves); ok {
 			valid = append(valid, coord)
 		}
 	}
@@ -375,24 +368,13 @@ func CanKnightMove(model Model, squareName string) []string {
 }
 
 func checkKnightMove(boardState BoardState, rank, file string, moves []knightMove) (string, bool) {
-	if coordA, okA, _ := IsRelCoordValid(boardState, rank, file, moves[0].Direction, moves[0].Distance); okA {
-		rankB, fileB := getRankAndFileFromSquareName(coordA)
-		if coordB, okB, _ := IsRelCoordValid(boardState, rankB, fileB, moves[1].Direction, moves[1].Distance); okB {
-			return coordB, true
+	if coord, ok := GetRelativeCoord(rank, file, moves[0].Direction, moves[0].Distance); ok {
+		rank, file := getRankAndFileFromSquareName(coord)
+		if coord, ok, _ := IsRelCoordValid(boardState, rank, file, moves[1].Direction, moves[1].Distance); ok {
+			return coord, true
 		}
 	}
 	return "", false
-	// coordA, okA, _ := IsRelCoordValid(boardState, rank, file, moves[0].Direction, moves[0].Distance)
-	// if !okA {
-	// 	return "", false
-	// }
-	// fmt.Println("FIRST Coord ", coordA)
-	// rankB, fileB := getRankAndFileFromSquareName(coordA)
-	// coordB, okB, _ := IsRelCoordValid(boardState, rankB, fileB, moves[1].Direction, moves[1].Distance)
-	// if okB {
-	// 	return coordB, okB
-	// }
-	// return "", false
 }
 
 // GetNextRanks gets the series of ranks after
@@ -412,36 +394,14 @@ func GetNextRanks(rankStr string) []string {
 	return resp
 }
 
-// CanRookMove determines all valid moves for the Rook
-func CanRookMove(model Model, squareName string) []string {
-	fmt.Println("can rook move ", squareName)
-	rank, file := getRankAndFileFromSquareName(squareName)
-
-	valid := []string{}
-
-	ranks := GetNextRanks(rank)
-	fmt.Println("Next ranks: ", ranks)
-
-	if coord, ok, _ := IsRelCoordValid(model.BoardState, rank, file, North, 1); ok {
-		valid = append(valid, coord)
-	}
-
-	return valid
-}
-
 // IsRelCoordValid checks if the specified coordinate is valid
-// It is valid if it exists
+// It is valid if it exists and not occupied
 func IsRelCoordValid(boardState BoardState, rank, file string, direction Direction, n int) (string, bool, OnBoardData) {
-	// fmt.Println(">>>>>>>>>> a.0 ", rank, file)
 	if coord, ok := GetRelativeCoord(rank, file, direction, n); ok {
-		// fmt.Println(">>>>>>>>>> a")
 		occupant, isOccupied := boardState[coord]
 		if !isOccupied {
-			// fmt.Println(">>>>>>>>>> b")
 			return coord, true, occupant
 		}
-		// why is this a white bishop when it should be vacant?
-		fmt.Println(">>>>>>>>>> c ", occupant)
 	}
 	return "", false, OnBoardData{}
 }
