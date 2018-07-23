@@ -335,7 +335,6 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 	// get two spaces north or south
 	coords := GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 2)
 	fmt.Println("coords north/south: ", coords)
-	// valid if not occupied
 	if !isOccupied(boardState, coords[0]) {
 		valid = append(valid, coords[0])
 		if !isOccupied(boardState, coords[1]) {
