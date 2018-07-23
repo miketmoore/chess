@@ -420,18 +420,6 @@ func canKnightMove(boardState BoardState, currCoord Coord) []Coord {
 	return valid
 }
 
-func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceMove) (Coord, bool) {
-	coord, ok := GetRelativeCoord(rank, file, moves[0].Direction, moves[0].Distance)
-	if !ok {
-		return Coord{}, false
-	}
-	coord, ok, _ = IsRelCoordValid(boardState, coord.Rank, coord.File, moves[1].Direction, moves[1].Distance)
-	if ok {
-		return coord, true
-	}
-	return Coord{}, false
-}
-
 func getValidMovesForBishop(boardState BoardState, currCoord Coord) []Coord {
 	valid := []Coord{}
 
@@ -452,47 +440,4 @@ func getValidMovesForBishop(boardState BoardState, currCoord Coord) []Coord {
 	}
 
 	return valid
-}
-
-// GetNextRanks gets the series of ranksOrder after
-func GetNextRanks(rank Rank) []Rank {
-	resp := []Rank{}
-	collect := false
-	for _, r := range ranksOrder {
-		if !collect && r == rank {
-			collect = true
-		} else if collect {
-			resp = append(resp, r)
-		}
-	}
-	return resp
-}
-
-// GetPreviousRanks gets the seris of ranks before
-func GetPreviousRanks(rank Rank) []Rank {
-	resp := []Rank{}
-	collect := true
-	for _, r := range ranksOrder {
-		if collect {
-			if r != rank {
-				resp = append(resp, r)
-			} else {
-				collect = false
-			}
-		}
-	}
-	return resp
-}
-
-// IsRelCoordValid checks if the specified coordinate is valid
-// It is valid if it exists and not occupied
-func IsRelCoordValid(boardState BoardState, rank Rank, file File, direction Direction, n int) (Coord, bool, OnBoardData) {
-	coord, ok := GetRelativeCoord(rank, file, direction, n)
-	if ok {
-		occupant, isOccupied := boardState[coord]
-		if !isOccupied {
-			return coord, true, occupant
-		}
-	}
-	return Coord{}, false, OnBoardData{}
 }

@@ -60,42 +60,6 @@ func TestGetPreviousFile(t *testing.T) {
 
 }
 
-func TestGetNextRanks(t *testing.T) {
-	tests := []struct {
-		inputRank     chess.Rank
-		expectedRanks []chess.Rank
-		matches       int
-	}{
-		{chess.RankNone, []chess.Rank{}, 0},
-		{chess.Rank1, []chess.Rank{chess.Rank2, chess.Rank3, chess.Rank4, chess.Rank5, chess.Rank6, chess.Rank7, chess.Rank8}, 7},
-		{chess.Rank2, []chess.Rank{chess.Rank3, chess.Rank4, chess.Rank5, chess.Rank6, chess.Rank7, chess.Rank8}, 6},
-		{chess.Rank3, []chess.Rank{chess.Rank4, chess.Rank5, chess.Rank6, chess.Rank7, chess.Rank8}, 5},
-		{chess.Rank4, []chess.Rank{chess.Rank5, chess.Rank6, chess.Rank7, chess.Rank8}, 4},
-		{chess.Rank5, []chess.Rank{chess.Rank6, chess.Rank7, chess.Rank8}, 3},
-		{chess.Rank6, []chess.Rank{chess.Rank7, chess.Rank8}, 2},
-		{chess.Rank7, []chess.Rank{chess.Rank8}, 1},
-		{chess.Rank8, []chess.Rank{}, 0},
-	}
-	for _, test := range tests {
-		t.Run(string(test.inputRank), func(t *testing.T) {
-			got := chess.GetNextRanks(test.inputRank)
-			if len(got) != len(test.expectedRanks) {
-				t.Fatal(fmt.Sprintf("length is wrong - got %d expected %d", len(got), len(test.expectedRanks)))
-			}
-			matches := 0
-			for i, rank := range got {
-				if rank == test.expectedRanks[i] {
-					matches++
-				}
-			}
-			if matches != test.matches {
-				t.Fatal(fmt.Sprintf("result is unexpected - got %d matches but expected %d", matches, test.matches))
-			}
-		})
-
-	}
-}
-
 func TestGetRelativeCoord(t *testing.T) {
 	tests := []struct {
 		rank      chess.Rank
