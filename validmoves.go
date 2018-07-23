@@ -344,26 +344,26 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 	// pawn attack moves
 	if playerColor == PlayerWhite {
 		// NW
-		coord := GetCoordsBySlopeAndDistance(currCoord, 1, 1, 1)[0]
-		if isOccupiedByColor(boardState, coord, PlayerBlack) {
+		coord, ok := GetCoordBySlopeAndDistance(currCoord, 1, 1)
+		if ok && isOccupiedByColor(boardState, coord, PlayerBlack) {
 			valid = append(valid, coord)
 		}
 
 		// NE
-		coord = GetCoordsBySlopeAndDistance(currCoord, 1, -1, 1)[0]
-		if isOccupiedByColor(boardState, coord, PlayerBlack) {
+		coord, ok = GetCoordBySlopeAndDistance(currCoord, 1, -1)
+		if ok && isOccupiedByColor(boardState, coord, PlayerBlack) {
 			valid = append(valid, coord)
 		}
 	} else {
 		// SW
-		coord := GetCoordsBySlopeAndDistance(currCoord, -1, -1, 1)[0]
-		if isOccupiedByColor(boardState, coord, PlayerWhite) {
+		coord, ok := GetCoordBySlopeAndDistance(currCoord, -1, -1)
+		if ok && isOccupiedByColor(boardState, coord, PlayerBlack) {
 			valid = append(valid, coord)
 		}
 
 		// SE
-		coord = GetCoordsBySlopeAndDistance(currCoord, -1, 1, 1)[0]
-		if isOccupiedByColor(boardState, coord, PlayerWhite) {
+		coord, ok = GetCoordBySlopeAndDistance(currCoord, -1, 1)
+		if ok && isOccupiedByColor(boardState, coord, PlayerBlack) {
 			valid = append(valid, coord)
 		}
 	}

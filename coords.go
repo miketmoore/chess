@@ -64,7 +64,9 @@ func GetCoordsBySlopeAndDistance(start Coord, yChange, xChange, distance int) []
 
 	for d < distance && y < 8 && y >= 0 && x < 8 && x >= 0 {
 		coord := TranslateXYToRankFile(x, y)
+		fmt.Println(x, y)
 		_, ok := validCoords[coord]
+		fmt.Println("OK")
 		if ok {
 			coords = append(coords, coord)
 		}
@@ -74,6 +76,30 @@ func GetCoordsBySlopeAndDistance(start Coord, yChange, xChange, distance int) []
 	}
 
 	return coords
+}
+
+func GetCoordBySlopeAndDistance(start Coord, yChange, xChange int) (Coord, bool) {
+	x, y := TranslateRankFileToXY(start)
+
+	distance := 1
+	d := 0
+
+	y += yChange
+	x += xChange
+
+	for d < distance && y < 8 && y >= 0 && x < 8 && x >= 0 {
+		coord := TranslateXYToRankFile(x, y)
+		fmt.Println(x, y)
+		_, ok := validCoords[coord]
+		fmt.Println("OK")
+		if ok {
+			return coord, true
+		}
+		y += yChange
+		x += xChange
+		d++
+	}
+	return Coord{}, false
 }
 
 func GetCoordsBySlopeAndDistanceAll(start Coord, distance int) []Coord {
