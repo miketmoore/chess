@@ -315,7 +315,7 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 	case Knight:
 		return getValidMovesKnight(playerColor, boardState, coord)
 	case Rook:
-		return getValidMovesRook(boardState, coord)
+		return getValidMovesRook(playerColor, boardState, coord)
 	case Bishop:
 		return getValidMovesForBishop(boardState, coord)
 	}
@@ -385,7 +385,8 @@ func getValidMovesKing(playerColor PlayerColor, boardState BoardState, currCoord
 	return valid
 }
 
-func getValidMovesRook(boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesRook(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+	opposite := GetOppositeColor(playerColor)
 	valid := []Coord{}
 
 	slopes := []DirectionSlope{
@@ -400,7 +401,16 @@ func getValidMovesRook(boardState BoardState, currCoord Coord) []Coord {
 		xChange := slope[1]
 		for i := 0; i < 8; i++ {
 			coords := GetCoordsBySlopeAndDistance(currCoord, yChange, xChange, i)
-			valid = append(valid, coords...)
+			for _, coord := range coords {
+				if !isOccupied(boardState, coord) {
+					valid = append(valid, coord)
+				} else if isOccupiedByColor(boardState, coord, opposite) {
+					valid = append(valid, coord)
+					break
+				} else {
+					break
+				}
+			}
 		}
 	}
 
