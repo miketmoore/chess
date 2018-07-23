@@ -458,15 +458,67 @@ func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceM
 	return Coord{}, false
 }
 
+/*
+	(x,y)
+	7
+	6
+	5
+	4
+	3
+	2
+	1  0,1  1,1  2,1  3,1  4,1  5,1  6,1  7,1
+	0  0,0  1,0  2,0  3,0  4,0  5,0  6,0  7,0
+	   0    1    2    3    4    5    6    7
+*/
+func TranslateRankFileToXY(coord Coord) (int, int) {
+	y := int(coord.Rank) - 1
+	x := int(coord.File) - 1
+	return x, y
+}
+
+func TranslateXYToRankFile(x, y int) Coord {
+	fmt.Println("a: ", x, y)
+	fmt.Println("b: ", x+1, y+1)
+	fmt.Println("c: ", File(x+1), Rank(y+1))
+	file := File(x + 1)
+	rank := Rank(y + 1)
+	return NewCoord(file, rank)
+}
+
+func getCoordsBySlope(start Coord, yChange, xChange int) []Coord {
+	coords := []Coord{}
+	x, y := TranslateRankFileToXY(start)
+	fmt.Println(x, y)
+	for x < 8 && y < 7 {
+		coord := TranslateXYToRankFile(x, y)
+		_, ok := validCoords[coord]
+		if ok {
+			fmt.Printf("translated coord: %+v\n", coord)
+			coords = append(coords, coord)
+
+		}
+		x += xChange
+		y += yChange
+	}
+	return coords
+}
+
 func getValidMovesForBishop(boardState BoardState, currCoord Coord) []Coord {
 	fmt.Println("bishop moves")
-	rank, file := currCoord.GetRankFile()
+	// rank, file := currCoord.GetRankFile()
 
 	valid := []Coord{}
 
-	// NorthEast
+	// NorthEast slope: +1/+1
+	// follow slope from current coordinate
+	// x, y := TranslateRankFileToXY(currCoord)
+	// fmt.Println(">>> ", x, y)
+	valid = append(valid, getCoordsBySlope(currCoord, 1, 1)...)
+	// valid = append(valid, getCoordsBySlope(currCoord, 1, -1)...)
+	// valid = append(valid, getCoordsBySlope(currCoord, -1, 1)...)
+	// valid = append(valid, getCoordsBySlope(currCoord, -1, -1)...)
 
-	ranks := append([]Rank{rank}, GetNextRanks(rank)...)
+	// ranks := append([]Rank{rank}, GetNextRanks(rank)...)
 
 	/*
 		   -  e3	north 1, east 1 (from d2)
@@ -474,42 +526,42 @@ func getValidMovesForBishop(boardState BoardState, currCoord Coord) []Coord {
 		c1			start
 	*/
 
-	for i, r := range ranks {
-		coordA, _ := GetRelativeCoord(r, file, North, 1)
-		coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, East, i+1)
-		if coordB.Rank != 0 {
-			valid = append(valid, coordB)
-			fStr := fileByFileView[coordB.File]
-			rStr := rankByRankView[coordB.Rank]
-			fmt.Println(fStr, rStr)
-		}
+	// for i, r := range ranks {
+	// 	coordA, _ := GetRelativeCoord(r, file, North, 1)
+	// 	coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, East, i+1)
+	// 	if coordB.Rank != 0 {
+	// 		valid = append(valid, coordB)
+	// 		fStr := fileByFileView[coordB.File]
+	// 		rStr := rankByRankView[coordB.Rank]
+	// 		fmt.Println(fStr, rStr)
+	// 	}
 
-	}
+	// }
 
-	for i, r := range ranks {
-		coordA, _ := GetRelativeCoord(r, file, North, 1)
-		coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, West, i+1)
-		if coordB.Rank != 0 {
-			valid = append(valid, coordB)
-			fStr := fileByFileView[coordB.File]
-			rStr := rankByRankView[coordB.Rank]
-			fmt.Println(fStr, rStr)
-		}
-	}
+	// for i, r := range ranks {
+	// 	coordA, _ := GetRelativeCoord(r, file, North, 1)
+	// 	coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, West, i+1)
+	// 	if coordB.Rank != 0 {
+	// 		valid = append(valid, coordB)
+	// 		fStr := fileByFileView[coordB.File]
+	// 		rStr := rankByRankView[coordB.Rank]
+	// 		fmt.Println(fStr, rStr)
+	// 	}
+	// }
 
-	ranks = append([]Rank{rank}, GetPreviousRanks(rank)...)
+	// ranks = append([]Rank{rank}, GetPreviousRanks(rank)...)
 
-	for i, r := range ranks {
-		coordA, _ := GetRelativeCoord(r, file, South, 1)
-		coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, East, i+1)
-		if coordB.Rank != 0 {
-			valid = append(valid, coordB)
-			fStr := fileByFileView[coordB.File]
-			rStr := rankByRankView[coordB.Rank]
-			fmt.Println(fStr, rStr)
-		}
+	// for i, r := range ranks {
+	// 	coordA, _ := GetRelativeCoord(r, file, South, 1)
+	// 	coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, East, i+1)
+	// 	if coordB.Rank != 0 {
+	// 		valid = append(valid, coordB)
+	// 		fStr := fileByFileView[coordB.File]
+	// 		rStr := rankByRankView[coordB.Rank]
+	// 		fmt.Println(fStr, rStr)
+	// 	}
 
-	}
+	// }
 
 	fmt.Println(valid)
 
