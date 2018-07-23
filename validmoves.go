@@ -318,6 +318,8 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 		return getValidMovesRook(playerColor, boardState, coord)
 	case Bishop:
 		return getValidMovesForBishop(playerColor, boardState, coord)
+	case Queen:
+		return getValidMovesForQueen(playerColor, boardState, coord)
 	}
 	return []Coord{}
 }
@@ -474,5 +476,14 @@ func getValidMovesForBishop(playerColor PlayerColor, boardState BoardState, curr
 		}
 	}
 
+	return valid
+}
+
+func getValidMovesForQueen(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+	diagonals := getValidMovesForBishop(playerColor, boardState, currCoord)
+	horizontals := getValidMovesRook(playerColor, boardState, currCoord)
+	valid := []Coord{}
+	valid = append(valid, diagonals...)
+	valid = append(valid, horizontals...)
 	return valid
 }
