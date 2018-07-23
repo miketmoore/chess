@@ -397,26 +397,24 @@ func newMove(direction Direction, distance int) pieceMove {
 	}
 }
 
-var knightMoves = [][]pieceMove{
-	[]pieceMove{newMove(North, 2), newMove(West, 1)},
-	[]pieceMove{newMove(North, 2), newMove(East, 1)},
-	[]pieceMove{newMove(East, 2), newMove(North, 1)},
-	[]pieceMove{newMove(East, 2), newMove(South, 1)},
-	[]pieceMove{newMove(South, 2), newMove(East, 1)},
-	[]pieceMove{newMove(South, 2), newMove(West, 1)},
-	[]pieceMove{newMove(West, 2), newMove(South, 1)},
-	[]pieceMove{newMove(West, 2), newMove(North, 1)},
-}
-
 func canKnightMove(boardState BoardState, currCoord Coord) []Coord {
-	rank, file := currCoord.GetRankFile()
 
 	valid := []Coord{}
 
-	for _, moves := range knightMoves {
-		if coord, ok := checkKnightMove(boardState, rank, file, moves); ok {
-			valid = append(valid, coord)
-		}
+	var slopes = [][]int{
+		[]int{2, -1},
+		[]int{2, 1},
+		[]int{1, 2},
+		[]int{-1, 2},
+		[]int{-2, 1},
+		[]int{-2, -1},
+		[]int{1, -2},
+		[]int{-1, -2},
+	}
+
+	for _, slope := range slopes {
+		coords := GetCoordsBySlopeAndDistance(currCoord, slope[0], slope[1], 1)
+		valid = append(valid, coords...)
 	}
 
 	return valid
