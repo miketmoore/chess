@@ -1,7 +1,5 @@
 package chess
 
-import "fmt"
-
 func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank) bool {
 
 	if playerColor == PlayerWhite {
@@ -31,6 +29,19 @@ const (
 	SouthEast Direction = "southeast"
 	East      Direction = "east"
 	West      Direction = "west"
+)
+
+type DirectionSlope []int
+
+var (
+	SlopeNorth     DirectionSlope = []int{1, 0}
+	SlopeNorthEast DirectionSlope = []int{1, 1}
+	SlopeEast      DirectionSlope = []int{0, 1}
+	SlopeSouthEast DirectionSlope = []int{-1, 1}
+	SlopeSouth     DirectionSlope = []int{-1, 0}
+	SlopeSouthWest DirectionSlope = []int{-1, -1}
+	SlopeWest      DirectionSlope = []int{0, -1}
+	SlopeNorthWest DirectionSlope = []int{1, -1}
 )
 
 // Rank is a custom type that represents a horizontal row (rank) on the chess board
@@ -310,11 +321,6 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 }
 
 func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
-	rank, file := currCoord.GetRankFile()
-
-	// if pawn is on starting square, it is elligible for moving one or two spaces
-
-	// build hash of valid board destinations
 	valid := []Coord{}
 
 	yChange := 1
@@ -337,53 +343,42 @@ func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord
 		valid = append(valid, coords...)
 	} else {
 		// is SW occupied by the enemy? if so, it is a valid move
-		if coord, ok := GetRelativeCoord(rank, file, SouthWest, 1); ok {
-			if occupant, isOccupied := boardState[coord]; isOccupied {
-				if occupant.Color == PlayerWhite {
-					valid = append(valid, coord)
-				}
-			}
-		}
+		coords := GetCoordsBySlopeAndDistance(currCoord, -1, -1, 1)
+		valid = append(valid, coords...)
+
 		// is SE occupied by the enemy? if so, it is a valid move
-		if coord, ok := GetRelativeCoord(rank, file, SouthEast, 1); ok {
-			if occupant, isOccupied := boardState[coord]; isOccupied {
-				if occupant.Color == PlayerWhite {
-					valid = append(valid, coord)
-				}
-			}
-		}
+		coords = GetCoordsBySlopeAndDistance(currCoord, -1, 1, 1)
+		valid = append(valid, coords...)
 	}
 
 	return valid
 }
 
 func canKingMove(boardState BoardState, currCoord Coord) []Coord {
-	rank, file := currCoord.GetRankFile()
-
 	valid := []Coord{}
 
-	directions := []Direction{North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest}
-	for _, direction := range directions {
-		if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 1); ok {
-			valid = append(valid, coord)
-		}
-	}
+	coords := GetCoordsBySlopeAndDistanceAll(currCoord, 1)
+	valid = append(valid, coords...)
 
 	return valid
 }
 
 func canRookMove(boardState BoardState, currCoord Coord) []Coord {
-	rank, file := currCoord.GetRankFile()
 	valid := []Coord{}
 
-	directions := []Direction{North, East, South, West}
-	for _, direction := range directions {
+	slopes := []DirectionSlope{
+		SlopeNorth,
+		SlopeEast,
+		SlopeSouth,
+		SlopeWest,
+	}
+
+	for _, slope := range slopes {
+		yChange := slope[0]
+		xChange := slope[1]
 		for i := 0; i < 8; i++ {
-			if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, i+1); ok {
-				valid = append(valid, coord)
-			} else {
-				break
-			}
+			coords := GetCoordsBySlopeAndDistance(currCoord, yChange, xChange, i)
+			valid = append(valid, coords...)
 		}
 	}
 
@@ -440,65 +435,23 @@ func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceM
 }
 
 func getValidMovesForBishop(boardState BoardState, currCoord Coord) []Coord {
-	// rank, file := currCoord.GetRankFile()
-
 	valid := []Coord{}
 
-	// NorthEast slope: +1/+1
-	// follow slope from current coordinate
-	// x, y := TranslateRankFileToXY(currCoord)
-	// fmt.Println(">>> ", x, y)
-	valid = append(valid, GetCoordsBySlope(currCoord, 1, 1)...)
-	// valid = append(valid, getCoordsBySlope(currCoord, 1, -1)...)
-	// valid = append(valid, getCoordsBySlope(currCoord, -1, 1)...)
-	// valid = append(valid, getCoordsBySlope(currCoord, -1, -1)...)
+	slopes := []DirectionSlope{
+		SlopeNorthEast,
+		SlopeSouthEast,
+		SlopeSouthWest,
+		SlopeNorthWest,
+	}
 
-	// ranks := append([]Rank{rank}, GetNextRanks(rank)...)
-
-	/*
-		   -  e3	north 1, east 1 (from d2)
-		-  d2		north 1, east 1 (from c1)
-		c1			start
-	*/
-
-	// for i, r := range ranks {
-	// 	coordA, _ := GetRelativeCoord(r, file, North, 1)
-	// 	coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, East, i+1)
-	// 	if coordB.Rank != 0 {
-	// 		valid = append(valid, coordB)
-	// 		fStr := fileByFileView[coordB.File]
-	// 		rStr := rankByRankView[coordB.Rank]
-	// 		fmt.Println(fStr, rStr)
-	// 	}
-
-	// }
-
-	// for i, r := range ranks {
-	// 	coordA, _ := GetRelativeCoord(r, file, North, 1)
-	// 	coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, West, i+1)
-	// 	if coordB.Rank != 0 {
-	// 		valid = append(valid, coordB)
-	// 		fStr := fileByFileView[coordB.File]
-	// 		rStr := rankByRankView[coordB.Rank]
-	// 		fmt.Println(fStr, rStr)
-	// 	}
-	// }
-
-	// ranks = append([]Rank{rank}, GetPreviousRanks(rank)...)
-
-	// for i, r := range ranks {
-	// 	coordA, _ := GetRelativeCoord(r, file, South, 1)
-	// 	coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, East, i+1)
-	// 	if coordB.Rank != 0 {
-	// 		valid = append(valid, coordB)
-	// 		fStr := fileByFileView[coordB.File]
-	// 		rStr := rankByRankView[coordB.Rank]
-	// 		fmt.Println(fStr, rStr)
-	// 	}
-
-	// }
-
-	fmt.Println(valid)
+	for _, slope := range slopes {
+		yChange := slope[0]
+		xChange := slope[1]
+		for i := 0; i < 8; i++ {
+			coords := GetCoordsBySlopeAndDistance(currCoord, yChange, xChange, i)
+			valid = append(valid, coords...)
+		}
+	}
 
 	return valid
 }
