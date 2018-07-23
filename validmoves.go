@@ -311,7 +311,7 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 	case Pawn:
 		return getValidMovesPawn(playerColor, boardState, coord)
 	case King:
-		return getValidMovesKing(boardState, coord)
+		return getValidMovesKing(playerColor, boardState, coord)
 	case Knight:
 		return getValidMovesKnight(playerColor, boardState, coord)
 	case Rook:
@@ -371,11 +371,16 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 	return valid
 }
 
-func getValidMovesKing(boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesKing(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+	opposite := GetOppositeColor(playerColor)
 	valid := []Coord{}
 
 	coords := GetCoordsBySlopeAndDistanceAll(currCoord, 1)
-	valid = append(valid, coords...)
+	for _, coord := range coords {
+		if !isOccupied(boardState, coord) || isOccupiedByColor(boardState, coord, opposite) {
+			valid = append(valid, coord)
+		}
+	}
 
 	return valid
 }
