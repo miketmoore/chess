@@ -1,5 +1,7 @@
 package chess
 
+import "fmt"
+
 func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank) bool {
 
 	if playerColor == PlayerWhite {
@@ -301,6 +303,8 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 		return canKnightMove(boardState, coord)
 	case Rook:
 		return canRookMove(boardState, coord)
+	case Bishop:
+		return getValidMovesForBishop(boardState, coord)
 	}
 	return []Coord{}
 }
@@ -454,6 +458,64 @@ func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceM
 	return Coord{}, false
 }
 
+func getValidMovesForBishop(boardState BoardState, currCoord Coord) []Coord {
+	fmt.Println("bishop moves")
+	rank, file := currCoord.GetRankFile()
+
+	valid := []Coord{}
+
+	// NorthEast
+
+	ranks := append([]Rank{rank}, GetNextRanks(rank)...)
+
+	/*
+		   -  e3	north 1, east 1 (from d2)
+		-  d2		north 1, east 1 (from c1)
+		c1			start
+	*/
+
+	for i, r := range ranks {
+		coordA, _ := GetRelativeCoord(r, file, North, 1)
+		coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, East, i+1)
+		if coordB.Rank != 0 {
+			valid = append(valid, coordB)
+			fStr := fileByFileView[coordB.File]
+			rStr := rankByRankView[coordB.Rank]
+			fmt.Println(fStr, rStr)
+		}
+
+	}
+
+	for i, r := range ranks {
+		coordA, _ := GetRelativeCoord(r, file, North, 1)
+		coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, West, i+1)
+		if coordB.Rank != 0 {
+			valid = append(valid, coordB)
+			fStr := fileByFileView[coordB.File]
+			rStr := rankByRankView[coordB.Rank]
+			fmt.Println(fStr, rStr)
+		}
+	}
+
+	ranks = append([]Rank{rank}, GetPreviousRanks(rank)...)
+
+	for i, r := range ranks {
+		coordA, _ := GetRelativeCoord(r, file, South, 1)
+		coordB, _ := GetRelativeCoord(coordA.Rank, coordA.File, East, i+1)
+		if coordB.Rank != 0 {
+			valid = append(valid, coordB)
+			fStr := fileByFileView[coordB.File]
+			rStr := rankByRankView[coordB.Rank]
+			fmt.Println(fStr, rStr)
+		}
+
+	}
+
+	fmt.Println(valid)
+
+	return valid
+}
+
 // GetNextRanks gets the series of ranksOrder after
 func GetNextRanks(rank Rank) []Rank {
 	resp := []Rank{}
@@ -463,6 +525,22 @@ func GetNextRanks(rank Rank) []Rank {
 			collect = true
 		} else if collect {
 			resp = append(resp, r)
+		}
+	}
+	return resp
+}
+
+// GetPreviousRanks gets the seris of ranks before
+func GetPreviousRanks(rank Rank) []Rank {
+	resp := []Rank{}
+	collect := true
+	for _, r := range ranksOrder {
+		if collect {
+			if r != rank {
+				resp = append(resp, r)
+			} else {
+				collect = false
+			}
 		}
 	}
 	return resp
