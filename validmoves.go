@@ -317,24 +317,32 @@ func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord
 	// build hash of valid board destinations
 	valid := []Coord{}
 
-	direction := North
+	// direction := North
+	// if playerColor == PlayerBlack {
+	// 	direction = South
+	// }
+	yChange := 1
 	if playerColor == PlayerBlack {
-		direction = South
+		yChange = -1
 	}
+
+	// get two spaces north
+	coords := GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 1)
+	valid = append(valid, coords...)
 
 	// is one space ahead vacant?
-	if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 1); ok {
-		valid = append(valid, coord)
-	}
+	// if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 1); ok {
+	// 	valid = append(valid, coord)
+	// }
 
-	if isCoordStartPosition(playerColor, Pawn, currCoord.Rank) {
+	// if isCoordStartPosition(playerColor, Pawn, currCoord.Rank) {
 
-		// is two spaces ahead vacant?
-		if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 2); ok {
-			valid = append(valid, coord)
-		}
+	// 	// is two spaces ahead vacant?
+	// 	if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 2); ok {
+	// 		valid = append(valid, coord)
+	// 	}
 
-	}
+	// }
 
 	// pawn attack moves
 	if playerColor == PlayerWhite {
@@ -456,55 +464,6 @@ func checkKnightMove(boardState BoardState, rank Rank, file File, moves []pieceM
 		return coord, true
 	}
 	return Coord{}, false
-}
-
-/*
-	(x,y)
-	7
-	6
-	5
-	4
-	3
-	2
-	1  0,1  1,1  2,1  3,1  4,1  5,1  6,1  7,1
-	0  0,0  1,0  2,0  3,0  4,0  5,0  6,0  7,0
-	   0    1    2    3    4    5    6    7
-*/
-func TranslateRankFileToXY(coord Coord) (int, int) {
-	y := int(coord.Rank) - 1
-	x := int(coord.File) - 1
-	return x, y
-}
-
-func TranslateXYToRankFile(x, y int) Coord {
-	file := File(x + 1)
-	rank := Rank(y + 1)
-	return NewCoord(file, rank)
-}
-
-func GetCoordsBySlope(start Coord, xChange, yChange int) []Coord {
-	fmt.Println(yChange, xChange)
-	coords := []Coord{}
-	x, y := TranslateRankFileToXY(start)
-	fmt.Println("translated x,y: ", x, y)
-	x++
-	y++
-	for x <= 7 && y <= 7 {
-		fmt.Println("LOOP")
-		coord := TranslateXYToRankFile(x, y)
-		_, ok := validCoords[coord]
-		if ok {
-			// fmt.Printf("translated coord: %+v\n", coord)
-			coords = append(coords, coord)
-
-		}
-		// fmt.Println("x...", x, xChange)
-		// fmt.Println("y...", y, yChange)
-		x += xChange
-		y += yChange
-		fmt.Println("x,y: ", x, y)
-	}
-	return coords
 }
 
 func getValidMovesForBishop(boardState BoardState, currCoord Coord) []Coord {
