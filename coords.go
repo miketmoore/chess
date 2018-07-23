@@ -60,7 +60,7 @@ func GetCoordsBySlopeAndDistance(start Coord, yChange, xChange, distance int) []
 	d := 0
 	if yChange == 1 && xChange == 0 {
 		y++
-		for d <= distance && y < 8 {
+		for d < distance && y < 8 {
 			coord := TranslateXYToRankFile(x, y)
 			_, ok := validCoords[coord]
 			if ok {
@@ -71,13 +71,39 @@ func GetCoordsBySlopeAndDistance(start Coord, yChange, xChange, distance int) []
 		}
 	} else if yChange == -1 && xChange == 0 {
 		y--
-		for d <= distance && y >= 0 {
+		for d < distance && y >= 0 {
 			coord := TranslateXYToRankFile(x, y)
 			_, ok := validCoords[coord]
 			if ok {
 				coords = append(coords, coord)
 			}
 			y--
+			d++
+		}
+	} else if yChange == 1 && xChange == 1 {
+		y++
+		x++
+		for d < distance && y < 8 && x < 8 {
+			coord := TranslateXYToRankFile(x, y)
+			_, ok := validCoords[coord]
+			if ok {
+				coords = append(coords, coord)
+			}
+			y++
+			x++
+			d++
+		}
+	} else if yChange == 1 && xChange == -1 {
+		y++
+		x--
+		for d < distance && y < 8 && x > 0 {
+			coord := TranslateXYToRankFile(x, y)
+			_, ok := validCoords[coord]
+			if ok {
+				coords = append(coords, coord)
+			}
+			y++
+			x--
 			d++
 		}
 	}

@@ -317,51 +317,24 @@ func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord
 	// build hash of valid board destinations
 	valid := []Coord{}
 
-	// direction := North
-	// if playerColor == PlayerBlack {
-	// 	direction = South
-	// }
 	yChange := 1
 	if playerColor == PlayerBlack {
 		yChange = -1
 	}
 
 	// get two spaces north
-	coords := GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 1)
+	coords := GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 2)
 	valid = append(valid, coords...)
-
-	// is one space ahead vacant?
-	// if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 1); ok {
-	// 	valid = append(valid, coord)
-	// }
-
-	// if isCoordStartPosition(playerColor, Pawn, currCoord.Rank) {
-
-	// 	// is two spaces ahead vacant?
-	// 	if coord, ok, _ := IsRelCoordValid(boardState, rank, file, direction, 2); ok {
-	// 		valid = append(valid, coord)
-	// 	}
-
-	// }
 
 	// pawn attack moves
 	if playerColor == PlayerWhite {
-		// is NW occupied by the enemy? if so, it is a valid move
-		if coord, ok := GetRelativeCoord(rank, file, NorthWest, 1); ok {
-			if occupant, isOccupied := boardState[coord]; isOccupied {
-				if occupant.Color == PlayerBlack {
-					valid = append(valid, coord)
-				}
-			}
-		}
-		// // is NE occupied by the enemy? if so, it is a valid move
-		if coord, ok := GetRelativeCoord(rank, file, NorthEast, 1); ok {
-			if occupant, isOccupied := boardState[coord]; isOccupied {
-				if occupant.Color == PlayerBlack {
-					valid = append(valid, coord)
-				}
-			}
-		}
+		// NW
+		coords := GetCoordsBySlopeAndDistance(currCoord, 1, 1, 1)
+		valid = append(valid, coords...)
+
+		// NE
+		coords = GetCoordsBySlopeAndDistance(currCoord, 1, -1, 1)
+		valid = append(valid, coords...)
 	} else {
 		// is SW occupied by the enemy? if so, it is a valid move
 		if coord, ok := GetRelativeCoord(rank, file, SouthWest, 1); ok {
