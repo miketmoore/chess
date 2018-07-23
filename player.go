@@ -9,3 +9,10 @@ const (
 	// PlayerBlack represents the black player
 	PlayerBlack PlayerColor = "black"
 )
+
+func GetOppositeColor(color PlayerColor) PlayerColor {
+	if color == PlayerWhite {
+		return PlayerBlack
+	}
+	return PlayerWhite
+}
