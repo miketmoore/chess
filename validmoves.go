@@ -477,34 +477,37 @@ func TranslateRankFileToXY(coord Coord) (int, int) {
 }
 
 func TranslateXYToRankFile(x, y int) Coord {
-	fmt.Println("a: ", x, y)
-	fmt.Println("b: ", x+1, y+1)
-	fmt.Println("c: ", File(x+1), Rank(y+1))
 	file := File(x + 1)
 	rank := Rank(y + 1)
 	return NewCoord(file, rank)
 }
 
-func getCoordsBySlope(start Coord, yChange, xChange int) []Coord {
+func GetCoordsBySlope(start Coord, xChange, yChange int) []Coord {
+	fmt.Println(yChange, xChange)
 	coords := []Coord{}
 	x, y := TranslateRankFileToXY(start)
-	fmt.Println(x, y)
-	for x < 8 && y < 7 {
+	fmt.Println("translated x,y: ", x, y)
+	x++
+	y++
+	for x <= 7 && y <= 7 {
+		fmt.Println("LOOP")
 		coord := TranslateXYToRankFile(x, y)
 		_, ok := validCoords[coord]
 		if ok {
-			fmt.Printf("translated coord: %+v\n", coord)
+			// fmt.Printf("translated coord: %+v\n", coord)
 			coords = append(coords, coord)
 
 		}
+		// fmt.Println("x...", x, xChange)
+		// fmt.Println("y...", y, yChange)
 		x += xChange
 		y += yChange
+		fmt.Println("x,y: ", x, y)
 	}
 	return coords
 }
 
 func getValidMovesForBishop(boardState BoardState, currCoord Coord) []Coord {
-	fmt.Println("bishop moves")
 	// rank, file := currCoord.GetRankFile()
 
 	valid := []Coord{}
@@ -513,7 +516,7 @@ func getValidMovesForBishop(boardState BoardState, currCoord Coord) []Coord {
 	// follow slope from current coordinate
 	// x, y := TranslateRankFileToXY(currCoord)
 	// fmt.Println(">>> ", x, y)
-	valid = append(valid, getCoordsBySlope(currCoord, 1, 1)...)
+	valid = append(valid, GetCoordsBySlope(currCoord, 1, 1)...)
 	// valid = append(valid, getCoordsBySlope(currCoord, 1, -1)...)
 	// valid = append(valid, getCoordsBySlope(currCoord, -1, 1)...)
 	// valid = append(valid, getCoordsBySlope(currCoord, -1, -1)...)
