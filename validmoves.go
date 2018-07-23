@@ -1,5 +1,7 @@
 package chess
 
+import "fmt"
+
 func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank) bool {
 
 	if playerColor == PlayerWhite {
@@ -328,27 +330,42 @@ func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord
 		yChange = -1
 	}
 
-	// get two spaces north
+	// get two spaces north or south
 	coords := GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 2)
-	valid = append(valid, coords...)
+	fmt.Println("coords north/south: ", coords)
+	// valid if not occupied
+	if !isOccupied(boardState, coords[0]) {
+		valid = append(valid, coords[0])
+		if !isOccupied(boardState, coords[1]) {
+			valid = append(valid, coords[1])
+		}
+	}
 
 	// pawn attack moves
 	if playerColor == PlayerWhite {
 		// NW
-		coords := GetCoordsBySlopeAndDistance(currCoord, 1, 1, 1)
-		valid = append(valid, coords...)
+		coord := GetCoordsBySlopeAndDistance(currCoord, 1, 1, 1)[0]
+		if isOccupiedByColor(boardState, coord, PlayerBlack) {
+			valid = append(valid, coord)
+		}
 
 		// NE
-		coords = GetCoordsBySlopeAndDistance(currCoord, 1, -1, 1)
-		valid = append(valid, coords...)
+		coord = GetCoordsBySlopeAndDistance(currCoord, 1, -1, 1)[0]
+		if isOccupiedByColor(boardState, coord, PlayerBlack) {
+			valid = append(valid, coord)
+		}
 	} else {
-		// is SW occupied by the enemy? if so, it is a valid move
-		coords := GetCoordsBySlopeAndDistance(currCoord, -1, -1, 1)
-		valid = append(valid, coords...)
+		// SW
+		coord := GetCoordsBySlopeAndDistance(currCoord, -1, -1, 1)[0]
+		if isOccupiedByColor(boardState, coord, PlayerWhite) {
+			valid = append(valid, coord)
+		}
 
-		// is SE occupied by the enemy? if so, it is a valid move
-		coords = GetCoordsBySlopeAndDistance(currCoord, -1, 1, 1)
-		valid = append(valid, coords...)
+		// SE
+		coord = GetCoordsBySlopeAndDistance(currCoord, -1, 1, 1)[0]
+		if isOccupiedByColor(boardState, coord, PlayerWhite) {
+			valid = append(valid, coord)
+		}
 	}
 
 	return valid

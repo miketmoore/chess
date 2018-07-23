@@ -96,3 +96,13 @@ func GetCoordsBySlopeAndDistanceAll(start Coord, distance int) []Coord {
 
 	return coords
 }
+
+func isOccupied(boardState BoardState, coord Coord) bool {
+	_, isOccupied := boardState[coord]
+	return isOccupied
+}
+
+func isOccupiedByColor(boardState BoardState, coord Coord, color PlayerColor) bool {
+	occupant, occupied := boardState[coord]
+	return occupied && occupant.Color == color
+}
