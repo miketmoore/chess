@@ -309,20 +309,20 @@ func GetRelativeCoord(rank Rank, file File, direction Direction, distance int) (
 func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, coord Coord) []Coord {
 	switch piece {
 	case Pawn:
-		return canPawnMove(playerColor, boardState, coord)
+		return getValidMovesPawn(playerColor, boardState, coord)
 	case King:
-		return canKingMove(boardState, coord)
+		return getValidMovesKing(boardState, coord)
 	case Knight:
-		return canKnightMove(boardState, coord)
+		return getValidMovesKnight(boardState, coord)
 	case Rook:
-		return canRookMove(boardState, coord)
+		return getValidMovesRook(boardState, coord)
 	case Bishop:
 		return getValidMovesForBishop(boardState, coord)
 	}
 	return []Coord{}
 }
 
-func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
 	valid := []Coord{}
 
 	yChange := 1
@@ -371,7 +371,7 @@ func canPawnMove(playerColor PlayerColor, boardState BoardState, currCoord Coord
 	return valid
 }
 
-func canKingMove(boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesKing(boardState BoardState, currCoord Coord) []Coord {
 	valid := []Coord{}
 
 	coords := GetCoordsBySlopeAndDistanceAll(currCoord, 1)
@@ -380,7 +380,7 @@ func canKingMove(boardState BoardState, currCoord Coord) []Coord {
 	return valid
 }
 
-func canRookMove(boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesRook(boardState BoardState, currCoord Coord) []Coord {
 	valid := []Coord{}
 
 	slopes := []DirectionSlope{
@@ -402,19 +402,7 @@ func canRookMove(boardState BoardState, currCoord Coord) []Coord {
 	return valid
 }
 
-type pieceMove struct {
-	Direction Direction
-	Distance  int
-}
-
-func newMove(direction Direction, distance int) pieceMove {
-	return pieceMove{
-		direction,
-		distance,
-	}
-}
-
-func canKnightMove(boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesKnight(boardState BoardState, currCoord Coord) []Coord {
 
 	valid := []Coord{}
 
