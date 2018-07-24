@@ -214,26 +214,6 @@ var validCoords = map[Coord]bool{
 	Coord{Rank8, FileH}: true,
 }
 
-// GetPreviousFile gets the previous file as a string
-func GetPreviousFile(file File) (File, bool) {
-	for i, f := range FilesOrder {
-		if f == file && i-1 >= 0 {
-			return FilesOrder[i-1], true
-		}
-	}
-	return FileNone, false
-}
-
-// GetNextFile gets the next file as a string
-func GetNextFile(file File) (File, bool) {
-	for i, f := range FilesOrder {
-		if f == file && len(FilesOrder) > i+1 {
-			return FilesOrder[i+1], true
-		}
-	}
-	return FileNone, false
-}
-
 // GetValidMoves returns a list of valid coordinates the piece can be moved to
 func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, coord Coord) []Coord {
 	switch piece {
