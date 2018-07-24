@@ -26,31 +26,6 @@ func TranslateXYToRankFile(x, y int) Coord {
 	return NewCoord(file, rank)
 }
 
-func GetCoordsBySlope(start Coord, xChange, yChange int) []Coord {
-	fmt.Println(yChange, xChange)
-	coords := []Coord{}
-	x, y := TranslateRankFileToXY(start)
-	fmt.Println("translated x,y: ", x, y)
-	x++
-	y++
-	for x <= 7 && y <= 7 {
-		fmt.Println("LOOP")
-		coord := TranslateXYToRankFile(x, y)
-		_, ok := validCoords[coord]
-		if ok {
-			// fmt.Printf("translated coord: %+v\n", coord)
-			coords = append(coords, coord)
-
-		}
-		// fmt.Println("x...", x, xChange)
-		// fmt.Println("y...", y, yChange)
-		x += xChange
-		y += yChange
-		fmt.Println("x,y: ", x, y)
-	}
-	return coords
-}
-
 // GetCoordsBySlopeAndDistance gets a list of coordinates (rank,file)
 func GetCoordsBySlopeAndDistance(start Coord, yChange, xChange, distance int) []Coord {
 	x, y := TranslateRankFileToXY(start)
