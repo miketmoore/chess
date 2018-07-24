@@ -37,3 +37,5 @@ You can [download the latest published binary](https://miketmoore.itch.io/chess)
 ## 🎨 Custom Game Art - Work in Progress
 
 I am drawing a set of chess pieces for this game. You can follow my progress on [Flickr](https://www.flickr.com/photos/miketmoore/albums/72157693792363695).
+
+<img src="assets/screenshots/chess-custom-art-in-progress.png" width="500">
