@@ -244,7 +244,7 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 	coords := GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 2)
 	if !isOccupied(boardState, coords[0]) {
 		valid = append(valid, coords[0])
-		if !isOccupied(boardState, coords[1]) {
+		if isCoordStartPosition(playerColor, Pawn, currCoord.Rank) && !isOccupied(boardState, coords[1]) {
 			valid = append(valid, coords[1])
 		}
 	}
