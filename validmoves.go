@@ -280,12 +280,12 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 }
 
 func getValidMovesKing(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
-	opposite := GetOppositeColor(playerColor)
+	enemyColor := GetOppositeColor(playerColor)
 	valid := []Coord{}
 
 	coords := GetCoordsBySlopeAndDistanceAll(currCoord, 1)
 	for _, coord := range coords {
-		if !isOccupied(boardState, coord) || isOccupiedByColor(boardState, coord, opposite) {
+		if !isOccupied(boardState, coord) || isOccupiedByColor(boardState, coord, enemyColor) {
 			valid = append(valid, coord)
 		}
 	}
@@ -294,7 +294,7 @@ func getValidMovesKing(playerColor PlayerColor, boardState BoardState, currCoord
 }
 
 func getValidMovesRook(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
-	opposite := GetOppositeColor(playerColor)
+	enemyColor := GetOppositeColor(playerColor)
 	valid := []Coord{}
 
 	slopes := []DirectionSlope{
@@ -312,7 +312,7 @@ func getValidMovesRook(playerColor PlayerColor, boardState BoardState, currCoord
 			for _, coord := range coords {
 				if !isOccupied(boardState, coord) {
 					valid = append(valid, coord)
-				} else if isOccupiedByColor(boardState, coord, opposite) {
+				} else if isOccupiedByColor(boardState, coord, enemyColor) {
 					valid = append(valid, coord)
 					break
 				} else {
@@ -354,7 +354,7 @@ func getValidMovesKnight(playerColor PlayerColor, boardState BoardState, currCoo
 }
 
 func getValidMovesForBishop(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
-	opposite := GetOppositeColor(playerColor)
+	enemyColor := GetOppositeColor(playerColor)
 	valid := []Coord{}
 
 	slopes := []DirectionSlope{
@@ -372,7 +372,7 @@ func getValidMovesForBishop(playerColor PlayerColor, boardState BoardState, curr
 			for _, coord := range coords {
 				if !isOccupied(boardState, coord) {
 					valid = append(valid, coord)
-				} else if isOccupiedByColor(boardState, coord, opposite) {
+				} else if isOccupiedByColor(boardState, coord, enemyColor) {
 					valid = append(valid, coord)
 					break
 				} else {
