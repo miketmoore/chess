@@ -393,6 +393,7 @@ func getValidMovesForQueen(playerColor PlayerColor, boardState BoardState, currC
 	return valid
 }
 
+// IsDestinationValid checks if the specified color can move to the
 func IsDestinationValid(whitesMove bool, isOccupied bool, occupant OnBoardData) bool {
 	if isOccupied {
 		if whitesMove && occupant.Color == PlayerBlack {

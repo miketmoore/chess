@@ -192,7 +192,7 @@ func run() {
 					if ok {
 						occupant, isOccupied := model.BoardState[coord]
 						isValid := chess.FindInSliceCoord(validDestinations, coord)
-						if isValid && isDestinationValid(model.WhitesMove, isOccupied, occupant) {
+						if isValid && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
 							move(&model, coord)
 							printHistory(model.History)
 						} else {
