@@ -194,6 +194,13 @@ func run() {
 						isValid := chess.FindInSliceCoord(validDestinations, coord)
 						if isValid && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
 							move(&model, coord)
+
+							// check if enemy is in check
+							if isInCheck(model.BoardState, model.CurrentPlayerColor()) {
+								fmt.Println("Check!")
+								model.History[len(model.History)-1].Check = true
+							}
+
 							printHistory(model.History)
 						} else {
 							model.CurrentState = chess.StateSelectPiece
@@ -238,7 +245,7 @@ func main() {
 
 func printHistory(history []chess.HistoryEntry) {
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Player Color", "Piece", "From", "To", "Captured"})
+	table.SetHeader([]string{"Player Color", "Piece", "From", "To", "Captured", "Check"})
 	for _, entry := range history {
 
 		var playerColor = "white"
@@ -252,6 +259,7 @@ func printHistory(history []chess.HistoryEntry) {
 			entry.FromCoordString(),
 			entry.ToCoordString(),
 			string(entry.CapturedPiece),
+			fmt.Sprintf("%t", entry.Check),
 		})
 	}
 	table.Render()
@@ -290,4 +298,41 @@ func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer,
 
 		chess.DrawPiece(win, squares, piece, coord)
 	}
+}
+
+func isInCheck(boardState chess.BoardState, playerColor chess.PlayerColor) bool {
+	enemyColor := chess.GetOppositeColor(playerColor)
+
+	// for each piece of the playerColor that is still in player
+	// if it is threatening the king, this is check
+
+	kingCoord, ok := findKingCoord(boardState, enemyColor)
+	if !ok {
+		fmt.Println("could not find the king")
+	}
+
+	for coord, pieceData := range boardState {
+		if pieceData.Piece != chess.King {
+			fmt.Printf("checking if %s is putting the king in check\n", pieceData.Piece)
+
+			moves := chess.GetValidMoves(playerColor, pieceData.Piece, boardState, coord)
+			for _, move := range moves {
+				// if any of these moves is where the king is, then it is in check
+				if move.Rank == kingCoord.Rank && move.File == kingCoord.File {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
+}
+
+func findKingCoord(boardState chess.BoardState, playerColor chess.PlayerColor) (chess.Coord, bool) {
+	for coord, pieceData := range boardState {
+		if pieceData.Piece == chess.King && pieceData.Color == playerColor {
+			return coord, true
+		}
+	}
+	return chess.Coord{}, false
 }

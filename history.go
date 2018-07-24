@@ -9,6 +9,7 @@ type HistoryEntry struct {
 	FromCoord     Coord
 	ToCoord       Coord
 	CapturedPiece Piece
+	Check         bool
 }
 
 // FromCoordString returns the Coord entry as a string
