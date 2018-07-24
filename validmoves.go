@@ -392,3 +392,16 @@ func getValidMovesForQueen(playerColor PlayerColor, boardState BoardState, currC
 	valid = append(valid, horizontals...)
 	return valid
 }
+
+func IsDestinationValid(whitesMove bool, isOccupied bool, occupant OnBoardData) bool {
+	if isOccupied {
+		if whitesMove && occupant.Color == PlayerBlack {
+			return true
+		} else if !whitesMove && occupant.Color == PlayerWhite {
+			return true
+		}
+	} else {
+		return true
+	}
+	return false
+}

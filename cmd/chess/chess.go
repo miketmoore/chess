@@ -207,19 +207,6 @@ func run() {
 	}
 }
 
-func isDestinationValid(whitesMove bool, isOccupied bool, occupant chess.OnBoardData) bool {
-	if isOccupied {
-		if whitesMove && occupant.Color == chess.PlayerBlack {
-			return true
-		} else if !whitesMove && occupant.Color == chess.PlayerWhite {
-			return true
-		}
-	} else {
-		return true
-	}
-	return false
-}
-
 func move(model *chess.Model, destCoord chess.Coord) {
 	model.CurrentState = chess.StateDraw
 	model.Draw = true
