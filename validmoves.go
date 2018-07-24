@@ -20,17 +20,17 @@ func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank) bool 
 }
 
 // Direction is a custom type used to describe a direction from a square on the board
-type Direction string
+type Direction int
 
 const (
-	North     Direction = "north"
-	NorthWest Direction = "northwest"
-	NorthEast Direction = "northeast"
-	South     Direction = "south"
-	SouthWest Direction = "southwest"
-	SouthEast Direction = "southeast"
-	East      Direction = "east"
-	West      Direction = "west"
+	North Direction = iota
+	NorthWest
+	NorthEast
+	South
+	SouthWest
+	SouthEast
+	East
+	West
 )
 
 type DirectionSlope []int
