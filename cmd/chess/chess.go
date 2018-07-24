@@ -10,7 +10,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/miketmoore/chess"
-	"github.com/miketmoore/zelduh"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/olekukonko/tablewriter"
 	"golang.org/x/image/colornames"
@@ -22,7 +21,7 @@ const screenH = 600
 const squareSize float64 = 50
 const displayFontPath = "assets/kenney_fontpackage/Fonts/Kenney Future Narrow.ttf"
 const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
-const translationFile = "i18n/chess/en-US.all.json"
+const translationFile = "i18n/en.toml"
 const lang = "en-US"
 
 func run() {
@@ -30,7 +29,7 @@ func run() {
 	bundle := &i18n.Bundle{DefaultLanguage: language.English}
 
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
-	bundle.MustLoadMessageFile(zelduh.TranslationFile)
+	bundle.MustLoadMessageFile(translationFile)
 
 	localizer := i18n.NewLocalizer(bundle, "en")
 
