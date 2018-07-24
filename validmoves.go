@@ -1,7 +1,5 @@
 package chess
 
-import "fmt"
-
 func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank) bool {
 
 	if playerColor == PlayerWhite {
@@ -243,7 +241,6 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 
 	// get two spaces north or south
 	coords := GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 2)
-	fmt.Println("coords north/south: ", coords)
 	if !isOccupied(boardState, coords[0]) {
 		valid = append(valid, coords[0])
 		if !isOccupied(boardState, coords[1]) {
