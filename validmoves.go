@@ -232,6 +232,7 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 }
 
 func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+	enemyColor := GetOppositeColor(playerColor)
 	valid := []Coord{}
 
 	yChange := 1
@@ -252,25 +253,25 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 	if playerColor == PlayerWhite {
 		// NW
 		coord, ok := GetCoordBySlopeAndDistance(currCoord, 1, 1)
-		if ok && isOccupiedByColor(boardState, coord, PlayerBlack) {
+		if ok && isOccupiedByColor(boardState, coord, enemyColor) {
 			valid = append(valid, coord)
 		}
 
 		// NE
 		coord, ok = GetCoordBySlopeAndDistance(currCoord, 1, -1)
-		if ok && isOccupiedByColor(boardState, coord, PlayerBlack) {
+		if ok && isOccupiedByColor(boardState, coord, enemyColor) {
 			valid = append(valid, coord)
 		}
 	} else {
 		// SW
 		coord, ok := GetCoordBySlopeAndDistance(currCoord, -1, -1)
-		if ok && isOccupiedByColor(boardState, coord, PlayerBlack) {
+		if ok && isOccupiedByColor(boardState, coord, enemyColor) {
 			valid = append(valid, coord)
 		}
 
 		// SE
 		coord, ok = GetCoordBySlopeAndDistance(currCoord, -1, 1)
-		if ok && isOccupiedByColor(boardState, coord, PlayerBlack) {
+		if ok && isOccupiedByColor(boardState, coord, enemyColor) {
 			valid = append(valid, coord)
 		}
 	}
