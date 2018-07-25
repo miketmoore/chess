@@ -19,3 +19,11 @@ func (m *Model) CurrentPlayerColor() PlayerColor {
 	}
 	return PlayerBlack
 }
+
+// EnemyPlayerColor returns the enemy player color
+func (m *Model) EnemyPlayerColor() PlayerColor {
+	if m.WhitesMove {
+		return PlayerBlack
+	}
+	return PlayerWhite
+}

@@ -1,5 +1,9 @@
 package chess
 
+import (
+	"fmt"
+)
+
 func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank) bool {
 
 	if playerColor == PlayerWhite {
@@ -332,4 +336,52 @@ func IsDestinationValid(whitesMove bool, isOccupied bool, occupant OnBoardData) 
 		return true
 	}
 	return false
+}
+
+// IsKingInCheck determines if the king of specified color is in check
+func IsKingInCheck(boardState BoardState, playerColor PlayerColor) (bool, []Piece) {
+
+	// get the specified  player's king coord
+	kingCoord, ok := findKingCoordByColor(boardState, playerColor)
+	if !ok {
+		fmt.Println("could not find the king")
+	}
+
+	enemyColor := GetOppositeColor(playerColor)
+
+	inCheck := false
+	threateningPieces := []Piece{}
+
+	// loop through all pieces
+	for coord, pieceData := range boardState {
+		// check if enemy has king in check
+		if pieceData.Piece != King && pieceData.Color == enemyColor {
+			// fmt.Printf("checking if %s is putting the king in check\n", pieceData.Piece)
+
+			// get valid moves for enemy piece
+			moves := GetValidMoves(enemyColor, pieceData.Piece, boardState, coord)
+
+			// check if any of the moves currently put the king in check
+			for _, move := range moves {
+				// if any of these moves is where the king is, then it is in check
+				if move.Rank == kingCoord.Rank && move.File == kingCoord.File {
+					fmt.Printf("%s has the king in check\n", pieceData.Piece)
+					inCheck = true
+					threateningPieces = append(threateningPieces, pieceData.Piece)
+					break
+				}
+			}
+		}
+	}
+
+	return inCheck, threateningPieces
+}
+
+func findKingCoordByColor(boardState BoardState, playerColor PlayerColor) (Coord, bool) {
+	for coord, pieceData := range boardState {
+		if pieceData.Piece == King && pieceData.Color == playerColor {
+			return coord, true
+		}
+	}
+	return Coord{}, false
 }

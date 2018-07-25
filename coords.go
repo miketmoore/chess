@@ -1,7 +1,5 @@
 package chess
 
-import "fmt"
-
 var validCoords = map[Coord]bool{
 	Coord{Rank1, FileA}: true,
 	Coord{Rank2, FileA}: true,
@@ -101,9 +99,7 @@ func GetCoordsBySlopeAndDistance(start Coord, yChange, xChange, distance int) []
 
 	for d < distance && y < 8 && y >= 0 && x < 8 && x >= 0 {
 		coord := TranslateXYToRankFile(x, y)
-		fmt.Println(x, y)
 		_, ok := validCoords[coord]
-		fmt.Println("OK")
 		if ok {
 			coords = append(coords, coord)
 		}
@@ -126,9 +122,7 @@ func GetCoordBySlopeAndDistance(start Coord, yChange, xChange int) (Coord, bool)
 
 	for d < distance && y < 8 && y >= 0 && x < 8 && x >= 0 {
 		coord := TranslateXYToRankFile(x, y)
-		fmt.Println(x, y)
 		_, ok := validCoords[coord]
-		fmt.Println("OK")
 		if ok {
 			return coord, true
 		}
