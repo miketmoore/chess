@@ -396,39 +396,30 @@ type ThreateningPiece struct {
 }
 
 type InCheckData struct {
-	BlackThreatening, WhiteThreatening []ThreateningPiece
+	BlackThreateningWhite, WhiteThreateningBlack []ThreateningPiece
 }
 
 func GetInCheckData(boardState BoardState) InCheckData {
-
-	data := InCheckData{
-		BlackThreatening: []ThreateningPiece{},
-		WhiteThreatening: []ThreateningPiece{},
+	return InCheckData{
+		BlackThreateningWhite: buildThreateningPieceSlice(boardState, PlayerWhite),
+		WhiteThreateningBlack: buildThreateningPieceSlice(boardState, PlayerBlack),
 	}
+}
 
-	whiteInCheck, blackPiecesThreatening := isKingInCheck(boardState, PlayerWhite)
-	if whiteInCheck {
-		fmt.Printf("White is in check by %d pieces\n", len(blackPiecesThreatening))
-		for _, threateningPiece := range blackPiecesThreatening {
-			fmt.Printf("%s %s is threatening from rank %s file %s\n",
+func buildThreateningPieceSlice(boardState BoardState, color PlayerColor) []ThreateningPiece {
+	data := []ThreateningPiece{}
+	if ok, threateningPieces := isKingInCheck(boardState, color); ok {
+		fmt.Printf("%s is in check by %d %s pieces\n", color, len(threateningPieces), GetOppositeColor(color))
+		for _, threateningPiece := range threateningPieces {
+			fmt.Printf("%s %s is threatening from file %s rank %s\n",
 				threateningPiece.Color,
 				threateningPiece.Piece,
+				fileByFileView[threateningPiece.Coord.File],
 				rankByRankView[threateningPiece.Coord.Rank],
-				fileByFileView[threateningPiece.Coord.File])
-			data.BlackThreatening = append(data.BlackThreatening, threateningPiece)
+			)
+			data = append(data, threateningPiece)
 		}
 		// model.History[len(model.History)-1].Check = true
 	}
-
 	return data
-	// // todo check if enemy is in check
-	// enemyPlayerInCheck, threateningCurrentPieces :=
-	// 	chess.IsKingInCheck(model.BoardState, model.EnemyPlayerColor())
-	// if enemyPlayerInCheck {
-	// 	fmt.Printf("Check - %s is in check by %s (%d pieces)!\n",
-	// 		model.EnemyPlayerColor(),
-	// 		model.CurrentPlayerColor(),
-	// 		len(threateningCurrentPieces))
-	// 	model.History[len(model.History)-1].Check = true
-	// }
 }
