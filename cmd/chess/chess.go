@@ -196,7 +196,16 @@ func run() {
 							move(&model, coord)
 
 							inCheckData := chess.GetInCheckData(model.BoardState)
-							fmt.Println(inCheckData)
+							if inCheckData.InCheck {
+								fmt.Println("Someone is in check!")
+								model.History[len(model.History)-1].Check = true
+								if len(inCheckData.WhiteThreateningBlack) > 0 {
+									fmt.Println("Black is in check by white")
+								}
+								if len(inCheckData.BlackThreateningWhite) > 0 {
+									fmt.Println("White is in check by black")
+								}
+							}
 
 							printHistory(model.History)
 						} else {

@@ -396,14 +396,17 @@ type ThreateningPiece struct {
 }
 
 type InCheckData struct {
+	InCheck                                      bool
 	BlackThreateningWhite, WhiteThreateningBlack []ThreateningPiece
 }
 
 func GetInCheckData(boardState BoardState) InCheckData {
-	return InCheckData{
+	data := InCheckData{
 		BlackThreateningWhite: buildThreateningPieceSlice(boardState, PlayerWhite),
 		WhiteThreateningBlack: buildThreateningPieceSlice(boardState, PlayerBlack),
 	}
+	data.InCheck = len(data.BlackThreateningWhite) > 0 || len(data.WhiteThreateningBlack) > 0
+	return data
 }
 
 func buildThreateningPieceSlice(boardState BoardState, color PlayerColor) []ThreateningPiece {
