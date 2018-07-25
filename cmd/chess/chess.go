@@ -195,27 +195,8 @@ func run() {
 						if isValid && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
 							move(&model, coord)
 
-							// check if current player is in check
-							currentPlayerInCheck, threateningEnemyPieces :=
-								chess.IsKingInCheck(model.BoardState, model.CurrentPlayerColor())
-							if currentPlayerInCheck {
-								fmt.Printf("Check - %s is in check by %s (%d pieces)!\n",
-									model.CurrentPlayerColor(),
-									model.EnemyPlayerColor(),
-									len(threateningEnemyPieces))
-								model.History[len(model.History)-1].Check = true
-							}
-
-							// todo check if enemy is in check
-							enemyPlayerInCheck, threateningCurrentPieces :=
-								chess.IsKingInCheck(model.BoardState, model.EnemyPlayerColor())
-							if enemyPlayerInCheck {
-								fmt.Printf("Check - %s is in check by %s (%d pieces)!\n",
-									model.EnemyPlayerColor(),
-									model.CurrentPlayerColor(),
-									len(threateningCurrentPieces))
-								model.History[len(model.History)-1].Check = true
-							}
+							inCheckData := chess.GetInCheckData(model.BoardState)
+							fmt.Println(inCheckData)
 
 							printHistory(model.History)
 						} else {

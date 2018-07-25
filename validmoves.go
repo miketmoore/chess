@@ -338,8 +338,7 @@ func IsDestinationValid(whitesMove bool, isOccupied bool, occupant OnBoardData) 
 	return false
 }
 
-// IsKingInCheck determines if the king of specified color is in check
-func IsKingInCheck(boardState BoardState, playerColor PlayerColor) (bool, []Piece) {
+func isKingInCheck(boardState BoardState, playerColor PlayerColor) (bool, []ThreateningPiece) {
 
 	// get the specified  player's king coord
 	kingCoord, ok := findKingCoordByColor(boardState, playerColor)
@@ -350,7 +349,7 @@ func IsKingInCheck(boardState BoardState, playerColor PlayerColor) (bool, []Piec
 	enemyColor := GetOppositeColor(playerColor)
 
 	inCheck := false
-	threateningPieces := []Piece{}
+	threateningPieces := []ThreateningPiece{}
 
 	// loop through all pieces
 	for coord, pieceData := range boardState {
@@ -367,7 +366,11 @@ func IsKingInCheck(boardState BoardState, playerColor PlayerColor) (bool, []Piec
 				if move.Rank == kingCoord.Rank && move.File == kingCoord.File {
 					fmt.Printf("%s has the king in check\n", pieceData.Piece)
 					inCheck = true
-					threateningPieces = append(threateningPieces, pieceData.Piece)
+					threateningPieces = append(threateningPieces, ThreateningPiece{
+						Color: pieceData.Color,
+						Piece: pieceData.Piece,
+						Coord: coord,
+					})
 					break
 				}
 			}
@@ -384,4 +387,48 @@ func findKingCoordByColor(boardState BoardState, playerColor PlayerColor) (Coord
 		}
 	}
 	return Coord{}, false
+}
+
+type ThreateningPiece struct {
+	Color PlayerColor
+	Piece Piece
+	Coord Coord
+}
+
+type InCheckData struct {
+	BlackThreatening, WhiteThreatening []ThreateningPiece
+}
+
+func GetInCheckData(boardState BoardState) InCheckData {
+
+	data := InCheckData{
+		BlackThreatening: []ThreateningPiece{},
+		WhiteThreatening: []ThreateningPiece{},
+	}
+
+	whiteInCheck, blackPiecesThreatening := isKingInCheck(boardState, PlayerWhite)
+	if whiteInCheck {
+		fmt.Printf("White is in check by %d pieces\n", len(blackPiecesThreatening))
+		for _, threateningPiece := range blackPiecesThreatening {
+			fmt.Printf("%s %s is threatening from rank %s file %s\n",
+				threateningPiece.Color,
+				threateningPiece.Piece,
+				rankByRankView[threateningPiece.Coord.Rank],
+				fileByFileView[threateningPiece.Coord.File])
+			data.BlackThreatening = append(data.BlackThreatening, threateningPiece)
+		}
+		// model.History[len(model.History)-1].Check = true
+	}
+
+	return data
+	// // todo check if enemy is in check
+	// enemyPlayerInCheck, threateningCurrentPieces :=
+	// 	chess.IsKingInCheck(model.BoardState, model.EnemyPlayerColor())
+	// if enemyPlayerInCheck {
+	// 	fmt.Printf("Check - %s is in check by %s (%d pieces)!\n",
+	// 		model.EnemyPlayerColor(),
+	// 		model.CurrentPlayerColor(),
+	// 		len(threateningCurrentPieces))
+	// 	model.History[len(model.History)-1].Check = true
+	// }
 }
