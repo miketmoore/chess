@@ -113,7 +113,8 @@ func run() {
 	for !win.Closed() {
 
 		if win.JustPressed(pixelgl.KeyQ) {
-			printHistory(model.History)
+			// printHistory(model.History)
+			printPGN(model.History)
 			os.Exit(0)
 		}
 
@@ -207,7 +208,7 @@ func run() {
 								}
 							}
 
-							printHistory(model.History)
+							// printHistory(model.History)
 							printPGN(model.History)
 						} else {
 							model.CurrentState = chess.StateSelectPiece
