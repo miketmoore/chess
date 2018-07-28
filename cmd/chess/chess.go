@@ -208,6 +208,7 @@ func run() {
 							}
 
 							printHistory(model.History)
+							printPGN(model.History)
 						} else {
 							model.CurrentState = chess.StateSelectPiece
 						}
@@ -269,6 +270,10 @@ func printHistory(history []chess.HistoryEntry) {
 		})
 	}
 	table.Render()
+}
+
+func printPGN(history []chess.HistoryEntry) {
+	fmt.Println(chess.HistoryToPGN(history))
 }
 
 func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer, squares chess.BoardMap) {
