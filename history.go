@@ -4,12 +4,17 @@ import "fmt"
 
 // HistoryEntry represents one log of game history
 type HistoryEntry struct {
-	WhitesMove    bool
-	Piece         Piece
-	FromCoord     Coord
-	ToCoord       Coord
-	CapturedPiece Piece
-	Check         bool
+	WhitesMove      bool
+	Piece           Piece
+	FromCoord       Coord
+	ToCoord         Coord
+	CapturedPiece   Piece
+	Check           bool
+	Checkmate       bool
+	KingsideCastle  bool
+	QueensideCastle bool
+	Promotion       bool
+	PromotedPiece   Piece
 }
 
 // FromCoordString returns the Coord entry as a string

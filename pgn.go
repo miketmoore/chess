@@ -29,33 +29,54 @@ check move: add + as suffix
 checkmate move: add # as suffix
 */
 
+func pieceToPGNPiece(pgn *string, piece Piece) {
+	switch piece {
+	case Knight:
+		*pgn += "N"
+	case King:
+		*pgn += "K"
+	case Queen:
+		*pgn += "Q"
+	case Rook:
+		*pgn += "R"
+	case Bishop:
+		*pgn += "B"
+	}
+}
+
 func HistoryToPGN(history []HistoryEntry) string {
 	pgn := ""
 	white := true
 	i := 1
-	for _, entry := range history {
+	for j, entry := range history {
 		if white {
 			pgn += fmt.Sprintf("%d. ", i)
 		} else {
 			i++
 		}
-		switch entry.Piece {
-		case Knight:
-			pgn += "N"
-		case King:
-			pgn += "K"
-		case Queen:
-			pgn += "Q"
-		case Rook:
-			pgn += "R"
-		case Bishop:
-			pgn += "B"
+		if entry.KingsideCastle {
+			pgn += "O-O"
+		} else if entry.QueensideCastle {
+			pgn += "O-O-O"
+		} else {
+			pieceToPGNPiece(&pgn, entry.Piece)
+
+			pgn += fmt.Sprintf("%s%s", fileByFileView[entry.ToCoord.File], rankByRankView[entry.ToCoord.Rank])
+			if entry.Check {
+				pgn += "+"
+			} else if entry.Checkmate {
+				pgn += "#"
+				break
+			}
+			if entry.Promotion {
+				pgn += "="
+				pieceToPGNPiece(&pgn, entry.PromotedPiece)
+			}
 		}
-		pgn += fmt.Sprintf("%s%s", fileByFileView[entry.ToCoord.File], rankByRankView[entry.ToCoord.Rank])
-		if entry.Check {
-			pgn += "+"
+		if j < len(history)-1 {
+			pgn += " "
 		}
-		pgn += " "
+
 		white = !white
 	}
 	return pgn
