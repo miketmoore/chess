@@ -79,7 +79,7 @@ const (
 var ranksOrder = []Rank{Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8}
 var FilesOrder = []File{FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH}
 
-var rankByRankView = map[Rank]string{
+var rankToRankView = map[Rank]string{
 	Rank1: "1",
 	Rank2: "2",
 	Rank3: "3",
@@ -90,7 +90,7 @@ var rankByRankView = map[Rank]string{
 	Rank8: "8",
 }
 
-var fileByFileView = map[File]string{
+var fileToFileView = map[File]string{
 	FileA: "a",
 	FileB: "b",
 	FileC: "c",
@@ -99,28 +99,6 @@ var fileByFileView = map[File]string{
 	FileF: "f",
 	FileG: "g",
 	FileH: "h",
-}
-
-var rankViewByRank = map[string]Rank{
-	"1": Rank1,
-	"2": Rank2,
-	"3": Rank3,
-	"4": Rank4,
-	"5": Rank5,
-	"6": Rank6,
-	"7": Rank7,
-	"8": Rank8,
-}
-
-var fileViewByFile = map[string]File{
-	"a": FileA,
-	"b": FileB,
-	"c": FileC,
-	"d": FileD,
-	"e": FileE,
-	"f": FileF,
-	"g": FileG,
-	"h": FileH,
 }
 
 // Coord represents a board square by rank and file
@@ -417,8 +395,8 @@ func buildThreateningPieceSlice(boardState BoardState, color PlayerColor) []Thre
 			fmt.Printf("%s %s is threatening from file %s rank %s\n",
 				threateningPiece.Color,
 				threateningPiece.Piece,
-				fileByFileView[threateningPiece.Coord.File],
-				rankByRankView[threateningPiece.Coord.Rank],
+				fileToFileView[threateningPiece.Coord.File],
+				rankToRankView[threateningPiece.Coord.Rank],
 			)
 			data = append(data, threateningPiece)
 		}

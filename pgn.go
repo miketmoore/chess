@@ -61,7 +61,7 @@ func HistoryToPGN(history []HistoryEntry) string {
 		} else {
 			pieceToPGNPiece(&pgn, entry.Piece)
 
-			pgn += fmt.Sprintf("%s%s", fileByFileView[entry.ToCoord.File], rankByRankView[entry.ToCoord.Rank])
+			pgn += fmt.Sprintf("%s%s", fileToFileView[entry.ToCoord.File], rankToRankView[entry.ToCoord.Rank])
 			if entry.Check {
 				pgn += "+"
 			} else if entry.Checkmate {
