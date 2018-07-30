@@ -193,19 +193,11 @@ func run() {
 						occupant, isOccupied := model.BoardState[coord]
 						isValid := chess.FindInSliceCoord(validDestinations, coord)
 						if isValid && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
+
+							recordPGN(&model, coord)
+
 							move(&model, coord)
 
-							inCheckData := chess.GetInCheckData(model.BoardState)
-							if inCheckData.InCheck {
-								fmt.Println("Someone is in check!")
-								// TODO add check notation to PGN data
-								if len(inCheckData.WhiteThreateningBlack) > 0 {
-									fmt.Println("Black is in check by white")
-								}
-								if len(inCheckData.BlackThreateningWhite) > 0 {
-									fmt.Println("White is in check by black")
-								}
-							}
 							fmt.Println(model.PGN.String())
 						} else {
 							model.CurrentState = chess.StateSelectPiece
@@ -224,21 +216,42 @@ func move(model *chess.Model, destCoord chess.Coord) {
 	model.Draw = true
 	model.MoveDestinationCoord = destCoord
 
-	// _, isCapture := model.BoardState[destCoord]
-
-	if model.WhitesMove {
-		model.PGN.Movetext = append(model.PGN.Movetext, pgn.MovetextEntry{
-			White: fmt.Sprintf("%s%s", chess.FileToFileView[destCoord.File], chess.RankToRankView[destCoord.Rank]),
-		})
-	} else {
-		move := model.PGN.Movetext[len(model.PGN.Movetext)-1]
-		move.Black = fmt.Sprintf("%s%s", chess.FileToFileView[destCoord.File], chess.RankToRankView[destCoord.Rank])
-		model.PGN.Movetext[len(model.PGN.Movetext)-1] = move
-	}
-
 	model.BoardState[destCoord] = model.PieceToMove
 	delete(model.BoardState, model.MoveStartCoord)
+
 	model.WhitesMove = !model.WhitesMove
+}
+
+func recordPGN(model *chess.Model, destCoord chess.Coord) {
+	pieceToMove := model.PieceToMove.Piece
+	startCoord := model.MoveStartCoord
+	_, capture := model.BoardState[destCoord]
+
+	inCheckData := chess.GetInCheckData(
+		model.BoardState,
+		model.CurrentPlayerColor(),
+		pieceToMove,
+		startCoord,
+		destCoord,
+	)
+
+	if model.WhitesMove {
+		model.PGN.RecordWhiteMove(
+			chess.FileToFileView[destCoord.File],
+			chess.RankToRankView[destCoord.Rank],
+			capture,
+			string(pieceToMove),
+			inCheckData.InCheck,
+		)
+	} else {
+		model.PGN.RecordBlackMove(
+			chess.FileToFileView[destCoord.File],
+			chess.RankToRankView[destCoord.Rank],
+			capture,
+			string(pieceToMove),
+			inCheckData.InCheck,
+		)
+	}
 }
 
 func main() {

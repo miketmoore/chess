@@ -378,7 +378,12 @@ type InCheckData struct {
 	BlackThreateningWhite, WhiteThreateningBlack []ThreateningPiece
 }
 
-func GetInCheckData(boardState BoardState) InCheckData {
+func GetInCheckData(boardState BoardState, color PlayerColor, pieceToMove Piece, startCoord, destCoord Coord) InCheckData {
+	delete(boardState, startCoord)
+	boardState[destCoord] = OnBoardData{
+		Piece: pieceToMove,
+		Color: color,
+	}
 	data := InCheckData{
 		BlackThreateningWhite: buildThreateningPieceSlice(boardState, PlayerWhite),
 		WhiteThreateningBlack: buildThreateningPieceSlice(boardState, PlayerBlack),
