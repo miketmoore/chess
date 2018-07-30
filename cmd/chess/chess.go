@@ -10,8 +10,8 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/miketmoore/chess"
+	"github.com/miketmoore/pgn"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/olekukonko/tablewriter"
 	"golang.org/x/image/colornames"
 	"golang.org/x/text/language"
 )
@@ -46,7 +46,7 @@ func run() {
 
 	// Game data
 	model := chess.Model{
-		History:      []chess.HistoryEntry{},
+		PGN:          pgn.PGN{},
 		BoardState:   chess.InitialOnBoardState(),
 		Draw:         true,
 		WhitesMove:   true,
@@ -113,8 +113,7 @@ func run() {
 	for !win.Closed() {
 
 		if win.JustPressed(pixelgl.KeyQ) {
-			// printHistory(model.History)
-			printPGN(model.History)
+			fmt.Println(model.PGN.String())
 			os.Exit(0)
 		}
 
@@ -199,7 +198,7 @@ func run() {
 							inCheckData := chess.GetInCheckData(model.BoardState)
 							if inCheckData.InCheck {
 								fmt.Println("Someone is in check!")
-								model.History[len(model.History)-1].Check = true
+								// TODO add check notation to PGN data
 								if len(inCheckData.WhiteThreateningBlack) > 0 {
 									fmt.Println("Black is in check by white")
 								}
@@ -207,9 +206,7 @@ func run() {
 									fmt.Println("White is in check by black")
 								}
 							}
-
-							// printHistory(model.History)
-							printPGN(model.History)
+							fmt.Println(model.PGN.String())
 						} else {
 							model.CurrentState = chess.StateSelectPiece
 						}
@@ -227,20 +224,17 @@ func move(model *chess.Model, destCoord chess.Coord) {
 	model.Draw = true
 	model.MoveDestinationCoord = destCoord
 
-	entry := chess.HistoryEntry{
-		WhitesMove: model.WhitesMove,
-		Piece:      model.PieceToMove.Piece,
-		FromCoord:  model.MoveStartCoord,
-		ToCoord:    model.MoveDestinationCoord,
-	}
+	// _, isCapture := model.BoardState[destCoord]
 
-	captor, ok := model.BoardState[destCoord]
-	if ok {
-		// record capture
-		entry.CapturedPiece = captor.Piece
+	if model.WhitesMove {
+		model.PGN.Movetext = append(model.PGN.Movetext, pgn.MovetextEntry{
+			White: fmt.Sprintf("%s%s", chess.FileToFileView[destCoord.File], chess.RankToRankView[destCoord.Rank]),
+		})
+	} else {
+		move := model.PGN.Movetext[len(model.PGN.Movetext)-1]
+		move.Black = fmt.Sprintf("%s%s", chess.FileToFileView[destCoord.File], chess.RankToRankView[destCoord.Rank])
+		model.PGN.Movetext[len(model.PGN.Movetext)-1] = move
 	}
-
-	model.History = append(model.History, entry)
 
 	model.BoardState[destCoord] = model.PieceToMove
 	delete(model.BoardState, model.MoveStartCoord)
@@ -249,32 +243,6 @@ func move(model *chess.Model, destCoord chess.Coord) {
 
 func main() {
 	pixelgl.Run(run)
-}
-
-func printHistory(history []chess.HistoryEntry) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Player Color", "Piece", "From", "To", "Captured", "Check"})
-	for _, entry := range history {
-
-		var playerColor = "white"
-		if !entry.WhitesMove {
-			playerColor = "black"
-		}
-
-		table.Append([]string{
-			playerColor,
-			string(entry.Piece),
-			entry.FromCoordString(),
-			entry.ToCoordString(),
-			string(entry.CapturedPiece),
-			fmt.Sprintf("%t", entry.Check),
-		})
-	}
-	table.Render()
-}
-
-func printPGN(history []chess.HistoryEntry) {
-	fmt.Println(chess.HistoryToPGN(history))
 }
 
 func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer, squares chess.BoardMap) {

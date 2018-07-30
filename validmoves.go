@@ -79,7 +79,7 @@ const (
 var ranksOrder = []Rank{Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8}
 var FilesOrder = []File{FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH}
 
-var rankToRankView = map[Rank]string{
+var RankToRankView = map[Rank]string{
 	Rank1: "1",
 	Rank2: "2",
 	Rank3: "3",
@@ -90,7 +90,7 @@ var rankToRankView = map[Rank]string{
 	Rank8: "8",
 }
 
-var fileToFileView = map[File]string{
+var FileToFileView = map[File]string{
 	FileA: "a",
 	FileB: "b",
 	FileC: "c",
@@ -395,12 +395,11 @@ func buildThreateningPieceSlice(boardState BoardState, color PlayerColor) []Thre
 			fmt.Printf("%s %s is threatening from file %s rank %s\n",
 				threateningPiece.Color,
 				threateningPiece.Piece,
-				fileToFileView[threateningPiece.Coord.File],
-				rankToRankView[threateningPiece.Coord.Rank],
+				FileToFileView[threateningPiece.Coord.File],
+				RankToRankView[threateningPiece.Coord.Rank],
 			)
 			data = append(data, threateningPiece)
 		}
-		// model.History[len(model.History)-1].Check = true
 	}
 	return data
 }
