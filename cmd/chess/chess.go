@@ -10,7 +10,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/miketmoore/chess"
-	"github.com/miketmoore/pgn"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/text/language"
@@ -46,7 +45,6 @@ func run() {
 
 	// Game data
 	model := chess.Model{
-		PGN:          pgn.PGN{},
 		BoardState:   chess.InitialOnBoardState(),
 		Draw:         true,
 		WhitesMove:   true,
@@ -113,7 +111,6 @@ func run() {
 	for !win.Closed() {
 
 		if win.JustPressed(pixelgl.KeyQ) {
-			fmt.Println(model.PGN.String())
 			os.Exit(0)
 		}
 
@@ -194,11 +191,7 @@ func run() {
 						isValid := chess.FindInSliceCoord(validDestinations, coord)
 						if isValid && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
 
-							recordPGN(&model, coord)
-
 							move(&model, coord)
-
-							fmt.Println(model.PGN.String())
 						} else {
 							model.CurrentState = chess.StateSelectPiece
 						}
@@ -220,38 +213,6 @@ func move(model *chess.Model, destCoord chess.Coord) {
 	delete(model.BoardState, model.MoveStartCoord)
 
 	model.WhitesMove = !model.WhitesMove
-}
-
-func recordPGN(model *chess.Model, destCoord chess.Coord) {
-	pieceToMove := model.PieceToMove.Piece
-	startCoord := model.MoveStartCoord
-	_, capture := model.BoardState[destCoord]
-
-	inCheckData := chess.GetInCheckData(
-		model.BoardState,
-		model.CurrentPlayerColor(),
-		pieceToMove,
-		startCoord,
-		destCoord,
-	)
-
-	if model.WhitesMove {
-		model.PGN.RecordWhiteMove(
-			chess.FileToFileView[destCoord.File],
-			chess.RankToRankView[destCoord.Rank],
-			capture,
-			string(pieceToMove),
-			inCheckData.InCheck,
-		)
-	} else {
-		model.PGN.RecordBlackMove(
-			chess.FileToFileView[destCoord.File],
-			chess.RankToRankView[destCoord.Rank],
-			capture,
-			string(pieceToMove),
-			inCheckData.InCheck,
-		)
-	}
 }
 
 func main() {

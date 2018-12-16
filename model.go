@@ -1,10 +1,7 @@
 package chess
 
-import "github.com/miketmoore/pgn"
-
 // Model contains data used for the game
 type Model struct {
-	PGN                  pgn.PGN
 	BoardState           BoardState
 	PieceToMove          OnBoardData
 	MoveStartCoord       Coord
