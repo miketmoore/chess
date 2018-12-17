@@ -303,7 +303,7 @@ func getValidMovesForQueen(playerColor PlayerColor, boardState BoardState, currC
 }
 
 // IsDestinationValid checks if the specified color can move to the
-func IsDestinationValid(whitesMove bool, isOccupied bool, occupant OnBoardData) bool {
+func IsDestinationValid(whitesMove bool, isOccupied bool, occupant PlayerPiece) bool {
 	if isOccupied {
 		if whitesMove && occupant.Color == PlayerBlack {
 			return true
@@ -380,7 +380,7 @@ type InCheckData struct {
 
 func GetInCheckData(boardState BoardState, color PlayerColor, pieceToMove Piece, startCoord, destCoord Coord) InCheckData {
 	delete(boardState, startCoord)
-	boardState[destCoord] = OnBoardData{
+	boardState[destCoord] = PlayerPiece{
 		Piece: pieceToMove,
 		Color: color,
 	}

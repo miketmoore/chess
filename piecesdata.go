@@ -18,11 +18,11 @@ const (
 	King Piece = "king"
 )
 
-// OnBoardData represents one player's piece
-type OnBoardData struct {
+// PlayerPiece represents one player's piece
+type PlayerPiece struct {
 	Color PlayerColor
 	Piece Piece
 }
 
 // BoardState is a data structure used to track pieces currently on the board
-type BoardState map[Coord]OnBoardData
+type BoardState map[Coord]PlayerPiece

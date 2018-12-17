@@ -3,7 +3,7 @@ package chess
 // Model contains data used for the game
 type Model struct {
 	BoardState           BoardState
-	PieceToMove          OnBoardData
+	PieceToMove          PlayerPiece
 	MoveStartCoord       Coord
 	MoveDestinationCoord Coord
 	Draw                 bool
