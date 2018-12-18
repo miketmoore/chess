@@ -110,8 +110,8 @@ func DrawPiece(win *pixelgl.Window, squares BoardMap, piece *pixel.Sprite, coord
 }
 
 // HighlightSquares adds a visual marker to the list of board squares
-func HighlightSquares(win *pixelgl.Window, squares BoardMap, coords []Coord, color color.RGBA) {
-	for _, coord := range coords {
+func HighlightSquares(win *pixelgl.Window, squares BoardMap, coords ValidMoves, color color.RGBA) {
+	for coord := range coords {
 
 		square := squares[coord]
 		x := square.OriginX + 13

@@ -107,6 +107,8 @@ type Coord struct {
 	File File
 }
 
+type ValidMoves map[Coord]uint8
+
 // GetRankFile returns the rank and file
 func (c Coord) GetRankFile() (Rank, File) {
 	return c.Rank, c.File
@@ -121,7 +123,7 @@ func NewCoord(file File, rank Rank) Coord {
 }
 
 // GetValidMoves returns a list of valid coordinates the piece can be moved to
-func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, coord Coord) []Coord {
+func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, coord Coord) ValidMoves {
 	switch piece {
 	case Pawn:
 		return getValidMovesPawn(playerColor, boardState, coord)
@@ -136,12 +138,12 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 	case Queen:
 		return getValidMovesForQueen(playerColor, boardState, coord)
 	}
-	return []Coord{}
+	return ValidMoves{}
 }
 
-func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
 	enemyColor := GetOppositeColor(playerColor)
-	valid := []Coord{}
+	valid := ValidMoves{}
 
 	yChange := 1
 	if playerColor == PlayerBlack {
@@ -151,9 +153,9 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 	// get two spaces north or south
 	coords := GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 2)
 	if !isOccupied(boardState, coords[0]) {
-		valid = append(valid, coords[0])
+		valid[coords[0]] = 1
 		if isCoordStartPosition(playerColor, Pawn, currCoord.Rank) && !isOccupied(boardState, coords[1]) {
-			valid = append(valid, coords[1])
+			valid[coords[1]] = 1
 		}
 	}
 
@@ -162,48 +164,48 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 		// NW
 		coord, ok := GetCoordBySlopeAndDistance(currCoord, 1, 1)
 		if ok && isOccupiedByColor(boardState, coord, enemyColor) {
-			valid = append(valid, coord)
+			valid[coord] = 1
 		}
 
 		// NE
 		coord, ok = GetCoordBySlopeAndDistance(currCoord, 1, -1)
 		if ok && isOccupiedByColor(boardState, coord, enemyColor) {
-			valid = append(valid, coord)
+			valid[coord] = 1
 		}
 	} else {
 		// SW
 		coord, ok := GetCoordBySlopeAndDistance(currCoord, -1, -1)
 		if ok && isOccupiedByColor(boardState, coord, enemyColor) {
-			valid = append(valid, coord)
+			valid[coord] = 1
 		}
 
 		// SE
 		coord, ok = GetCoordBySlopeAndDistance(currCoord, -1, 1)
 		if ok && isOccupiedByColor(boardState, coord, enemyColor) {
-			valid = append(valid, coord)
+			valid[coord] = 1
 		}
 	}
 
 	return valid
 }
 
-func getValidMovesKing(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesKing(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
 	enemyColor := GetOppositeColor(playerColor)
-	valid := []Coord{}
+	valid := ValidMoves{}
 
 	coords := GetCoordsBySlopeAndDistanceAll(currCoord, 1)
 	for _, coord := range coords {
 		if !isOccupied(boardState, coord) || isOccupiedByColor(boardState, coord, enemyColor) {
-			valid = append(valid, coord)
+			valid[coord] = 1
 		}
 	}
 
 	return valid
 }
 
-func getValidMovesRook(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesRook(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
 	enemyColor := GetOppositeColor(playerColor)
-	valid := []Coord{}
+	valid := ValidMoves{}
 
 	slopes := []DirectionSlope{
 		SlopeNorth,
@@ -219,9 +221,9 @@ func getValidMovesRook(playerColor PlayerColor, boardState BoardState, currCoord
 			coords := GetCoordsBySlopeAndDistance(currCoord, yChange, xChange, i)
 			for _, coord := range coords {
 				if !isOccupied(boardState, coord) {
-					valid = append(valid, coord)
+					valid[coord] = 1
 				} else if isOccupiedByColor(boardState, coord, enemyColor) {
-					valid = append(valid, coord)
+					valid[coord] = 1
 					break
 				} else {
 					break
@@ -233,9 +235,9 @@ func getValidMovesRook(playerColor PlayerColor, boardState BoardState, currCoord
 	return valid
 }
 
-func getValidMovesKnight(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesKnight(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
 
-	valid := []Coord{}
+	valid := ValidMoves{}
 
 	var slopes = [][]int{
 		[]int{2, -1},
@@ -252,7 +254,7 @@ func getValidMovesKnight(playerColor PlayerColor, boardState BoardState, currCoo
 		coords := GetCoordsBySlopeAndDistance(currCoord, slope[0], slope[1], 1)
 		for _, coord := range coords {
 			if !isOccupied(boardState, coord) || isOccupiedByColor(boardState, coord, GetOppositeColor(playerColor)) {
-				valid = append(valid, coord)
+				valid[coord] = 1
 			}
 		}
 
@@ -261,9 +263,9 @@ func getValidMovesKnight(playerColor PlayerColor, boardState BoardState, currCoo
 	return valid
 }
 
-func getValidMovesForBishop(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesForBishop(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
 	enemyColor := GetOppositeColor(playerColor)
-	valid := []Coord{}
+	valid := ValidMoves{}
 
 	slopes := []DirectionSlope{
 		SlopeNorthEast,
@@ -279,9 +281,9 @@ func getValidMovesForBishop(playerColor PlayerColor, boardState BoardState, curr
 			coords := GetCoordsBySlopeAndDistance(currCoord, yChange, xChange, i)
 			for _, coord := range coords {
 				if !isOccupied(boardState, coord) {
-					valid = append(valid, coord)
+					valid[coord] = 1
 				} else if isOccupiedByColor(boardState, coord, enemyColor) {
-					valid = append(valid, coord)
+					valid[coord] = 1
 					break
 				} else {
 					break
@@ -293,12 +295,16 @@ func getValidMovesForBishop(playerColor PlayerColor, boardState BoardState, curr
 	return valid
 }
 
-func getValidMovesForQueen(playerColor PlayerColor, boardState BoardState, currCoord Coord) []Coord {
+func getValidMovesForQueen(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
 	diagonals := getValidMovesForBishop(playerColor, boardState, currCoord)
 	horizontals := getValidMovesRook(playerColor, boardState, currCoord)
-	valid := []Coord{}
-	valid = append(valid, diagonals...)
-	valid = append(valid, horizontals...)
+	valid := ValidMoves{}
+	for coord := range diagonals {
+		valid[coord] = 1
+	}
+	for coord := range horizontals {
+		valid[coord] = 1
+	}
 	return valid
 }
 
@@ -339,7 +345,7 @@ func isKingInCheck(boardState BoardState, playerColor PlayerColor) (bool, []Thre
 			moves := GetValidMoves(enemyColor, pieceData.Piece, boardState, coord)
 
 			// check if any of the moves currently put the king in check
-			for _, move := range moves {
+			for move := range moves {
 				// if any of these moves is where the king is, then it is in check
 				if move.Rank == kingCoord.Rank && move.File == kingCoord.File {
 					fmt.Printf("%s has the king in check\n", pieceData.Piece)

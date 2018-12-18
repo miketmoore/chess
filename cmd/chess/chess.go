@@ -106,7 +106,7 @@ func run() {
 	// Make pieces
 	drawer := chess.NewSpriteByColor()
 
-	validDestinations := []chess.Coord{}
+	validDestinations := chess.ValidMoves{}
 
 	for !win.Closed() {
 
@@ -188,9 +188,8 @@ func run() {
 					coord, ok := chess.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						occupant, isOccupied := model.BoardState[coord]
-						isValid := chess.FindInSliceCoord(validDestinations, coord)
-						if isValid && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
-
+						isValid := validDestinations[coord]
+						if isValid == 1 && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
 							move(&model, coord)
 						} else {
 							model.CurrentState = chess.StateSelectPiece
