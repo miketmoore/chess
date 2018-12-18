@@ -188,8 +188,8 @@ func run() {
 					coord, ok := chess.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						occupant, isOccupied := model.BoardState[coord]
-						isValid := validDestinations[coord]
-						if isValid == 1 && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
+						_, isValid := validDestinations[coord]
+						if isValid && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
 							move(&model, coord)
 						} else {
 							model.CurrentState = chess.StateSelectPiece
