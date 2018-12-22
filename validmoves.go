@@ -114,14 +114,6 @@ func (c Coord) GetRankFile() (Rank, File) {
 	return c.Rank, c.File
 }
 
-// NewCoord returns a new rank and file coordinate
-func NewCoord(file File, rank Rank) Coord {
-	return Coord{
-		File: file,
-		Rank: rank,
-	}
-}
-
 // GetValidMoves returns a list of valid coordinates the piece can be moved to
 func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, coord Coord) ValidMoves {
 	switch piece {

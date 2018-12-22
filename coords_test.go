@@ -12,23 +12,23 @@ func TestTranslateRankFileToXY(t *testing.T) {
 		x, y  int
 		coord chess.Coord
 	}{
-		{0, 0, chess.NewCoord(chess.FileA, chess.Rank1)},
-		{0, 1, chess.NewCoord(chess.FileA, chess.Rank2)},
-		{0, 2, chess.NewCoord(chess.FileA, chess.Rank3)},
-		{0, 3, chess.NewCoord(chess.FileA, chess.Rank4)},
-		{0, 4, chess.NewCoord(chess.FileA, chess.Rank5)},
-		{0, 5, chess.NewCoord(chess.FileA, chess.Rank6)},
-		{0, 6, chess.NewCoord(chess.FileA, chess.Rank7)},
-		{0, 7, chess.NewCoord(chess.FileA, chess.Rank8)},
+		{0, 0, chess.Coord{File:chess.FileA,Rank:chess.Rank1}},
+		{0, 1, chess.Coord{File:chess.FileA,Rank:chess.Rank2}},
+		{0, 2, chess.Coord{File:chess.FileA,Rank:chess.Rank3}},
+		{0, 3, chess.Coord{File:chess.FileA,Rank:chess.Rank4}},
+		{0, 4, chess.Coord{File:chess.FileA,Rank:chess.Rank5}},
+		{0, 5, chess.Coord{File:chess.FileA,Rank:chess.Rank6}},
+		{0, 6, chess.Coord{File:chess.FileA,Rank:chess.Rank7}},
+		{0, 7, chess.Coord{File:chess.FileA,Rank:chess.Rank8}},
 
-		{7, 0, chess.NewCoord(chess.FileH, chess.Rank1)},
-		{7, 1, chess.NewCoord(chess.FileH, chess.Rank2)},
-		{7, 2, chess.NewCoord(chess.FileH, chess.Rank3)},
-		{7, 3, chess.NewCoord(chess.FileH, chess.Rank4)},
-		{7, 4, chess.NewCoord(chess.FileH, chess.Rank5)},
-		{7, 5, chess.NewCoord(chess.FileH, chess.Rank6)},
-		{7, 6, chess.NewCoord(chess.FileH, chess.Rank7)},
-		{7, 7, chess.NewCoord(chess.FileH, chess.Rank8)},
+		{7, 0, chess.Coord{File:chess.FileH,Rank:chess.Rank1}},
+		{7, 1, chess.Coord{File:chess.FileH,Rank:chess.Rank2}},
+		{7, 2, chess.Coord{File:chess.FileH,Rank:chess.Rank3}},
+		{7, 3, chess.Coord{File:chess.FileH,Rank:chess.Rank4}},
+		{7, 4, chess.Coord{File:chess.FileH,Rank:chess.Rank5}},
+		{7, 5, chess.Coord{File:chess.FileH,Rank:chess.Rank6}},
+		{7, 6, chess.Coord{File:chess.FileH,Rank:chess.Rank7}},
+		{7, 7, chess.Coord{File:chess.FileH,Rank:chess.Rank8}},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%d,%d", test.x, test.y), func(t *testing.T) {
@@ -48,23 +48,23 @@ func TestTranslateXYToRankFile(t *testing.T) {
 		x, y  int
 		coord chess.Coord
 	}{
-		{0, 0, chess.NewCoord(chess.FileA, chess.Rank1)},
-		{0, 1, chess.NewCoord(chess.FileA, chess.Rank2)},
-		{0, 2, chess.NewCoord(chess.FileA, chess.Rank3)},
-		{0, 3, chess.NewCoord(chess.FileA, chess.Rank4)},
-		{0, 4, chess.NewCoord(chess.FileA, chess.Rank5)},
-		{0, 5, chess.NewCoord(chess.FileA, chess.Rank6)},
-		{0, 6, chess.NewCoord(chess.FileA, chess.Rank7)},
-		{0, 7, chess.NewCoord(chess.FileA, chess.Rank8)},
+		{0, 0, chess.Coord{File:chess.FileA,Rank:chess.Rank1}},
+		{0, 1, chess.Coord{File:chess.FileA,Rank:chess.Rank2}},
+		{0, 2, chess.Coord{File:chess.FileA,Rank:chess.Rank3}},
+		{0, 3, chess.Coord{File:chess.FileA,Rank:chess.Rank4}},
+		{0, 4, chess.Coord{File:chess.FileA,Rank:chess.Rank5}},
+		{0, 5, chess.Coord{File:chess.FileA,Rank:chess.Rank6}},
+		{0, 6, chess.Coord{File:chess.FileA,Rank:chess.Rank7}},
+		{0, 7, chess.Coord{File:chess.FileA,Rank:chess.Rank8}},
 
-		{7, 0, chess.NewCoord(chess.FileH, chess.Rank1)},
-		{7, 1, chess.NewCoord(chess.FileH, chess.Rank2)},
-		{7, 2, chess.NewCoord(chess.FileH, chess.Rank3)},
-		{7, 3, chess.NewCoord(chess.FileH, chess.Rank4)},
-		{7, 4, chess.NewCoord(chess.FileH, chess.Rank5)},
-		{7, 5, chess.NewCoord(chess.FileH, chess.Rank6)},
-		{7, 6, chess.NewCoord(chess.FileH, chess.Rank7)},
-		{7, 7, chess.NewCoord(chess.FileH, chess.Rank8)},
+		{7, 0, chess.Coord{File:chess.FileH,Rank:chess.Rank1}},
+		{7, 1, chess.Coord{File:chess.FileH,Rank:chess.Rank2}},
+		{7, 2, chess.Coord{File:chess.FileH,Rank:chess.Rank3}},
+		{7, 3, chess.Coord{File:chess.FileH,Rank:chess.Rank4}},
+		{7, 4, chess.Coord{File:chess.FileH,Rank:chess.Rank5}},
+		{7, 5, chess.Coord{File:chess.FileH,Rank:chess.Rank6}},
+		{7, 6, chess.Coord{File:chess.FileH,Rank:chess.Rank7}},
+		{7, 7, chess.Coord{File:chess.FileH,Rank:chess.Rank8}},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%d,%d", test.x, test.y), func(t *testing.T) {

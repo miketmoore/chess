@@ -83,7 +83,7 @@ func TranslateRankFileToXY(coord Coord) (int, int) {
 func TranslateXYToRankFile(x, y int) Coord {
 	file := File(x + 1)
 	rank := Rank(y + 1)
-	return NewCoord(file, rank)
+	return Coord{File: file, Rank: rank}
 }
 
 // GetCoordsBySlopeAndDistance gets a list of coordinates (rank,file)
