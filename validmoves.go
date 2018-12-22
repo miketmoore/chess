@@ -49,10 +49,10 @@ var (
 )
 
 // Rank is a custom type that represents a horizontal row (rank) on the chess board
-type Rank int
+type Rank uint8
 
 // File is a custom type that represents a vertical column (file) on the chess board
-type File int
+type File uint8
 
 const (
 	RankNone Rank = 0
