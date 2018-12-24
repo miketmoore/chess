@@ -16,7 +16,7 @@ You can [download the latest published binary](https://miketmoore.itch.io/chess)
 
 ```
 # Get dependencies, run tests, and build binary:
-mkdir $GOPATH/src/github.com/miketmoore
+mkdir -p $GOPATH/src/github.com/miketmoore
 cd $GOPATH/src/github.com/miketmoore
 git clone github.com/miketmoore/chess
 cd chess
