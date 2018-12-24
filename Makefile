@@ -17,3 +17,5 @@ clean:
 	rm -f $(BINARY_NAME)
 deps:
 	$(GOGET) -u $(REPO)/...
+listdeps:
+	$(GOCMD) list -f '{{ join .Deps "\n" }}' $(REPO)
