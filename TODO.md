@@ -1,17 +1,14 @@
-# Basic TODO
-
-- en passant
-- castle
-- promotion
-- checkmate
-- stalemate
-
 # Goals/Milestones
 
 Develop a chess game that allows playing through recorded games, playing over a network, local play, and human versus AI.
 
 Milestones
 * Local game
+  * en passant
+  * castle
+  * promotion
+  * checkmate
+  * stalemate
 * Record current game state
 * UI
   * New game
