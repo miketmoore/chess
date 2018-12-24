@@ -12,20 +12,18 @@ https://miketmoore.itch.io/chess
 
 You can [download the latest published binary](https://miketmoore.itch.io/chess) from itch.io or build from source.
 
-## 📦 Build from Source
+## 📦 Build and Run from Source
 
 ```
-# Get via "go get"
-> go get -u github.com/miketmoore/chess/...
+# Get dependencies, run tests, and build binary:
+mkdir $GOPATH/src/github.com/miketmoore
+cd $GOPATH/src/github.com/miketmoore
+git clone github.com/miketmoore/chess
+cd chess
+make 
 
-# Navigate to source
-> cd $GOPATH/src/github.com/miketmoore/chess
-
-# Install the binary
-> go install
-
-# Run the binary
-> ./$GOBIN/chess
+# Run 
+./chess
 ```
 
 ## 📝 Credit

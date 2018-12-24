@@ -5,7 +5,7 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 BINARY_NAME=chess
 
-all: test build
+all: deps test build
 build:
 	$(GOBUILD) -o $(BINARY_NAME) -v
 test:
@@ -14,6 +14,4 @@ clean:
 	$(GOCLEAN) -i
 	rm -f $(BINARY_NAME)
 deps:
-	$(GOGET) github.com/faiface/pixel
-	$(GOGET) github.com/BurntSushi/toml
-	$(GOGET) github.com/nicksnyder/go-i18n/v2/i18n
+	$(GOGET) -u github.com/miketmoore/chess/...
