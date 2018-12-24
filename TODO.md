@@ -2,7 +2,8 @@
 
 Develop a chess game that allows playing through recorded games, playing over a network, local play, and human versus AI.
 
-Milestones
+## Milestones
+
 * Local game
   * en passant
   * castle
