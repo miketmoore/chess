@@ -84,8 +84,7 @@ func run() {
 	bodyTxt := text.New(bodyOrig, bodyAtlas)
 
 	// Title
-	titleStr := "Chess"
-	fmt.Fprintln(displayTxt, titleStr)
+	fmt.Fprintln(displayTxt, i18nTitle)
 
 	// Sub-title
 	pressAnyKeyStr := i18nPressAnyKey
