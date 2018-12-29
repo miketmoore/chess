@@ -1,9 +1,9 @@
 package chess
 
 // PlayerColor is a type for player colors
-type PlayerColor uint8
+type PlayerColor bool
 
 const (
-	PlayerWhite PlayerColor = iota
-	PlayerBlack
+	PlayerWhite PlayerColor = true
+	PlayerBlack PlayerColor = false
 )

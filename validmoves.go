@@ -107,7 +107,7 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 }
 
 func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
-	enemyColor := playerColor ^ 1
+	enemyColor := !playerColor
 	valid := ValidMoves{}
 
 	yChange := 1
@@ -155,7 +155,7 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 }
 
 func getValidMovesKing(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
-	enemyColor := playerColor ^ 1
+	enemyColor := !playerColor
 	valid := ValidMoves{}
 
 	coords := GetCoordsBySlopeAndDistanceAll(currCoord, 1)
@@ -169,7 +169,7 @@ func getValidMovesKing(playerColor PlayerColor, boardState BoardState, currCoord
 }
 
 func getValidMovesRook(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
-	enemyColor := playerColor ^ 1
+	enemyColor := !playerColor
 	valid := ValidMoves{}
 
 	slopes := []DirectionSlope{
@@ -218,7 +218,7 @@ func getValidMovesKnight(playerColor PlayerColor, boardState BoardState, currCoo
 	for _, slope := range slopes {
 		coords := GetCoordsBySlopeAndDistance(currCoord, slope[0], slope[1], 1)
 		for _, coord := range coords {
-			if !isOccupied(boardState, coord) || isOccupiedByColor(boardState, coord, playerColor^1) {
+			if !isOccupied(boardState, coord) || isOccupiedByColor(boardState, coord, !playerColor) {
 				valid[coord] = 1
 			}
 		}
@@ -229,7 +229,7 @@ func getValidMovesKnight(playerColor PlayerColor, boardState BoardState, currCoo
 }
 
 func getValidMovesForBishop(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
-	enemyColor := playerColor ^ 1
+	enemyColor := !playerColor
 	valid := ValidMoves{}
 
 	slopes := []DirectionSlope{
