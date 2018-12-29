@@ -80,8 +80,8 @@ func NewBoardView(
 			shape.Push(pixel.V(xInc, yInc))
 			shape.Push(pixel.V(squareW+xInc, squareH+yInc))
 			shape.Rectangle(0)
-			// TODO
-			coord := Coord{Rank(int(r) + 1), FilesOrder[int(c)]}
+
+			coord := Coord{Rank(int(r) + 1), File(c + 1)}
 
 			squares[coord] = Square{
 				Shape:   shape,

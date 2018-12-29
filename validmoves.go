@@ -76,8 +76,6 @@ const (
 	FileH    File = 8
 )
 
-var FilesOrder = []File{FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH}
-
 var RankToRankView = map[Rank]string{
 	Rank1: "1",
 	Rank2: "2",
