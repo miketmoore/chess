@@ -7,10 +7,3 @@ const (
 	PlayerWhite PlayerColor = iota
 	PlayerBlack
 )
-
-func GetOppositeColor(color PlayerColor) PlayerColor {
-	if color == PlayerWhite {
-		return PlayerBlack
-	}
-	return PlayerWhite
-}
