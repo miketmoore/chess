@@ -114,6 +114,9 @@ func run() {
 		}
 
 		switch model.CurrentState {
+		/*
+			Draw the title screen
+		*/
 		case chess.StateTitle:
 			if model.Draw {
 				win.Clear(colornames.Black)
@@ -136,12 +139,18 @@ func run() {
 				win.Clear(colornames.Black)
 				model.Draw = true
 			}
+		/*
+			Draw the current state of the pieces on the board
+		*/
 		case chess.StateDraw:
 			if model.Draw {
 				draw(win, model.BoardState, drawer, squares)
 				model.Draw = false
 				model.CurrentState = chess.StateSelectPiece
 			}
+		/*
+			Listen for input - the current player may select a piece to move
+		*/
 		case chess.StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				square := chess.FindSquareByVec(squares, win.MousePosition())
@@ -172,6 +181,9 @@ func run() {
 
 				}
 			}
+		/*
+			Highlight squares that are valid moves for the piece that was just selected
+		*/
 		case chess.DrawValidMoves:
 			if model.Draw {
 				draw(win, model.BoardState, drawer, squares)
@@ -179,6 +191,9 @@ func run() {
 				model.Draw = false
 				model.CurrentState = chess.StateSelectDestination
 			}
+		/*
+			Listen for input - the current player may select a destination square for their selected piece
+		*/
 		case chess.StateSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
