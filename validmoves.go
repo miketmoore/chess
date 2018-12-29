@@ -78,28 +78,6 @@ const (
 	FileH
 )
 
-var RankToRankView = map[Rank]string{
-	Rank1: "1",
-	Rank2: "2",
-	Rank3: "3",
-	Rank4: "4",
-	Rank5: "5",
-	Rank6: "6",
-	Rank7: "7",
-	Rank8: "8",
-}
-
-var FileToFileView = map[File]string{
-	FileA: "a",
-	FileB: "b",
-	FileC: "c",
-	FileD: "d",
-	FileE: "e",
-	FileF: "f",
-	FileG: "g",
-	FileH: "h",
-}
-
 // Coord represents a board square by rank and file
 type Coord struct {
 	Rank Rank
@@ -394,11 +372,11 @@ func buildThreateningPieceSlice(boardState BoardState, color PlayerColor) []Thre
 	if ok, threateningPieces := isKingInCheck(boardState, color); ok {
 		fmt.Printf("%s is in check by %d %s pieces\n", color, len(threateningPieces), GetOppositeColor(color))
 		for _, threateningPiece := range threateningPieces {
-			fmt.Printf("%s %s is threatening from file %s rank %s\n",
+			fmt.Printf("%s %s is threatening from file %d rank %d\n",
 				threateningPiece.Color,
 				threateningPiece.Piece,
-				FileToFileView[threateningPiece.Coord.File],
-				RankToRankView[threateningPiece.Coord.Rank],
+				threateningPiece.Coord.File,
+				threateningPiece.Coord.Rank,
 			)
 			data = append(data, threateningPiece)
 		}
