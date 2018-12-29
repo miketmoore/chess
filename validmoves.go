@@ -1,9 +1,5 @@
 package chess
 
-import (
-	"fmt"
-)
-
 func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank) bool {
 
 	if playerColor == PlayerWhite {
@@ -289,97 +285,4 @@ func IsDestinationValid(whitesMove bool, isOccupied bool, occupant PlayerPiece) 
 		return true
 	}
 	return false
-}
-
-func isKingInCheck(boardState BoardState, playerColor PlayerColor) (bool, []ThreateningPiece) {
-
-	// get the specified  player's king coord
-	kingCoord, ok := findKingCoordByColor(boardState, playerColor)
-	if !ok {
-		fmt.Println("could not find the king")
-	}
-
-	enemyColor := GetOppositeColor(playerColor)
-
-	inCheck := false
-	threateningPieces := []ThreateningPiece{}
-
-	// loop through all pieces
-	for coord, pieceData := range boardState {
-		// check if enemy has king in check
-		if pieceData.Piece != King && pieceData.Color == enemyColor {
-			// fmt.Printf("checking if %s is putting the king in check\n", pieceData.Piece)
-
-			// get valid moves for enemy piece
-			moves := GetValidMoves(enemyColor, pieceData.Piece, boardState, coord)
-
-			// check if any of the moves currently put the king in check
-			for move := range moves {
-				// if any of these moves is where the king is, then it is in check
-				if move.Rank == kingCoord.Rank && move.File == kingCoord.File {
-					fmt.Printf("%s has the king in check\n", pieceData.Piece)
-					inCheck = true
-					threateningPieces = append(threateningPieces, ThreateningPiece{
-						Color: pieceData.Color,
-						Piece: pieceData.Piece,
-						Coord: coord,
-					})
-					break
-				}
-			}
-		}
-	}
-
-	return inCheck, threateningPieces
-}
-
-func findKingCoordByColor(boardState BoardState, playerColor PlayerColor) (Coord, bool) {
-	for coord, pieceData := range boardState {
-		if pieceData.Piece == King && pieceData.Color == playerColor {
-			return coord, true
-		}
-	}
-	return Coord{}, false
-}
-
-type ThreateningPiece struct {
-	Color PlayerColor
-	Piece Piece
-	Coord Coord
-}
-
-type InCheckData struct {
-	InCheck                                      bool
-	BlackThreateningWhite, WhiteThreateningBlack []ThreateningPiece
-}
-
-func GetInCheckData(boardState BoardState, color PlayerColor, pieceToMove Piece, startCoord, destCoord Coord) InCheckData {
-	delete(boardState, startCoord)
-	boardState[destCoord] = PlayerPiece{
-		Piece: pieceToMove,
-		Color: color,
-	}
-	data := InCheckData{
-		BlackThreateningWhite: buildThreateningPieceSlice(boardState, PlayerWhite),
-		WhiteThreateningBlack: buildThreateningPieceSlice(boardState, PlayerBlack),
-	}
-	data.InCheck = len(data.BlackThreateningWhite) > 0 || len(data.WhiteThreateningBlack) > 0
-	return data
-}
-
-func buildThreateningPieceSlice(boardState BoardState, color PlayerColor) []ThreateningPiece {
-	data := []ThreateningPiece{}
-	if ok, threateningPieces := isKingInCheck(boardState, color); ok {
-		fmt.Printf("%s is in check by %d %s pieces\n", color, len(threateningPieces), GetOppositeColor(color))
-		for _, threateningPiece := range threateningPieces {
-			fmt.Printf("%s %s is threatening from file %d rank %d\n",
-				threateningPiece.Color,
-				threateningPiece.Piece,
-				threateningPiece.Coord.File,
-				threateningPiece.Coord.Rank,
-			)
-			data = append(data, threateningPiece)
-		}
-	}
-	return data
 }
