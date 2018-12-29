@@ -1,13 +1,11 @@
 package chess
 
 // PlayerColor is a type for player colors
-type PlayerColor string
+type PlayerColor uint8
 
 const (
-	// PlayerWhite represents the white player
-	PlayerWhite PlayerColor = "white"
-	// PlayerBlack represents the black player
-	PlayerBlack PlayerColor = "black"
+	PlayerWhite PlayerColor = iota
+	PlayerBlack
 )
 
 func GetOppositeColor(color PlayerColor) PlayerColor {
