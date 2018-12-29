@@ -4,12 +4,12 @@ func isCoordStartPosition(playerColor PlayerColor, piece Piece, rank Rank) bool 
 
 	if playerColor == PlayerWhite {
 		// white
-		if piece == Pawn {
+		if piece == PiecePawn {
 			return rank == Rank2
 		}
 	} else {
 		// black
-		if piece == Pawn {
+		if piece == PiecePawn {
 			return rank == Rank7
 		}
 	}
@@ -90,17 +90,17 @@ func (c Coord) GetRankFile() (Rank, File) {
 // GetValidMoves returns a list of valid coordinates the piece can be moved to
 func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, coord Coord) ValidMoves {
 	switch piece {
-	case Pawn:
+	case PiecePawn:
 		return getValidMovesPawn(playerColor, boardState, coord)
-	case King:
+	case PieceKing:
 		return getValidMovesKing(playerColor, boardState, coord)
-	case Knight:
+	case PieceKnight:
 		return getValidMovesKnight(playerColor, boardState, coord)
-	case Rook:
+	case PieceRook:
 		return getValidMovesRook(playerColor, boardState, coord)
-	case Bishop:
+	case PieceBishop:
 		return getValidMovesForBishop(playerColor, boardState, coord)
-	case Queen:
+	case PieceQueen:
 		return getValidMovesForQueen(playerColor, boardState, coord)
 	}
 	return ValidMoves{}
@@ -119,7 +119,7 @@ func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord
 	coords := GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 2)
 	if !isOccupied(boardState, coords[0]) {
 		valid[coords[0]] = 1
-		if isCoordStartPosition(playerColor, Pawn, currCoord.Rank) && !isOccupied(boardState, coords[1]) {
+		if isCoordStartPosition(playerColor, PiecePawn, currCoord.Rank) && !isOccupied(boardState, coords[1]) {
 			valid[coords[1]] = 1
 		}
 	}

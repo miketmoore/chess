@@ -14,12 +14,12 @@ func TestIsDestinationValid(t *testing.T) {
 		occupant    chess.PlayerPiece
 		expected    bool
 	}{
-		{true, true, chess.PlayerPiece{Color: chess.PlayerBlack, Piece: chess.Pawn}, true},
-		{true, true, chess.PlayerPiece{Color: chess.PlayerWhite, Piece: chess.Pawn}, false},
+		{true, true, chess.PlayerPiece{Color: chess.PlayerBlack, Piece: chess.PiecePawn}, true},
+		{true, true, chess.PlayerPiece{Color: chess.PlayerWhite, Piece: chess.PiecePawn}, false},
 		{true, false, chess.PlayerPiece{}, true},
 
-		{false, true, chess.PlayerPiece{Color: chess.PlayerWhite, Piece: chess.Pawn}, true},
-		{false, true, chess.PlayerPiece{Color: chess.PlayerBlack, Piece: chess.Pawn}, false},
+		{false, true, chess.PlayerPiece{Color: chess.PlayerWhite, Piece: chess.PiecePawn}, true},
+		{false, true, chess.PlayerPiece{Color: chess.PlayerBlack, Piece: chess.PiecePawn}, false},
 		{false, false, chess.PlayerPiece{}, true},
 	}
 

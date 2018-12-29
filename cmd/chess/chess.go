@@ -251,17 +251,17 @@ func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer,
 
 		var piece *pixel.Sprite
 		switch livePieceData.Piece {
-		case chess.Bishop:
+		case chess.PieceBishop:
 			piece = set.Bishop
-		case chess.King:
+		case chess.PieceKing:
 			piece = set.King
-		case chess.Knight:
+		case chess.PieceKnight:
 			piece = set.Knight
-		case chess.Pawn:
+		case chess.PiecePawn:
 			piece = set.Pawn
-		case chess.Queen:
+		case chess.PieceQueen:
 			piece = set.Queen
-		case chess.Rook:
+		case chess.PieceRook:
 			piece = set.Rook
 		}
 
