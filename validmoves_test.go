@@ -9,10 +9,10 @@ import (
 
 func TestIsDestinationValid(t *testing.T) {
 	tests := []struct {
-		whitesMove bool
-		isOccupied bool
-		occupant   chess.PlayerPiece
-		expected   bool
+		whiteToMove bool
+		isOccupied  bool
+		occupant    chess.PlayerPiece
+		expected    bool
 	}{
 		{true, true, chess.PlayerPiece{Color: chess.PlayerBlack, Piece: chess.Pawn}, true},
 		{true, true, chess.PlayerPiece{Color: chess.PlayerWhite, Piece: chess.Pawn}, false},
@@ -26,7 +26,7 @@ func TestIsDestinationValid(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
 			got := chess.IsDestinationValid(
-				test.whitesMove,
+				test.whiteToMove,
 				test.isOccupied,
 				test.occupant,
 			)

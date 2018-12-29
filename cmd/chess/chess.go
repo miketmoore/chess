@@ -43,11 +43,13 @@ func run() {
 		},
 	})
 
-	// Game data
+	/*
+		The current game data is stored here
+	*/
 	model := chess.Model{
 		BoardState:   chess.InitialOnBoardState(),
 		Draw:         true,
-		WhitesMove:   true,
+		WhiteToMove:  true,
 		CurrentState: chess.StateTitle,
 	}
 
@@ -203,7 +205,7 @@ func run() {
 					if ok {
 						occupant, isOccupied := model.BoardState[coord]
 						_, isValid := validDestinations[coord]
-						if isValid && chess.IsDestinationValid(model.WhitesMove, isOccupied, occupant) {
+						if isValid && chess.IsDestinationValid(model.WhiteToMove, isOccupied, occupant) {
 							move(&model, coord)
 						} else {
 							model.CurrentState = chess.StateSelectPiece
@@ -225,7 +227,7 @@ func move(model *chess.Model, destCoord chess.Coord) {
 	model.BoardState[destCoord] = model.PieceToMove
 	delete(model.BoardState, model.MoveStartCoord)
 
-	model.WhitesMove = !model.WhitesMove
+	model.WhiteToMove = !model.WhiteToMove
 }
 
 func main() {

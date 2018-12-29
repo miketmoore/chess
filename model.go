@@ -7,13 +7,13 @@ type Model struct {
 	MoveStartCoord       Coord
 	MoveDestinationCoord Coord
 	Draw                 bool
-	WhitesMove           bool
+	WhiteToMove          bool
 	CurrentState         State
 }
 
 // CurrentPlayerColor returns the current player color
 func (m *Model) CurrentPlayerColor() PlayerColor {
-	if m.WhitesMove {
+	if m.WhiteToMove {
 		return PlayerWhite
 	}
 	return PlayerBlack
@@ -21,7 +21,7 @@ func (m *Model) CurrentPlayerColor() PlayerColor {
 
 // EnemyPlayerColor returns the enemy player color
 func (m *Model) EnemyPlayerColor() PlayerColor {
-	if m.WhitesMove {
+	if m.WhiteToMove {
 		return PlayerBlack
 	}
 	return PlayerWhite
