@@ -55,25 +55,27 @@ type Rank uint8
 type File uint8
 
 const (
-	RankNone Rank = 0
-	Rank1    Rank = 1
-	Rank2    Rank = 2
-	Rank3    Rank = 3
-	Rank4    Rank = 4
-	Rank5    Rank = 5
-	Rank6    Rank = 6
-	Rank7    Rank = 7
-	Rank8    Rank = 8
+	RankNone Rank = iota
+	Rank1
+	Rank2
+	Rank3
+	Rank4
+	Rank5
+	Rank6
+	Rank7
+	Rank8
+)
 
-	FileNone File = 0
-	FileA    File = 1
-	FileB    File = 2
-	FileC    File = 3
-	FileD    File = 4
-	FileE    File = 5
-	FileF    File = 6
-	FileG    File = 7
-	FileH    File = 8
+const (
+	FileNone File = iota
+	FileA
+	FileB
+	FileC
+	FileD
+	FileE
+	FileF
+	FileG
+	FileH
 )
 
 var RankToRankView = map[Rank]string{
