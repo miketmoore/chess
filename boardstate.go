@@ -22,12 +22,14 @@ func InitialOnBoardState() BoardState {
 		Coord{File: FileH, Rank: Rank1}: PlayerPiece{Color: PlayerWhite, Piece: Rook},
 	}
 
-	for _, file := range FilesOrder {
+	var file File
+
+	for file = 1; file <= 8; file++ {
 		coord := Coord{File: file, Rank: Rank7}
 		boardState[coord] = PlayerPiece{Color: PlayerBlack, Piece: Pawn}
 	}
 
-	for _, file := range FilesOrder {
+	for file = 1; file <= 8; file++ {
 		coord := Coord{File: file, Rank: Rank2}
 		boardState[coord] = PlayerPiece{Color: PlayerWhite, Piece: Pawn}
 	}
