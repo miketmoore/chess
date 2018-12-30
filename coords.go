@@ -74,16 +74,56 @@ var validCoords = map[Coord]bool{
 	Coord{Rank8, FileH}: true,
 }
 
+var rankToY = map[Rank]int{
+	Rank1: 0,
+	Rank2: 1,
+	Rank3: 2,
+	Rank4: 3,
+	Rank5: 4,
+	Rank6: 5,
+	Rank7: 6,
+	Rank8: 7,
+}
+
+var yToRank = map[int]Rank{
+	0: Rank1,
+	1: Rank2,
+	2: Rank3,
+	3: Rank4,
+	4: Rank5,
+	5: Rank6,
+	6: Rank7,
+	7: Rank8,
+}
+
+var fileToX = map[File]int{
+	FileA: 0,
+	FileB: 1,
+	FileC: 2,
+	FileD: 3,
+	FileE: 4,
+	FileF: 5,
+	FileG: 6,
+	FileH: 7,
+}
+
+var xToFile = map[int]File{
+	0: FileA,
+	1: FileB,
+	2: FileC,
+	3: FileD,
+	4: FileE,
+	5: FileF,
+	6: FileG,
+	7: FileH,
+}
+
 func TranslateRankFileToXY(coord Coord) (int, int) {
-	y := int(coord.Rank) - 1
-	x := int(coord.File) - 1
-	return x, y
+	return fileToX[coord.File], rankToY[coord.Rank]
 }
 
 func TranslateXYToRankFile(x, y int) Coord {
-	file := File(x + 1)
-	rank := Rank(y + 1)
-	return Coord{File: file, Rank: rank}
+	return Coord{File: xToFile[x], Rank: yToRank[y]}
 }
 
 // GetCoordsBySlopeAndDistance gets a list of coordinates (rank,file)
