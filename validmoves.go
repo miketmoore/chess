@@ -106,6 +106,16 @@ func GetValidMoves(playerColor PlayerColor, piece Piece, boardState BoardState, 
 	return ValidMoves{}
 }
 
+func isOccupied(boardState BoardState, coord Coord) bool {
+	_, isOccupied := boardState[coord]
+	return isOccupied
+}
+
+func isOccupiedByColor(boardState BoardState, coord Coord, color PlayerColor) bool {
+	occupant, occupied := boardState[coord]
+	return occupied && occupant.Color == color
+}
+
 func getValidMovesPawn(playerColor PlayerColor, boardState BoardState, currCoord Coord) ValidMoves {
 	enemyColor := !playerColor
 	valid := ValidMoves{}
