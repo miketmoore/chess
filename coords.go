@@ -118,15 +118,17 @@ var xToFile = map[int]File{
 	7: FileH,
 }
 
+// TranslateRankFileToXY translates [File,Rank] coordinates to [x,y] coordinates
 func TranslateRankFileToXY(coord Coord) (int, int) {
 	return fileToX[coord.File], rankToY[coord.Rank]
 }
 
+// TranslateXYToRankFile translates [x,y] coordinates to [File,Rank] coordinates
 func TranslateXYToRankFile(x, y int) Coord {
 	return Coord{File: xToFile[x], Rank: yToRank[y]}
 }
 
-// GetCoordsBySlopeAndDistance gets a list of coordinates (rank,file)
+// GetCoordsBySlopeAndDistance gets a list of coordinates (file,rank)
 func GetCoordsBySlopeAndDistance(start Coord, yChange, xChange, distance int) []Coord {
 	x, y := TranslateRankFileToXY(start)
 
