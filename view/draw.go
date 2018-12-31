@@ -6,7 +6,42 @@ import (
 	"github.com/miketmoore/chess/model"
 )
 
-func Draw(win *pixelgl.Window, boardState model.BoardState, drawer Drawer, squares BoardMap) {
+// PieceDrawer contains all chess piece sprites
+type PieceDrawer struct {
+	Black PieceSpriteSet
+	White PieceSpriteSet
+}
+
+// NewPieceDrawer constructs a ByColor (chess piece sprites)
+func NewPieceDrawer() PieceDrawer {
+	// Load sprite sheet graphic
+	pic, err := loadPicture(spriteSheetPath)
+	if err != nil {
+		panic(err)
+	}
+
+	return PieceDrawer{
+		Black: PieceSpriteSet{
+			King:   newSprite(pic, 0, 0, 40, 40),
+			Queen:  newSprite(pic, 40, 0, 90, 40),
+			Bishop: newSprite(pic, 90, 0, 140, 40),
+			Knight: newSprite(pic, 130, 0, 180, 40),
+			Rook:   newSprite(pic, 185, 0, 220, 40),
+			Pawn:   newSprite(pic, 230, 0, 270, 40),
+		},
+		White: PieceSpriteSet{
+			King:   newSprite(pic, 0, 40, 40, 85),
+			Queen:  newSprite(pic, 40, 40, 90, 85),
+			Bishop: newSprite(pic, 90, 40, 140, 85),
+			Knight: newSprite(pic, 130, 40, 185, 85),
+			Rook:   newSprite(pic, 185, 40, 220, 85),
+			Pawn:   newSprite(pic, 230, 40, 270, 85),
+		},
+	}
+}
+
+// Draw renders the chess pieces in the correct position on the board
+func (drawer PieceDrawer) Draw(win *pixelgl.Window, boardState model.BoardState, squares BoardMap) {
 	// Draw board
 	for _, square := range squares {
 		square.Shape.Draw(win)

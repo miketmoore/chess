@@ -100,7 +100,7 @@ func run() {
 	)
 
 	// Make pieces
-	drawer := view.NewSpriteByColor()
+	pieceDrawer := view.NewPieceDrawer()
 
 	// The current game data is stored here
 	currentGame := gamemodel.New()
@@ -142,7 +142,7 @@ func run() {
 		*/
 		case gamestate.Draw:
 			if currentGame.Draw {
-				view.Draw(win, currentGame.BoardState, drawer, squares)
+				pieceDrawer.Draw(win, currentGame.BoardState, squares)
 				currentGame.Draw = false
 				currentGame.CurrentState = gamestate.SelectPiece
 			}
@@ -184,7 +184,7 @@ func run() {
 		*/
 		case gamestate.DrawValidMoves:
 			if currentGame.Draw {
-				view.Draw(win, currentGame.BoardState, drawer, squares)
+				pieceDrawer.Draw(win, currentGame.BoardState, squares)
 				view.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
 				currentGame.Draw = false
 				currentGame.CurrentState = gamestate.SelectDestination

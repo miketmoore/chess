@@ -15,12 +15,6 @@ type SpriteByName map[string]*pixel.Sprite
 // ByColor represents a map of color name to SpriteByName
 type ByColor map[string]SpriteByName
 
-// Drawer contains all chess piece sprites
-type Drawer struct {
-	Black PieceSpriteSet
-	White PieceSpriteSet
-}
-
 // PieceSpriteSet contains one sprite per type of piece
 type PieceSpriteSet struct {
 	King   *pixel.Sprite
@@ -29,34 +23,6 @@ type PieceSpriteSet struct {
 	Knight *pixel.Sprite
 	Rook   *pixel.Sprite
 	Pawn   *pixel.Sprite
-}
-
-// NewSpriteByColor constructs a ByColor (chess piece sprites)
-func NewSpriteByColor() Drawer {
-	// Load sprite sheet graphic
-	pic, err := loadPicture(spriteSheetPath)
-	if err != nil {
-		panic(err)
-	}
-
-	return Drawer{
-		Black: PieceSpriteSet{
-			King:   newSprite(pic, 0, 0, 40, 40),
-			Queen:  newSprite(pic, 40, 0, 90, 40),
-			Bishop: newSprite(pic, 90, 0, 140, 40),
-			Knight: newSprite(pic, 130, 0, 180, 40),
-			Rook:   newSprite(pic, 185, 0, 220, 40),
-			Pawn:   newSprite(pic, 230, 0, 270, 40),
-		},
-		White: PieceSpriteSet{
-			King:   newSprite(pic, 0, 40, 40, 85),
-			Queen:  newSprite(pic, 40, 40, 90, 85),
-			Bishop: newSprite(pic, 90, 40, 140, 85),
-			Knight: newSprite(pic, 130, 40, 185, 85),
-			Rook:   newSprite(pic, 185, 40, 220, 85),
-			Pawn:   newSprite(pic, 230, 40, 270, 85),
-		},
-	}
 }
 
 func newSprite(pic pixel.Picture, xa, ya, xb, yb float64) *pixel.Sprite {
