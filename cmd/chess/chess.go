@@ -3,15 +3,21 @@ package main
 import (
 	"fmt"
 	_ "image/png"
+	"io/ioutil"
 	"os"
 
 	"github.com/BurntSushi/toml"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	"github.com/miketmoore/chess"
+	"github.com/golang/freetype/truetype"
+	"github.com/miketmoore/chess/coordsmapper"
+	"github.com/miketmoore/chess/logic"
+	"github.com/miketmoore/chess/state"
+	"github.com/miketmoore/chess/view"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
+	"golang.org/x/image/font"
 	"golang.org/x/text/language"
 )
 
@@ -22,6 +28,68 @@ const displayFontPath = "assets/kenney_fontpackage/Fonts/Kenney Future Narrow.tt
 const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/en.toml"
 const lang = "en-US"
+
+// State is the type for the state enum
+type State string
+
+const (
+	StateTitle             State = "title"
+	StateDraw              State = "draw"
+	StateSelectPiece       State = "selectSpace"
+	StateSelectDestination State = "selectDestination"
+	DrawValidMoves         State = "drawValidMoves"
+)
+
+// Model contains data used for the game
+type Model struct {
+	BoardState           state.BoardState
+	PieceToMove          state.PlayerPiece
+	MoveStartCoord       state.Coord
+	MoveDestinationCoord state.Coord
+	Draw                 bool
+	WhiteToMove          bool
+	CurrentState         State
+}
+
+// CurrentPlayerColor returns the current player color
+func (m *Model) CurrentPlayerColor() state.PlayerColor {
+	if m.WhiteToMove {
+		return state.PlayerWhite
+	}
+	return state.PlayerBlack
+}
+
+// EnemyPlayerColor returns the enemy player color
+func (m *Model) EnemyPlayerColor() state.PlayerColor {
+	if m.WhiteToMove {
+		return state.PlayerBlack
+	}
+	return state.PlayerWhite
+}
+
+// LoadTTF loads a TTF font file
+func LoadTTF(path string, size float64) (font.Face, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	font, err := truetype.Parse(bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return truetype.NewFace(font, &truetype.Options{
+		Size:              size,
+		GlyphCacheEntries: 1,
+	}), nil
+}
 
 func run() {
 	// i18n
@@ -46,11 +114,11 @@ func run() {
 	/*
 		The current game data is stored here
 	*/
-	model := chess.Model{
-		BoardState:   chess.InitialOnBoardState(),
+	model := Model{
+		BoardState:   state.InitialOnBoardState(),
 		Draw:         true,
 		WhiteToMove:  true,
-		CurrentState: chess.StateTitle,
+		CurrentState: StateTitle,
 	}
 
 	// Setup GUI window
@@ -65,7 +133,7 @@ func run() {
 	}
 
 	// Prepare display text
-	displayFace, err := chess.LoadTTF(displayFontPath, 80)
+	displayFace, err := LoadTTF(displayFontPath, 80)
 	if err != nil {
 		panic(err)
 	}
@@ -75,7 +143,7 @@ func run() {
 	displayTxt := text.New(displayOrig, displayAtlas)
 
 	// Prepare body text
-	bodyFace, err := chess.LoadTTF(bodyFontPath, 12)
+	bodyFace, err := LoadTTF(bodyFontPath, 12)
 	if err != nil {
 		panic(err)
 	}
@@ -96,18 +164,18 @@ func run() {
 	boardThemeName := "sandcastle"
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
-	squares, squareOriginByCoords := chess.NewBoardView(
+	squares, squareOriginByCoords := view.NewBoardView(
 		float64(boardOriginX),
 		150,
 		squareSize,
-		chess.BoardThemes[boardThemeName]["black"],
-		chess.BoardThemes[boardThemeName]["white"],
+		view.BoardThemes[boardThemeName]["black"],
+		view.BoardThemes[boardThemeName]["white"],
 	)
 
 	// Make pieces
-	drawer := chess.NewSpriteByColor()
+	drawer := view.NewSpriteByColor()
 
-	validDestinations := chess.ValidMoves{}
+	validDestinations := logic.ValidMoves{}
 
 	for !win.Closed() {
 
@@ -119,7 +187,7 @@ func run() {
 		/*
 			Draw the title screen
 		*/
-		case chess.StateTitle:
+		case StateTitle:
 			if model.Draw {
 				win.Clear(colornames.Black)
 
@@ -137,27 +205,27 @@ func run() {
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				model.CurrentState = chess.StateDraw
+				model.CurrentState = StateDraw
 				win.Clear(colornames.Black)
 				model.Draw = true
 			}
 		/*
 			Draw the current state of the pieces on the board
 		*/
-		case chess.StateDraw:
+		case StateDraw:
 			if model.Draw {
 				draw(win, model.BoardState, drawer, squares)
 				model.Draw = false
-				model.CurrentState = chess.StateSelectPiece
+				model.CurrentState = StateSelectPiece
 			}
 		/*
 			Listen for input - the current player may select a piece to move
 		*/
-		case chess.StateSelectPiece:
+		case StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				square := chess.FindSquareByVec(squares, win.MousePosition())
+				square := view.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					coord, ok := chess.GetCoordByXY(
+					coord, ok := coordsmapper.GetCoordByXY(
 						squareOriginByCoords,
 						square.OriginX,
 						square.OriginY,
@@ -165,7 +233,7 @@ func run() {
 					if ok {
 						occupant, isOccupied := model.BoardState[coord]
 						if occupant.Color == model.CurrentPlayerColor() && isOccupied {
-							validDestinations = chess.GetValidMoves(
+							validDestinations = logic.GetValidMoves(
 								model.CurrentPlayerColor(),
 								occupant.Piece,
 								model.BoardState,
@@ -174,7 +242,7 @@ func run() {
 							if len(validDestinations) > 0 {
 								model.PieceToMove = occupant
 								model.MoveStartCoord = coord
-								model.CurrentState = chess.DrawValidMoves
+								model.CurrentState = DrawValidMoves
 								model.Draw = true
 							}
 						}
@@ -186,29 +254,29 @@ func run() {
 		/*
 			Highlight squares that are valid moves for the piece that was just selected
 		*/
-		case chess.DrawValidMoves:
+		case DrawValidMoves:
 			if model.Draw {
 				draw(win, model.BoardState, drawer, squares)
-				chess.HighlightSquares(win, squares, validDestinations, colornames.Greenyellow)
+				view.HighlightSquares(win, squares, validDestinations, colornames.Greenyellow)
 				model.Draw = false
-				model.CurrentState = chess.StateSelectDestination
+				model.CurrentState = StateSelectDestination
 			}
 		/*
 			Listen for input - the current player may select a destination square for their selected piece
 		*/
-		case chess.StateSelectDestination:
+		case StateSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
-				square := chess.FindSquareByVec(squares, mpos)
+				square := view.FindSquareByVec(squares, mpos)
 				if square != nil {
-					coord, ok := chess.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
+					coord, ok := coordsmapper.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						occupant, isOccupied := model.BoardState[coord]
 						_, isValid := validDestinations[coord]
-						if isValid && chess.IsDestinationValid(model.WhiteToMove, isOccupied, occupant) {
+						if isValid && logic.IsDestinationValid(model.WhiteToMove, isOccupied, occupant) {
 							move(&model, coord)
 						} else {
-							model.CurrentState = chess.StateSelectPiece
+							model.CurrentState = StateSelectPiece
 						}
 					}
 				}
@@ -219,8 +287,8 @@ func run() {
 	}
 }
 
-func move(model *chess.Model, destCoord chess.Coord) {
-	model.CurrentState = chess.StateDraw
+func move(model *Model, destCoord state.Coord) {
+	model.CurrentState = StateDraw
 	model.Draw = true
 	model.MoveDestinationCoord = destCoord
 
@@ -234,7 +302,7 @@ func main() {
 	pixelgl.Run(run)
 }
 
-func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer, squares chess.BoardMap) {
+func draw(win *pixelgl.Window, boardState state.BoardState, drawer view.Drawer, squares view.BoardMap) {
 	// Draw board
 	for _, square := range squares {
 		square.Shape.Draw(win)
@@ -242,8 +310,8 @@ func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer,
 
 	// Draw pieces in the correct position
 	for coord, livePieceData := range boardState {
-		var set chess.PieceSpriteSet
-		if livePieceData.Color == chess.PlayerBlack {
+		var set view.PieceSpriteSet
+		if livePieceData.Color == state.PlayerBlack {
 			set = drawer.Black
 		} else {
 			set = drawer.White
@@ -251,20 +319,20 @@ func draw(win *pixelgl.Window, boardState chess.BoardState, drawer chess.Drawer,
 
 		var piece *pixel.Sprite
 		switch livePieceData.Piece {
-		case chess.PieceBishop:
+		case state.PieceBishop:
 			piece = set.Bishop
-		case chess.PieceKing:
+		case state.PieceKing:
 			piece = set.King
-		case chess.PieceKnight:
+		case state.PieceKnight:
 			piece = set.Knight
-		case chess.PiecePawn:
+		case state.PiecePawn:
 			piece = set.Pawn
-		case chess.PieceQueen:
+		case state.PieceQueen:
 			piece = set.Queen
-		case chess.PieceRook:
+		case state.PieceRook:
 			piece = set.Rook
 		}
 
-		chess.DrawPiece(win, squares, piece, coord)
+		view.DrawPiece(win, squares, piece, coord)
 	}
 }
