@@ -12,9 +12,6 @@ var spriteSheetPath = "assets/standard_chess_pieces_sprite_sheet.png"
 // SpriteByName represents a map of piece names to sprites
 type SpriteByName map[string]*pixel.Sprite
 
-// ByColor represents a map of color name to SpriteByName
-type ByColor map[string]SpriteByName
-
 // PieceSpriteSet contains one sprite per type of piece
 type PieceSpriteSet struct {
 	King   *pixel.Sprite

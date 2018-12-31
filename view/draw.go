@@ -12,7 +12,7 @@ type pieceDrawer struct {
 	white PieceSpriteSet
 }
 
-// NewPieceDrawer constructs a ByColor (chess piece sprites)
+// NewPieceDrawer builds a pieceDrawer instance that is responsible for drawing chess pieces
 func NewPieceDrawer(win *pixelgl.Window) pieceDrawer {
 	// Load sprite sheet graphic
 	pic, err := loadPicture(spriteSheetPath)
@@ -73,6 +73,9 @@ func (drawer pieceDrawer) Draw(boardState model.BoardState, squares BoardMap) {
 			piece = set.Rook
 		}
 
-		DrawPiece(drawer.win, squares, piece, coord)
+		square := squares[coord]
+		x := square.OriginX + 25
+		y := square.OriginY + 25
+		piece.Draw(drawer.win, pixel.IM.Moved(pixel.V(x, y)))
 	}
 }

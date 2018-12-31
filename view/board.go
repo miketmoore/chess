@@ -83,14 +83,6 @@ func NewBoardView(
 	return squares, squareOriginByCoords
 }
 
-// DrawPiece draws a chess piece on the board
-func DrawPiece(win *pixelgl.Window, squares BoardMap, piece *pixel.Sprite, coord model.Coord) {
-	square := squares[coord]
-	x := square.OriginX + 25
-	y := square.OriginY + 25
-	piece.Draw(win, pixel.IM.Moved(pixel.V(x, y)))
-}
-
 // HighlightSquares adds a visual marker to the list of board squares
 func HighlightSquares(win *pixelgl.Window, squares BoardMap, coords logic.ValidMoves, color color.RGBA) {
 	for coord := range coords {
