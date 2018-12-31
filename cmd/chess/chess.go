@@ -14,7 +14,7 @@ import (
 	"github.com/miketmoore/chess/coordsmapper"
 	"github.com/miketmoore/chess/gamestate"
 	"github.com/miketmoore/chess/logic"
-	"github.com/miketmoore/chess/state"
+	"github.com/miketmoore/chess/model"
 	"github.com/miketmoore/chess/view"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
@@ -32,29 +32,29 @@ const lang = "en-US"
 
 // Model contains data used for the game
 type Model struct {
-	BoardState           state.BoardState
-	PieceToMove          state.PlayerPiece
-	MoveStartCoord       state.Coord
-	MoveDestinationCoord state.Coord
+	BoardState           model.BoardState
+	PieceToMove          model.PlayerPiece
+	MoveStartCoord       model.Coord
+	MoveDestinationCoord model.Coord
 	Draw                 bool
 	WhiteToMove          bool
 	CurrentState         gamestate.GameState
 }
 
 // CurrentPlayerColor returns the current player color
-func (m *Model) CurrentPlayerColor() state.PlayerColor {
+func (m *Model) CurrentPlayerColor() model.PlayerColor {
 	if m.WhiteToMove {
-		return state.PlayerWhite
+		return model.PlayerWhite
 	}
-	return state.PlayerBlack
+	return model.PlayerBlack
 }
 
 // EnemyPlayerColor returns the enemy player color
-func (m *Model) EnemyPlayerColor() state.PlayerColor {
+func (m *Model) EnemyPlayerColor() model.PlayerColor {
 	if m.WhiteToMove {
-		return state.PlayerBlack
+		return model.PlayerBlack
 	}
-	return state.PlayerWhite
+	return model.PlayerWhite
 }
 
 // LoadTTF loads a TTF font file
@@ -105,7 +105,7 @@ func run() {
 		The current game data is stored here
 	*/
 	model := Model{
-		BoardState:   state.InitialOnBoardState(),
+		BoardState:   model.InitialOnBoardState(),
 		Draw:         true,
 		WhiteToMove:  true,
 		CurrentState: gamestate.Title,
@@ -277,7 +277,7 @@ func run() {
 	}
 }
 
-func move(model *Model, destCoord state.Coord) {
+func move(model *Model, destCoord model.Coord) {
 	model.CurrentState = gamestate.Draw
 	model.Draw = true
 	model.MoveDestinationCoord = destCoord
@@ -292,7 +292,7 @@ func main() {
 	pixelgl.Run(run)
 }
 
-func draw(win *pixelgl.Window, boardState state.BoardState, drawer view.Drawer, squares view.BoardMap) {
+func draw(win *pixelgl.Window, boardState model.BoardState, drawer view.Drawer, squares view.BoardMap) {
 	// Draw board
 	for _, square := range squares {
 		square.Shape.Draw(win)
@@ -301,7 +301,7 @@ func draw(win *pixelgl.Window, boardState state.BoardState, drawer view.Drawer, 
 	// Draw pieces in the correct position
 	for coord, livePieceData := range boardState {
 		var set view.PieceSpriteSet
-		if livePieceData.Color == state.PlayerBlack {
+		if livePieceData.Color == model.PlayerBlack {
 			set = drawer.Black
 		} else {
 			set = drawer.White
@@ -309,17 +309,17 @@ func draw(win *pixelgl.Window, boardState state.BoardState, drawer view.Drawer, 
 
 		var piece *pixel.Sprite
 		switch livePieceData.Piece {
-		case state.PieceBishop:
+		case model.PieceBishop:
 			piece = set.Bishop
-		case state.PieceKing:
+		case model.PieceKing:
 			piece = set.King
-		case state.PieceKnight:
+		case model.PieceKnight:
 			piece = set.Knight
-		case state.PiecePawn:
+		case model.PiecePawn:
 			piece = set.Pawn
-		case state.PieceQueen:
+		case model.PieceQueen:
 			piece = set.Queen
-		case state.PieceRook:
+		case model.PieceRook:
 			piece = set.Rook
 		}
 

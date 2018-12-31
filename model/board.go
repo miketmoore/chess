@@ -1,4 +1,4 @@
-package state
+package model
 
 // BoardState is a data structure used to track pieces currently on the board
 type BoardState map[Coord]PlayerPiece

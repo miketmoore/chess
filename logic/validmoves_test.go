@@ -4,28 +4,29 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/miketmoore/chess"
+	"github.com/miketmoore/chess/logic"
+	"github.com/miketmoore/chess/model"
 )
 
 func TestIsDestinationValid(t *testing.T) {
 	tests := []struct {
 		whiteToMove bool
 		isOccupied  bool
-		occupant    chess.PlayerPiece
+		occupant    model.PlayerPiece
 		expected    bool
 	}{
-		{true, true, chess.PlayerPiece{Color: chess.PlayerBlack, Piece: chess.PiecePawn}, true},
-		{true, true, chess.PlayerPiece{Color: chess.PlayerWhite, Piece: chess.PiecePawn}, false},
-		{true, false, chess.PlayerPiece{}, true},
+		{true, true, model.PlayerPiece{Color: model.PlayerBlack, Piece: model.PiecePawn}, true},
+		{true, true, model.PlayerPiece{Color: model.PlayerWhite, Piece: model.PiecePawn}, false},
+		{true, false, model.PlayerPiece{}, true},
 
-		{false, true, chess.PlayerPiece{Color: chess.PlayerWhite, Piece: chess.PiecePawn}, true},
-		{false, true, chess.PlayerPiece{Color: chess.PlayerBlack, Piece: chess.PiecePawn}, false},
-		{false, false, chess.PlayerPiece{}, true},
+		{false, true, model.PlayerPiece{Color: model.PlayerWhite, Piece: model.PiecePawn}, true},
+		{false, true, model.PlayerPiece{Color: model.PlayerBlack, Piece: model.PiecePawn}, false},
+		{false, false, model.PlayerPiece{}, true},
 	}
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
-			got := chess.IsDestinationValid(
+			got := logic.IsDestinationValid(
 				test.whiteToMove,
 				test.isOccupied,
 				test.occupant,

@@ -1,4 +1,4 @@
-package state
+package model
 
 var ValidCoords = map[Coord]bool{
 	Coord{Rank1, FileA}: true,

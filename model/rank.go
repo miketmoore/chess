@@ -1,4 +1,4 @@
-package state
+package model
 
 // Rank is a custom type that represents a horizontal row (rank) on the chess board
 type Rank uint8

@@ -1,4 +1,4 @@
-package state
+package model
 
 // Piece represents the piece type
 type Piece uint8

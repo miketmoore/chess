@@ -2,20 +2,20 @@ package logic
 
 import (
 	"github.com/miketmoore/chess/coordsmapper"
-	"github.com/miketmoore/chess/state"
+	"github.com/miketmoore/chess/model"
 )
 
-func isCoordStartPosition(playerColor state.PlayerColor, piece state.Piece, rank state.Rank) bool {
+func isCoordStartPosition(playerColor model.PlayerColor, piece model.Piece, rank model.Rank) bool {
 
-	if playerColor == state.PlayerWhite {
+	if playerColor == model.PlayerWhite {
 		// white
-		if piece == state.PiecePawn {
-			return rank == state.Rank2
+		if piece == model.PiecePawn {
+			return rank == model.Rank2
 		}
 	} else {
 		// black
-		if piece == state.PiecePawn {
-			return rank == state.Rank7
+		if piece == model.PiecePawn {
+			return rank == model.Rank7
 		}
 	}
 
@@ -49,44 +49,44 @@ var (
 	SlopeNorthWest = DirectionSlope{1, -1}
 )
 
-type ValidMoves map[state.Coord]uint8
+type ValidMoves map[model.Coord]uint8
 
 // GetValidMoves returns a list of valid coordinates the piece can be moved to
-func GetValidMoves(playerColor state.PlayerColor, piece state.Piece, boardState state.BoardState,
-	coord state.Coord) ValidMoves {
+func GetValidMoves(playerColor model.PlayerColor, piece model.Piece, boardState model.BoardState,
+	coord model.Coord) ValidMoves {
 	switch piece {
-	case state.PiecePawn:
+	case model.PiecePawn:
 		return getValidMovesPawn(playerColor, boardState, coord)
-	case state.PieceKing:
+	case model.PieceKing:
 		return getValidMovesKing(playerColor, boardState, coord)
-	case state.PieceKnight:
+	case model.PieceKnight:
 		return getValidMovesKnight(playerColor, boardState, coord)
-	case state.PieceRook:
+	case model.PieceRook:
 		return getValidMovesRook(playerColor, boardState, coord)
-	case state.PieceBishop:
+	case model.PieceBishop:
 		return getValidMovesForBishop(playerColor, boardState, coord)
-	case state.PieceQueen:
+	case model.PieceQueen:
 		return getValidMovesForQueen(playerColor, boardState, coord)
 	}
 	return ValidMoves{}
 }
 
-func isOccupied(boardState state.BoardState, coord state.Coord) bool {
+func isOccupied(boardState model.BoardState, coord model.Coord) bool {
 	_, isOccupied := boardState[coord]
 	return isOccupied
 }
 
-func isOccupiedByColor(boardState state.BoardState, coord state.Coord, color state.PlayerColor) bool {
+func isOccupiedByColor(boardState model.BoardState, coord model.Coord, color model.PlayerColor) bool {
 	occupant, occupied := boardState[coord]
 	return occupied && occupant.Color == color
 }
 
-func getValidMovesPawn(playerColor state.PlayerColor, boardState state.BoardState, currCoord state.Coord) ValidMoves {
+func getValidMovesPawn(playerColor model.PlayerColor, boardState model.BoardState, currCoord model.Coord) ValidMoves {
 	enemyColor := !playerColor
 	valid := ValidMoves{}
 
 	yChange := 1
-	if playerColor == state.PlayerBlack {
+	if playerColor == model.PlayerBlack {
 		yChange = -1
 	}
 
@@ -94,13 +94,13 @@ func getValidMovesPawn(playerColor state.PlayerColor, boardState state.BoardStat
 	coords := coordsmapper.GetCoordsBySlopeAndDistance(currCoord, yChange, 0, 2)
 	if !isOccupied(boardState, coords[0]) {
 		valid[coords[0]] = 1
-		if isCoordStartPosition(playerColor, state.PiecePawn, currCoord.Rank) && !isOccupied(boardState, coords[1]) {
+		if isCoordStartPosition(playerColor, model.PiecePawn, currCoord.Rank) && !isOccupied(boardState, coords[1]) {
 			valid[coords[1]] = 1
 		}
 	}
 
 	// pawn attack moves
-	if playerColor == state.PlayerWhite {
+	if playerColor == model.PlayerWhite {
 		// NW
 		coord, ok := coordsmapper.GetCoordBySlopeAndDistance(currCoord, 1, 1)
 		if ok && isOccupiedByColor(boardState, coord, enemyColor) {
@@ -129,7 +129,7 @@ func getValidMovesPawn(playerColor state.PlayerColor, boardState state.BoardStat
 	return valid
 }
 
-func getValidMovesKing(playerColor state.PlayerColor, boardState state.BoardState, currCoord state.Coord) ValidMoves {
+func getValidMovesKing(playerColor model.PlayerColor, boardState model.BoardState, currCoord model.Coord) ValidMoves {
 	enemyColor := !playerColor
 	valid := ValidMoves{}
 
@@ -143,7 +143,7 @@ func getValidMovesKing(playerColor state.PlayerColor, boardState state.BoardStat
 	return valid
 }
 
-func getValidMovesRook(playerColor state.PlayerColor, boardState state.BoardState, currCoord state.Coord) ValidMoves {
+func getValidMovesRook(playerColor model.PlayerColor, boardState model.BoardState, currCoord model.Coord) ValidMoves {
 	enemyColor := !playerColor
 	valid := ValidMoves{}
 
@@ -175,7 +175,7 @@ func getValidMovesRook(playerColor state.PlayerColor, boardState state.BoardStat
 	return valid
 }
 
-func getValidMovesKnight(playerColor state.PlayerColor, boardState state.BoardState, currCoord state.Coord) ValidMoves {
+func getValidMovesKnight(playerColor model.PlayerColor, boardState model.BoardState, currCoord model.Coord) ValidMoves {
 
 	valid := ValidMoves{}
 
@@ -203,7 +203,7 @@ func getValidMovesKnight(playerColor state.PlayerColor, boardState state.BoardSt
 	return valid
 }
 
-func getValidMovesForBishop(playerColor state.PlayerColor, boardState state.BoardState, currCoord state.Coord) ValidMoves {
+func getValidMovesForBishop(playerColor model.PlayerColor, boardState model.BoardState, currCoord model.Coord) ValidMoves {
 	enemyColor := !playerColor
 	valid := ValidMoves{}
 
@@ -235,7 +235,7 @@ func getValidMovesForBishop(playerColor state.PlayerColor, boardState state.Boar
 	return valid
 }
 
-func getValidMovesForQueen(playerColor state.PlayerColor, boardState state.BoardState, currCoord state.Coord) ValidMoves {
+func getValidMovesForQueen(playerColor model.PlayerColor, boardState model.BoardState, currCoord model.Coord) ValidMoves {
 	diagonals := getValidMovesForBishop(playerColor, boardState, currCoord)
 	horizontals := getValidMovesRook(playerColor, boardState, currCoord)
 	valid := ValidMoves{}
@@ -249,11 +249,11 @@ func getValidMovesForQueen(playerColor state.PlayerColor, boardState state.Board
 }
 
 // IsDestinationValid checks if the specified color can move to the
-func IsDestinationValid(whiteToMove bool, isOccupied bool, occupant state.PlayerPiece) bool {
+func IsDestinationValid(whiteToMove bool, isOccupied bool, occupant model.PlayerPiece) bool {
 	if isOccupied {
-		if whiteToMove && occupant.Color == state.PlayerBlack {
+		if whiteToMove && occupant.Color == model.PlayerBlack {
 			return true
-		} else if !whiteToMove && occupant.Color == state.PlayerWhite {
+		} else if !whiteToMove && occupant.Color == model.PlayerWhite {
 			return true
 		}
 	} else {

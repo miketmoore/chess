@@ -1,4 +1,4 @@
-package state
+package model
 
 // PlayerColor is a type for player colors
 type PlayerColor bool

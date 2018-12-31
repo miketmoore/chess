@@ -1,4 +1,4 @@
-package state
+package model
 
 // File is a custom type that represents a vertical column (file) on the chess board
 type File uint8

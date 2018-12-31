@@ -1,4 +1,4 @@
-package state
+package model
 
 // Coord represents a board square by rank and file
 type Coord struct {

@@ -7,7 +7,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/miketmoore/chess/logic"
-	"github.com/miketmoore/chess/state"
+	"github.com/miketmoore/chess/model"
 )
 
 const totalSquares = 64
@@ -15,7 +15,7 @@ const totalRows = 8
 const totalCols = 8
 
 // BoardMap is the type used to describe the map of board squares/shapes
-type BoardMap map[state.Coord]Square
+type BoardMap map[model.Coord]Square
 
 // Square represents one square of the board
 type Square struct {
@@ -34,7 +34,7 @@ type Square struct {
 func NewBoardView(
 	originX, originY, size float64,
 	blackFill, whiteFill color.RGBA,
-) (BoardMap, map[state.Coord][]float64) {
+) (BoardMap, map[model.Coord][]float64) {
 	var squareW = size
 	var squareH = size
 	var r, c float64
@@ -44,7 +44,7 @@ func NewBoardView(
 	i := 0
 	squares := BoardMap{}
 
-	squareOriginByCoords := map[state.Coord][]float64{}
+	squareOriginByCoords := map[model.Coord][]float64{}
 
 	for r = 0; r < totalRows; r++ {
 		for c = 0; c < totalCols; c++ {
@@ -63,7 +63,7 @@ func NewBoardView(
 			shape.Push(pixel.V(squareW+xInc, squareH+yInc))
 			shape.Rectangle(0)
 
-			coord := state.Coord{state.Rank(int(r) + 1), state.File(c + 1)}
+			coord := model.Coord{model.Rank(int(r) + 1), model.File(c + 1)}
 
 			squares[coord] = Square{
 				Shape:   shape,
@@ -84,7 +84,7 @@ func NewBoardView(
 }
 
 // DrawPiece draws a chess piece on the board
-func DrawPiece(win *pixelgl.Window, squares BoardMap, piece *pixel.Sprite, coord state.Coord) {
+func DrawPiece(win *pixelgl.Window, squares BoardMap, piece *pixel.Sprite, coord model.Coord) {
 	square := squares[coord]
 	x := square.OriginX + 25
 	y := square.OriginY + 25
