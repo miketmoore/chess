@@ -5,7 +5,7 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 BINARY_NAME=chess
 REPO=github.com/miketmoore/chess
-MAIN=cmd/chess/chess.go
+MAIN=cmd/chess/*.go
 
 all: deps test build
 build:
