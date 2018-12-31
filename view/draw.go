@@ -6,22 +6,23 @@ import (
 	"github.com/miketmoore/chess/model"
 )
 
-// PieceDrawer contains all chess piece sprites
-type PieceDrawer struct {
-	Black PieceSpriteSet
-	White PieceSpriteSet
+type pieceDrawer struct {
+	win   *pixelgl.Window
+	black PieceSpriteSet
+	white PieceSpriteSet
 }
 
 // NewPieceDrawer constructs a ByColor (chess piece sprites)
-func NewPieceDrawer() PieceDrawer {
+func NewPieceDrawer(win *pixelgl.Window) pieceDrawer {
 	// Load sprite sheet graphic
 	pic, err := loadPicture(spriteSheetPath)
 	if err != nil {
 		panic(err)
 	}
 
-	return PieceDrawer{
-		Black: PieceSpriteSet{
+	return pieceDrawer{
+		win: win,
+		black: PieceSpriteSet{
 			King:   newSprite(pic, 0, 0, 40, 40),
 			Queen:  newSprite(pic, 40, 0, 90, 40),
 			Bishop: newSprite(pic, 90, 0, 140, 40),
@@ -29,7 +30,7 @@ func NewPieceDrawer() PieceDrawer {
 			Rook:   newSprite(pic, 185, 0, 220, 40),
 			Pawn:   newSprite(pic, 230, 0, 270, 40),
 		},
-		White: PieceSpriteSet{
+		white: PieceSpriteSet{
 			King:   newSprite(pic, 0, 40, 40, 85),
 			Queen:  newSprite(pic, 40, 40, 90, 85),
 			Bishop: newSprite(pic, 90, 40, 140, 85),
@@ -41,19 +42,19 @@ func NewPieceDrawer() PieceDrawer {
 }
 
 // Draw renders the chess pieces in the correct position on the board
-func (drawer PieceDrawer) Draw(win *pixelgl.Window, boardState model.BoardState, squares BoardMap) {
+func (drawer pieceDrawer) Draw(boardState model.BoardState, squares BoardMap) {
 	// Draw board
 	for _, square := range squares {
-		square.Shape.Draw(win)
+		square.Shape.Draw(drawer.win)
 	}
 
 	// Draw pieces in the correct position
 	for coord, livePieceData := range boardState {
 		var set PieceSpriteSet
 		if livePieceData.Color == model.PlayerBlack {
-			set = drawer.Black
+			set = drawer.black
 		} else {
-			set = drawer.White
+			set = drawer.white
 		}
 
 		var piece *pixel.Sprite
@@ -72,6 +73,6 @@ func (drawer PieceDrawer) Draw(win *pixelgl.Window, boardState model.BoardState,
 			piece = set.Rook
 		}
 
-		DrawPiece(win, squares, piece, coord)
+		DrawPiece(drawer.win, squares, piece, coord)
 	}
 }
