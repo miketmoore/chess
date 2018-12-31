@@ -10,6 +10,8 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/miketmoore/chess/coordsmapper"
+	"github.com/miketmoore/chess/fonts"
+	"github.com/miketmoore/chess/gamemodel"
 	"github.com/miketmoore/chess/gamestate"
 	"github.com/miketmoore/chess/logic"
 	"github.com/miketmoore/chess/model"
@@ -50,7 +52,7 @@ func run() {
 	/*
 		The current game data is stored here
 	*/
-	gameModel := Model{
+	gameModel := gamemodel.GameModel{
 		BoardState:   model.InitialOnBoardState(),
 		Draw:         true,
 		WhiteToMove:  true,
@@ -69,7 +71,7 @@ func run() {
 	}
 
 	// Prepare display text
-	displayFace, err := LoadTTF(displayFontPath, 80)
+	displayFace, err := fonts.LoadTTF(displayFontPath, 80)
 	if err != nil {
 		panic(err)
 	}
@@ -79,7 +81,7 @@ func run() {
 	displayTxt := text.New(displayOrig, displayAtlas)
 
 	// Prepare body text
-	bodyFace, err := LoadTTF(bodyFontPath, 12)
+	bodyFace, err := fonts.LoadTTF(bodyFontPath, 12)
 	if err != nil {
 		panic(err)
 	}
@@ -210,7 +212,7 @@ func run() {
 						occupant, isOccupied := gameModel.BoardState[coord]
 						_, isValid := validDestinations[coord]
 						if isValid && logic.IsDestinationValid(gameModel.WhiteToMove, isOccupied, occupant) {
-							move(&gameModel, coord)
+							gameModel.Move(coord)
 						} else {
 							gameModel.CurrentState = gamestate.SelectPiece
 						}
@@ -221,17 +223,6 @@ func run() {
 
 		win.Update()
 	}
-}
-
-func move(gameModel *Model, destCoord model.Coord) {
-	gameModel.CurrentState = gamestate.Draw
-	gameModel.Draw = true
-	gameModel.MoveDestinationCoord = destCoord
-
-	gameModel.BoardState[destCoord] = gameModel.PieceToMove
-	delete(gameModel.BoardState, gameModel.MoveStartCoord)
-
-	gameModel.WhiteToMove = !gameModel.WhiteToMove
 }
 
 func main() {

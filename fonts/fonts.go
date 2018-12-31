@@ -1,4 +1,4 @@
-package main
+package fonts
 
 import (
 	"io/ioutil"

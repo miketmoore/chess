@@ -1,4 +1,4 @@
-package main
+package gamemodel
 
 import (
 	"github.com/miketmoore/chess/gamestate"
@@ -6,7 +6,7 @@ import (
 )
 
 // Model contains data used for the game
-type Model struct {
+type GameModel struct {
 	BoardState           model.BoardState
 	PieceToMove          model.PlayerPiece
 	MoveStartCoord       model.Coord
@@ -17,7 +17,7 @@ type Model struct {
 }
 
 // CurrentPlayerColor returns the current player color
-func (m *Model) CurrentPlayerColor() model.PlayerColor {
+func (m *GameModel) CurrentPlayerColor() model.PlayerColor {
 	if m.WhiteToMove {
 		return model.PlayerWhite
 	}
@@ -25,9 +25,21 @@ func (m *Model) CurrentPlayerColor() model.PlayerColor {
 }
 
 // EnemyPlayerColor returns the enemy player color
-func (m *Model) EnemyPlayerColor() model.PlayerColor {
+func (m *GameModel) EnemyPlayerColor() model.PlayerColor {
 	if m.WhiteToMove {
 		return model.PlayerBlack
 	}
 	return model.PlayerWhite
+}
+
+// Move moves the current player piece
+func (m *GameModel) Move(destCoord model.Coord) {
+	m.CurrentState = gamestate.Draw
+	m.Draw = true
+	m.MoveDestinationCoord = destCoord
+
+	m.BoardState[destCoord] = m.PieceToMove
+	delete(m.BoardState, m.MoveStartCoord)
+
+	m.WhiteToMove = !m.WhiteToMove
 }
