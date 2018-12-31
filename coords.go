@@ -177,14 +177,14 @@ func GetCoordBySlopeAndDistance(start Coord, yChange, xChange int) (Coord, bool)
 
 func GetCoordsBySlopeAndDistanceAll(start Coord, distance int) []Coord {
 	slopes := [][]int{
-		[]int{1, 0},   // n
-		[]int{1, 1},   // ne
-		[]int{0, 1},   // e
-		[]int{-1, 1},  // se
-		[]int{-1, 0},  // s
-		[]int{-1, -1}, // sw
-		[]int{0, -1},  // w
-		[]int{1, -1},  // nw
+		{1, 0},   // n
+		{1, 1},   // ne
+		{0, 1},   // e
+		{-1, 1},  // se
+		{-1, 0},  // s
+		{-1, -1}, // sw
+		{0, -1},  // w
+		{1, -1},  // nw
 	}
 
 	coords := []Coord{}

@@ -34,14 +34,14 @@ const (
 type DirectionSlope []int
 
 var (
-	SlopeNorth     DirectionSlope = []int{1, 0}
-	SlopeNorthEast DirectionSlope = []int{1, 1}
-	SlopeEast      DirectionSlope = []int{0, 1}
-	SlopeSouthEast DirectionSlope = []int{-1, 1}
-	SlopeSouth     DirectionSlope = []int{-1, 0}
-	SlopeSouthWest DirectionSlope = []int{-1, -1}
-	SlopeWest      DirectionSlope = []int{0, -1}
-	SlopeNorthWest DirectionSlope = []int{1, -1}
+	SlopeNorth     = DirectionSlope{1, 0}
+	SlopeNorthEast = DirectionSlope{1, 1}
+	SlopeEast      = DirectionSlope{0, 1}
+	SlopeSouthEast = DirectionSlope{-1, 1}
+	SlopeSouth     = DirectionSlope{-1, 0}
+	SlopeSouthWest = DirectionSlope{-1, -1}
+	SlopeWest      = DirectionSlope{0, -1}
+	SlopeNorthWest = DirectionSlope{1, -1}
 )
 
 // Rank is a custom type that represents a horizontal row (rank) on the chess board
@@ -215,14 +215,14 @@ func getValidMovesKnight(playerColor PlayerColor, boardState BoardState, currCoo
 	valid := ValidMoves{}
 
 	var slopes = [][]int{
-		[]int{2, -1},
-		[]int{2, 1},
-		[]int{1, 2},
-		[]int{-1, 2},
-		[]int{-2, 1},
-		[]int{-2, -1},
-		[]int{1, -2},
-		[]int{-1, -2},
+		{2, -1},
+		{2, 1},
+		{1, 2},
+		{-1, 2},
+		{-2, 1},
+		{-2, -1},
+		{1, -2},
+		{-1, -2},
 	}
 
 	for _, slope := range slopes {
