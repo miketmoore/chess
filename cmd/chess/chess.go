@@ -12,6 +12,7 @@ import (
 	"github.com/faiface/pixel/text"
 	"github.com/golang/freetype/truetype"
 	"github.com/miketmoore/chess/coordsmapper"
+	"github.com/miketmoore/chess/gamestate"
 	"github.com/miketmoore/chess/logic"
 	"github.com/miketmoore/chess/state"
 	"github.com/miketmoore/chess/view"
@@ -29,17 +30,6 @@ const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/en.toml"
 const lang = "en-US"
 
-// State is the type for the state enum
-type State string
-
-const (
-	StateTitle             State = "title"
-	StateDraw              State = "draw"
-	StateSelectPiece       State = "selectSpace"
-	StateSelectDestination State = "selectDestination"
-	DrawValidMoves         State = "drawValidMoves"
-)
-
 // Model contains data used for the game
 type Model struct {
 	BoardState           state.BoardState
@@ -48,7 +38,7 @@ type Model struct {
 	MoveDestinationCoord state.Coord
 	Draw                 bool
 	WhiteToMove          bool
-	CurrentState         State
+	CurrentState         gamestate.GameState
 }
 
 // CurrentPlayerColor returns the current player color
@@ -118,7 +108,7 @@ func run() {
 		BoardState:   state.InitialOnBoardState(),
 		Draw:         true,
 		WhiteToMove:  true,
-		CurrentState: StateTitle,
+		CurrentState: gamestate.Title,
 	}
 
 	// Setup GUI window
@@ -187,7 +177,7 @@ func run() {
 		/*
 			Draw the title screen
 		*/
-		case StateTitle:
+		case gamestate.Title:
 			if model.Draw {
 				win.Clear(colornames.Black)
 
@@ -205,23 +195,23 @@ func run() {
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				model.CurrentState = StateDraw
+				model.CurrentState = gamestate.Draw
 				win.Clear(colornames.Black)
 				model.Draw = true
 			}
 		/*
 			Draw the current state of the pieces on the board
 		*/
-		case StateDraw:
+		case gamestate.Draw:
 			if model.Draw {
 				draw(win, model.BoardState, drawer, squares)
 				model.Draw = false
-				model.CurrentState = StateSelectPiece
+				model.CurrentState = gamestate.SelectPiece
 			}
 		/*
 			Listen for input - the current player may select a piece to move
 		*/
-		case StateSelectPiece:
+		case gamestate.SelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				square := view.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
@@ -242,7 +232,7 @@ func run() {
 							if len(validDestinations) > 0 {
 								model.PieceToMove = occupant
 								model.MoveStartCoord = coord
-								model.CurrentState = DrawValidMoves
+								model.CurrentState = gamestate.DrawValidMoves
 								model.Draw = true
 							}
 						}
@@ -254,17 +244,17 @@ func run() {
 		/*
 			Highlight squares that are valid moves for the piece that was just selected
 		*/
-		case DrawValidMoves:
+		case gamestate.DrawValidMoves:
 			if model.Draw {
 				draw(win, model.BoardState, drawer, squares)
 				view.HighlightSquares(win, squares, validDestinations, colornames.Greenyellow)
 				model.Draw = false
-				model.CurrentState = StateSelectDestination
+				model.CurrentState = gamestate.SelectDestination
 			}
 		/*
 			Listen for input - the current player may select a destination square for their selected piece
 		*/
-		case StateSelectDestination:
+		case gamestate.SelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 				square := view.FindSquareByVec(squares, mpos)
@@ -276,7 +266,7 @@ func run() {
 						if isValid && logic.IsDestinationValid(model.WhiteToMove, isOccupied, occupant) {
 							move(&model, coord)
 						} else {
-							model.CurrentState = StateSelectPiece
+							model.CurrentState = gamestate.SelectPiece
 						}
 					}
 				}
@@ -288,7 +278,7 @@ func run() {
 }
 
 func move(model *Model, destCoord state.Coord) {
-	model.CurrentState = StateDraw
+	model.CurrentState = gamestate.Draw
 	model.Draw = true
 	model.MoveDestinationCoord = destCoord
 
