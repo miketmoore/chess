@@ -14,26 +14,6 @@ const totalSquares = 64
 const totalRows = 8
 const totalCols = 8
 
-// BoardThemes is a collection of color themes for the board
-var BoardThemes = map[string]map[string]color.RGBA{
-	"classic": map[string]color.RGBA{
-		"black": color.RGBA{0, 0, 0, 255},
-		"white": color.RGBA{255, 255, 255, 255},
-	},
-	"coral": map[string]color.RGBA{
-		"black": color.RGBA{112, 162, 163, 255},
-		"white": color.RGBA{177, 228, 185, 255},
-	},
-	"emerald": map[string]color.RGBA{
-		"black": color.RGBA{111, 143, 114, 255},
-		"white": color.RGBA{173, 189, 143, 255},
-	},
-	"sandcastle": map[string]color.RGBA{
-		"black": color.RGBA{184, 139, 74, 255},
-		"white": color.RGBA{227, 193, 111, 255},
-	},
-}
-
 // BoardMap is the type used to describe the map of board squares/shapes
 type BoardMap map[state.Coord]Square
 

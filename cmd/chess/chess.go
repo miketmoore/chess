@@ -161,15 +161,15 @@ func run() {
 	fmt.Fprintln(bodyTxt, pressAnyKeyStr)
 
 	// Make board
-	boardThemeName := "sandcastle"
+	themeName := "sandcastle"
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
 	squares, squareOriginByCoords := view.NewBoardView(
 		float64(boardOriginX),
 		150,
 		squareSize,
-		view.BoardThemes[boardThemeName]["black"],
-		view.BoardThemes[boardThemeName]["white"],
+		view.Themes[themeName]["black"],
+		view.Themes[themeName]["white"],
 	)
 
 	// Make pieces
