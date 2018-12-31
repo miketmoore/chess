@@ -2,6 +2,7 @@ package gamemodel
 
 import (
 	"github.com/miketmoore/chess/gamestate"
+	"github.com/miketmoore/chess/logic"
 	"github.com/miketmoore/chess/model"
 )
 
@@ -14,6 +15,17 @@ type GameModel struct {
 	Draw                 bool
 	WhiteToMove          bool
 	CurrentState         gamestate.GameState
+	ValidDestinations    logic.ValidMoves
+}
+
+func New() GameModel {
+	return GameModel{
+		BoardState:        model.InitialOnBoardState(),
+		Draw:              true,
+		WhiteToMove:       true,
+		CurrentState:      gamestate.Title,
+		ValidDestinations: logic.ValidMoves{},
+	}
 }
 
 // CurrentPlayerColor returns the current player color

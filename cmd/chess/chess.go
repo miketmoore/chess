@@ -14,7 +14,6 @@ import (
 	"github.com/miketmoore/chess/gamemodel"
 	"github.com/miketmoore/chess/gamestate"
 	"github.com/miketmoore/chess/logic"
-	"github.com/miketmoore/chess/model"
 	"github.com/miketmoore/chess/view"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
@@ -48,16 +47,6 @@ func run() {
 			ID: "PressAnyKey",
 		},
 	})
-
-	/*
-		The current game data is stored here
-	*/
-	gameModel := gamemodel.GameModel{
-		BoardState:   model.InitialOnBoardState(),
-		Draw:         true,
-		WhiteToMove:  true,
-		CurrentState: gamestate.Title,
-	}
 
 	// Setup GUI window
 	cfg := pixelgl.WindowConfig{
@@ -113,7 +102,8 @@ func run() {
 	// Make pieces
 	drawer := view.NewSpriteByColor()
 
-	validDestinations := logic.ValidMoves{}
+	// The current game data is stored here
+	currentGame := gamemodel.New()
 
 	for !win.Closed() {
 
@@ -121,12 +111,12 @@ func run() {
 			os.Exit(0)
 		}
 
-		switch gameModel.CurrentState {
+		switch currentGame.CurrentState {
 		/*
 			Draw the title screen
 		*/
 		case gamestate.Title:
-			if gameModel.Draw {
+			if currentGame.Draw {
 				win.Clear(colornames.Black)
 
 				// Draw title text
@@ -139,22 +129,22 @@ func run() {
 				bodyTxt.Color = colornames.White
 				bodyTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(bodyTxt.Bounds().Center())))
 
-				gameModel.Draw = false
+				currentGame.Draw = false
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				gameModel.CurrentState = gamestate.Draw
+				currentGame.CurrentState = gamestate.Draw
 				win.Clear(colornames.Black)
-				gameModel.Draw = true
+				currentGame.Draw = true
 			}
 		/*
 			Draw the current state of the pieces on the board
 		*/
 		case gamestate.Draw:
-			if gameModel.Draw {
-				view.Draw(win, gameModel.BoardState, drawer, squares)
-				gameModel.Draw = false
-				gameModel.CurrentState = gamestate.SelectPiece
+			if currentGame.Draw {
+				view.Draw(win, currentGame.BoardState, drawer, squares)
+				currentGame.Draw = false
+				currentGame.CurrentState = gamestate.SelectPiece
 			}
 		/*
 			Listen for input - the current player may select a piece to move
@@ -169,19 +159,19 @@ func run() {
 						square.OriginY,
 					)
 					if ok {
-						occupant, isOccupied := gameModel.BoardState[coord]
-						if occupant.Color == gameModel.CurrentPlayerColor() && isOccupied {
-							validDestinations = logic.GetValidMoves(
-								gameModel.CurrentPlayerColor(),
+						occupant, isOccupied := currentGame.BoardState[coord]
+						if occupant.Color == currentGame.CurrentPlayerColor() && isOccupied {
+							currentGame.ValidDestinations = logic.GetValidMoves(
+								currentGame.CurrentPlayerColor(),
 								occupant.Piece,
-								gameModel.BoardState,
+								currentGame.BoardState,
 								coord,
 							)
-							if len(validDestinations) > 0 {
-								gameModel.PieceToMove = occupant
-								gameModel.MoveStartCoord = coord
-								gameModel.CurrentState = gamestate.DrawValidMoves
-								gameModel.Draw = true
+							if len(currentGame.ValidDestinations) > 0 {
+								currentGame.PieceToMove = occupant
+								currentGame.MoveStartCoord = coord
+								currentGame.CurrentState = gamestate.DrawValidMoves
+								currentGame.Draw = true
 							}
 						}
 
@@ -193,11 +183,11 @@ func run() {
 			Highlight squares that are valid moves for the piece that was just selected
 		*/
 		case gamestate.DrawValidMoves:
-			if gameModel.Draw {
-				view.Draw(win, gameModel.BoardState, drawer, squares)
-				view.HighlightSquares(win, squares, validDestinations, colornames.Greenyellow)
-				gameModel.Draw = false
-				gameModel.CurrentState = gamestate.SelectDestination
+			if currentGame.Draw {
+				view.Draw(win, currentGame.BoardState, drawer, squares)
+				view.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
+				currentGame.Draw = false
+				currentGame.CurrentState = gamestate.SelectDestination
 			}
 		/*
 			Listen for input - the current player may select a destination square for their selected piece
@@ -209,12 +199,12 @@ func run() {
 				if square != nil {
 					coord, ok := coordsmapper.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
-						occupant, isOccupied := gameModel.BoardState[coord]
-						_, isValid := validDestinations[coord]
-						if isValid && logic.IsDestinationValid(gameModel.WhiteToMove, isOccupied, occupant) {
-							gameModel.Move(coord)
+						occupant, isOccupied := currentGame.BoardState[coord]
+						_, isValid := currentGame.ValidDestinations[coord]
+						if isValid && logic.IsDestinationValid(currentGame.WhiteToMove, isOccupied, occupant) {
+							currentGame.Move(coord)
 						} else {
-							gameModel.CurrentState = gamestate.SelectPiece
+							currentGame.CurrentState = gamestate.SelectPiece
 						}
 					}
 				}
