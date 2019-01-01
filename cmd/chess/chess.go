@@ -56,13 +56,15 @@ func run() {
 	}
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	// Prepare display text
 	displayFace, err := fonts.LoadTTF(displayFontPath, 80)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	displayAtlas := text.NewAtlas(displayFace, text.ASCII)
@@ -72,7 +74,8 @@ func run() {
 	// Prepare body text
 	bodyFace, err := fonts.LoadTTF(bodyFontPath, 12)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	// Build body text
