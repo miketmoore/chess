@@ -100,7 +100,11 @@ func run() {
 	)
 
 	// Make pieces
-	pieceDrawer := view.NewPieceDrawer(win)
+	pieceDrawer, err := view.NewPieceDrawer(win)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	// The current game data is stored here
 	currentGame := gamemodel.New()

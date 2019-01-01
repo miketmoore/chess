@@ -13,11 +13,11 @@ type pieceDrawer struct {
 }
 
 // NewPieceDrawer builds a pieceDrawer instance that is responsible for drawing chess pieces
-func NewPieceDrawer(win *pixelgl.Window) pieceDrawer {
+func NewPieceDrawer(win *pixelgl.Window) (pieceDrawer, error) {
 	// Load sprite sheet graphic
 	pic, err := loadPicture(spriteSheetPath)
 	if err != nil {
-		panic(err)
+		return pieceDrawer{}, err
 	}
 
 	return pieceDrawer{
@@ -38,7 +38,7 @@ func NewPieceDrawer(win *pixelgl.Window) pieceDrawer {
 			Rook:   newSprite(pic, 185, 40, 220, 85),
 			Pawn:   newSprite(pic, 230, 40, 270, 85),
 		},
-	}
+	}, nil
 }
 
 // Draw renders the chess pieces in the correct position on the board
