@@ -4,6 +4,7 @@ import (
 	"fmt"
 	_ "image/png"
 	"os"
+	"time"
 
 	"github.com/BurntSushi/toml"
 	"github.com/faiface/pixel"
@@ -138,6 +139,7 @@ func run() {
 				}
 			} else if doSave == true {
 				fmt.Println("saving game...")
+				save(&currentGame)
 				currentGame.CurrentState = gamestate.Draw
 			} else {
 				fmt.Println("not saving game...")
@@ -248,4 +250,48 @@ func run() {
 
 func main() {
 	pixelgl.Run(run)
+}
+
+func save(game *gamemodel.GameModel) {
+	fmt.Println("save called")
+
+	currentPlayer := game.CurrentPlayerColor()
+	boardState := game.BoardState
+
+	// fmt.Printf("current player: %v\n", currentPlayer)
+	// fmt.Printf("current board state: %v\n", boardState)
+
+	now := time.Now().String()
+
+	data := fmt.Sprintf("%s\ncurrent=%t", now, currentPlayer)
+
+	for coord, playerPiece := range boardState {
+		x := fmt.Sprintf("color=%t;piece=%d;rank=%d;file=%d;", playerPiece.Color, playerPiece.Piece, coord.Rank, coord.File)
+		data = fmt.Sprintf("%s\n%s", data, x)
+	}
+
+	data = fmt.Sprintf("%s\n", data)
+
+	loc := "/tmp/chess_game"
+
+	f, err := os.Create(loc)
+	if err != nil {
+		fmt.Println("error creating file")
+		os.Exit(1)
+	}
+
+	defer f.Close()
+
+	n, err := f.WriteString(data)
+	fmt.Printf("write %d bytes\n", n)
+
+	if err != nil {
+		fmt.Println("error writing to file")
+		os.Exit(1)
+	}
+
+	f.Sync()
+
+	fmt.Printf("File written to: %s\n", loc)
+
 }
