@@ -9,4 +9,5 @@ const (
 	SelectPiece
 	SelectDestination
 	DrawValidMoves
+	SaveGame
 )

@@ -111,6 +111,8 @@ func run() {
 
 	// The current game data is stored here
 	currentGame := gamemodel.New()
+	pendingSaveConfirm := false
+	doSave := false
 
 	for !win.Closed() {
 
@@ -118,7 +120,29 @@ func run() {
 			os.Exit(0)
 		}
 
+		if currentGame.CurrentState != gamestate.SaveGame && win.Pressed(pixelgl.KeyS) && win.Pressed(pixelgl.KeyLeftSuper) {
+			fmt.Println("save game input detected")
+			pendingSaveConfirm = true
+			currentGame.CurrentState = gamestate.SaveGame
+		}
+
 		switch currentGame.CurrentState {
+		case gamestate.SaveGame:
+			if pendingSaveConfirm == true {
+				if win.JustPressed(pixelgl.KeyY) {
+					doSave = true
+					pendingSaveConfirm = false
+				} else if win.JustPressed(pixelgl.KeyN) {
+					doSave = false
+					pendingSaveConfirm = false
+				}
+			} else if doSave == true {
+				fmt.Println("saving game...")
+				currentGame.CurrentState = gamestate.Draw
+			} else {
+				fmt.Println("not saving game...")
+				currentGame.CurrentState = gamestate.Draw
+			}
 		/*
 			Draw the title screen
 		*/
