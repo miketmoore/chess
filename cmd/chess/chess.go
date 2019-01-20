@@ -122,7 +122,7 @@ func run() {
 		}
 
 		if currentGame.CurrentState != gamestate.SaveGame && win.Pressed(pixelgl.KeyS) && win.Pressed(pixelgl.KeyLeftSuper) {
-			fmt.Println("save game input detected")
+			fmt.Println("Save game? Y/N")
 			pendingSaveConfirm = true
 			currentGame.CurrentState = gamestate.SaveGame
 		}
@@ -131,18 +131,20 @@ func run() {
 		case gamestate.SaveGame:
 			if pendingSaveConfirm == true {
 				if win.JustPressed(pixelgl.KeyY) {
+					fmt.Println("Yes")
 					doSave = true
 					pendingSaveConfirm = false
 				} else if win.JustPressed(pixelgl.KeyN) {
+					fmt.Println("No")
 					doSave = false
 					pendingSaveConfirm = false
 				}
 			} else if doSave == true {
-				fmt.Println("saving game...")
+				fmt.Println("Saving game...")
 				save(&currentGame)
 				currentGame.CurrentState = gamestate.Draw
 			} else {
-				fmt.Println("not saving game...")
+				fmt.Println("Not saving game...")
 				currentGame.CurrentState = gamestate.Draw
 			}
 		/*
@@ -253,13 +255,9 @@ func main() {
 }
 
 func save(game *gamemodel.GameModel) {
-	fmt.Println("save called")
 
 	currentPlayer := game.CurrentPlayerColor()
 	boardState := game.BoardState
-
-	// fmt.Printf("current player: %v\n", currentPlayer)
-	// fmt.Printf("current board state: %v\n", boardState)
 
 	now := time.Now().String()
 
@@ -276,17 +274,16 @@ func save(game *gamemodel.GameModel) {
 
 	f, err := os.Create(loc)
 	if err != nil {
-		fmt.Println("error creating file")
+		fmt.Println("Error creating file")
 		os.Exit(1)
 	}
 
 	defer f.Close()
 
-	n, err := f.WriteString(data)
-	fmt.Printf("write %d bytes\n", n)
+	_, err = f.WriteString(data)
 
 	if err != nil {
-		fmt.Println("error writing to file")
+		fmt.Println("Error writing file")
 		os.Exit(1)
 	}
 
