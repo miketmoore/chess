@@ -3,7 +3,8 @@ package save
 import (
 	"fmt"
 	"os"
-	"time"
+
+	"github.com/miketmoore/chess/model"
 
 	"github.com/miketmoore/chess/gamemodel"
 )
@@ -25,13 +26,29 @@ func buildData(game *gamemodel.GameModel) string {
 	currentPlayer := game.CurrentPlayerColor()
 	boardState := game.BoardState
 
-	now := time.Now().String()
+	var data string
 
-	data := fmt.Sprintf("%s\ncurrent=%t", now, currentPlayer)
+	// 2. Color (0,1)
+	if currentPlayer == model.PlayerWhite {
+		data = "0"
+	} else {
+		data = "1"
+	}
 
+	// 3. Pieces on board with color and coordinate
 	for coord, playerPiece := range boardState {
-		x := fmt.Sprintf("color=%t;piece=%d;rank=%d;file=%d;", playerPiece.Color, playerPiece.Piece, coord.Rank, coord.File)
-		data = fmt.Sprintf("%s\n%s", data, x)
+
+		var color string // (0,1)
+		if playerPiece.Color == model.PlayerWhite {
+			color = "0"
+		} else {
+			color = "1"
+		}
+
+		// [0-1][0-5][0-8][0-8]
+		s := fmt.Sprintf("%s%d%d%d", color, playerPiece.Piece, coord.Rank, coord.File)
+
+		data = fmt.Sprintf("%s%s", data, s)
 	}
 
 	data = fmt.Sprintf("%s\n", data)
