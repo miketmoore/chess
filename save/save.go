@@ -28,14 +28,14 @@ func buildData(game *gamemodel.GameModel) string {
 
 	var data string
 
-	// 2. Color (0,1)
+	// Current player color (player to move)
 	if currentPlayer == model.PlayerWhite {
 		data = "0"
 	} else {
 		data = "1"
 	}
 
-	// 3. Pieces on board with color and coordinate
+	// Four digit string representing piece-color-rank-file
 	for coord, playerPiece := range boardState {
 
 		var color string // (0,1)
