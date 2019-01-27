@@ -54,6 +54,7 @@ func run() {
 			os.Exit(1)
 		}
 
+		fmt.Println("Parsing game")
 		currentPlayer, boardState, err = parse.Parse(string(b))
 		if err != nil {
 			fmt.Println("Failed to parse game ", err)
@@ -61,7 +62,7 @@ func run() {
 		}
 
 		gameLoadSuccess = true
-		fmt.Println("Success!")
+		fmt.Println("Finished parsing game!")
 	}
 
 	// i18n
@@ -148,13 +149,19 @@ func run() {
 	currentGame := gamemodel.New()
 
 	if gameLoadSuccess == true {
+		currentGame.CurrentState = gamestate.Draw
+		fmt.Println("Loading game into memory...")
 		currentGame.BoardState = boardState
 		if currentPlayer == model.PlayerWhite {
+			fmt.Println("Current player is white")
 			currentGame.WhiteToMove = true
 		} else {
+			fmt.Println("Current player is black")
 			currentGame.WhiteToMove = false
 		}
 	}
+
+	fmt.Println(currentGame.BoardState)
 
 	pendingSaveConfirm := false
 	doSave := false
@@ -200,6 +207,7 @@ func run() {
 		*/
 		case gamestate.Title:
 			if currentGame.Draw {
+				fmt.Println("drawing")
 				win.Clear(colornames.Black)
 
 				// Draw title text
