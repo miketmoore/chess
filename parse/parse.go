@@ -28,13 +28,8 @@ func Parse(data string) (model.PlayerColor, model.BoardState, error) {
 			return currentColor, boardState, errors.New("Failed to parse rune into uint")
 		}
 
-		fmt.Printf("index=%d rune=%c count=%d parsed=%v\n", r, index, count, parsed)
-
-		fmt.Println(parsed)
-
 		if index == 0 {
 			//  first char (current player color)
-			fmt.Println("parsing first char")
 			if r == '0' {
 				currentColor = model.PlayerWhite
 			} else if r == '1' {
@@ -53,12 +48,6 @@ func Parse(data string) (model.PlayerColor, model.BoardState, error) {
 			}
 			count++
 		} else if count == 1 {
-			parsed, err := strconv.ParseUint(string(r), 10, 32)
-			if err != nil {
-				fmt.Println(err)
-				return currentColor, boardState, errors.New("Failed to parse rune into uint")
-			}
-
 			d := model.Piece(parsed)
 
 			if d < model.PiecePawn || d > model.PieceKing {
@@ -68,12 +57,6 @@ func Parse(data string) (model.PlayerColor, model.BoardState, error) {
 			}
 			count++
 		} else if count == 2 {
-			parsed, err := strconv.ParseUint(string(r), 10, 32)
-			if err != nil {
-				fmt.Println(err)
-				return currentColor, boardState, errors.New("Failed to parse rune into uint")
-			}
-
 			d := model.Rank(parsed)
 
 			if d < model.RankNone || d > model.Rank8 {
@@ -83,12 +66,6 @@ func Parse(data string) (model.PlayerColor, model.BoardState, error) {
 			}
 			count++
 		} else if count == 3 {
-			parsed, err := strconv.ParseUint(string(r), 10, 32)
-			if err != nil {
-				fmt.Println(err)
-				return currentColor, boardState, errors.New("Failed to parse rune into uint")
-			}
-
 			d := model.File(parsed)
 
 			if d < model.FileNone || d > model.FileH {
