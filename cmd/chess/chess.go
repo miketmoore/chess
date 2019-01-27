@@ -1,9 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	_ "image/png"
+	"io/ioutil"
 	"os"
+
+	"github.com/miketmoore/chess/model"
 
 	"github.com/BurntSushi/toml"
 	"github.com/faiface/pixel"
@@ -14,6 +18,7 @@ import (
 	"github.com/miketmoore/chess/gamemodel"
 	"github.com/miketmoore/chess/gamestate"
 	"github.com/miketmoore/chess/logic"
+	"github.com/miketmoore/chess/parse"
 	"github.com/miketmoore/chess/save"
 	"github.com/miketmoore/chess/view"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -30,6 +35,35 @@ const translationFile = "i18n/en.toml"
 const lang = "en-US"
 
 func run() {
+
+	var gameFilePath string
+
+	flag.StringVar(&gameFilePath, "game", "", "file path of game to load")
+	flag.Parse()
+
+	gameLoadSuccess := false
+	var currentPlayer model.PlayerColor
+	var boardState model.BoardState
+
+	if gameFilePath != "" {
+		fmt.Println("Loading game from file...")
+
+		b, err := ioutil.ReadFile(gameFilePath)
+		if err != nil {
+			fmt.Println("Error reading file ", err)
+			os.Exit(1)
+		}
+
+		currentPlayer, boardState, err = parse.Parse(string(b))
+		if err != nil {
+			fmt.Println("Failed to parse game ", err)
+			os.Exit(1)
+		}
+
+		gameLoadSuccess = true
+		fmt.Println("Success!")
+	}
+
 	// i18n
 	bundle := &i18n.Bundle{DefaultLanguage: language.English}
 
@@ -112,6 +146,16 @@ func run() {
 
 	// The current game data is stored here
 	currentGame := gamemodel.New()
+
+	if gameLoadSuccess == true {
+		currentGame.BoardState = boardState
+		if currentPlayer == model.PlayerWhite {
+			currentGame.WhiteToMove = true
+		} else {
+			currentGame.WhiteToMove = false
+		}
+	}
+
 	pendingSaveConfirm := false
 	doSave := false
 
