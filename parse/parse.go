@@ -18,7 +18,7 @@ func Parse(data string) (model.PlayerColor, model.BoardState, error) {
 
 	for index, r := range data {
 		if r == '\n' {
-			fmt.Println("Newline encountered, ending parse")
+			// Newline encountered, ending parse
 			break
 		}
 
