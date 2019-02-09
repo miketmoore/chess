@@ -3,7 +3,7 @@ package view
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/miketmoore/chess/model"
+	"github.com/miketmoore/chess-api/model"
 )
 
 type pieceDrawer struct {

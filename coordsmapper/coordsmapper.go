@@ -1,6 +1,6 @@
 package coordsmapper
 
-import "github.com/miketmoore/chess/model"
+import "github.com/miketmoore/chess-api/model"
 
 var rankToY = map[model.Rank]int{
 	model.Rank1: 0,

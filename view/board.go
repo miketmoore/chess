@@ -6,8 +6,8 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/miketmoore/chess/logic"
-	"github.com/miketmoore/chess/model"
+	"github.com/miketmoore/chess-api/logic"
+	"github.com/miketmoore/chess-api/model"
 )
 
 const totalSquares = 64
