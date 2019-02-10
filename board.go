@@ -6,7 +6,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	chess "github.com/miketmoore/chess-api"
+	chessapi "github.com/miketmoore/chess-api"
 )
 
 const totalSquares = 64
@@ -14,7 +14,7 @@ const totalRows = 8
 const totalCols = 8
 
 // BoardMap is the type used to describe the map of board squares/shapes
-type BoardMap map[chess.Coord]Square
+type BoardMap map[chessapi.Coord]Square
 
 // Square represents one square of the board
 type Square struct {
@@ -33,7 +33,7 @@ type Square struct {
 func NewBoardView(
 	originX, originY, size float64,
 	blackFill, whiteFill color.RGBA,
-) (BoardMap, map[chess.Coord][]float64) {
+) (BoardMap, map[chessapi.Coord][]float64) {
 	var squareW = size
 	var squareH = size
 	var r, c float64
@@ -43,7 +43,7 @@ func NewBoardView(
 	i := 0
 	squares := BoardMap{}
 
-	squareOriginByCoords := map[chess.Coord][]float64{}
+	squareOriginByCoords := map[chessapi.Coord][]float64{}
 
 	for r = 0; r < totalRows; r++ {
 		for c = 0; c < totalCols; c++ {
@@ -62,7 +62,7 @@ func NewBoardView(
 			shape.Push(pixel.V(squareW+xInc, squareH+yInc))
 			shape.Rectangle(0)
 
-			coord := chess.Coord{chess.Rank(int(r) + 1), chess.File(c + 1)}
+			coord := chessapi.Coord{chessapi.Rank(int(r) + 1), chessapi.File(c + 1)}
 
 			squares[coord] = Square{
 				Shape:   shape,
@@ -83,7 +83,7 @@ func NewBoardView(
 }
 
 // HighlightSquares adds a visual marker to the list of board squares
-func HighlightSquares(win *pixelgl.Window, squares BoardMap, coords chess.ValidMoves, color color.RGBA) {
+func HighlightSquares(win *pixelgl.Window, squares BoardMap, coords chessapi.ValidMoves, color color.RGBA) {
 	for coord := range coords {
 
 		square := squares[coord]

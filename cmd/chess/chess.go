@@ -12,7 +12,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	chessui "github.com/miketmoore/chess"
-	chess "github.com/miketmoore/chess-api"
+	chessapi "github.com/miketmoore/chess-api"
 	"github.com/miketmoore/chess/fonts"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
@@ -35,8 +35,8 @@ func run() {
 	flag.Parse()
 
 	gameLoadSuccess := false
-	var currentPlayer chess.PlayerColor
-	var boardState chess.BoardState
+	var currentPlayer chessapi.PlayerColor
+	var boardState chessapi.BoardState
 
 	if gameFilePath != "" {
 		fmt.Println("Loading game from file...")
@@ -48,7 +48,7 @@ func run() {
 		}
 
 		fmt.Println("Parsing game")
-		currentPlayer, boardState, err = chess.Parse(string(b))
+		currentPlayer, boardState, err = chessapi.Parse(string(b))
 		if err != nil {
 			fmt.Println("Failed to parse game ", err)
 			os.Exit(1)
@@ -139,13 +139,13 @@ func run() {
 	}
 
 	// The current game data is stored here
-	currentGame := chess.NewGame()
+	currentGame := chessapi.NewGame()
 
 	if gameLoadSuccess == true {
-		currentGame.CurrentState = chess.StateDraw
+		currentGame.CurrentState = chessapi.StateDraw
 		fmt.Println("Loading game into memory...")
 		currentGame.BoardState = boardState
-		if currentPlayer == chess.PlayerWhite {
+		if currentPlayer == chessapi.PlayerWhite {
 			fmt.Println("Current player is white")
 			currentGame.WhiteToMove = true
 		} else {
@@ -165,14 +165,14 @@ func run() {
 			os.Exit(0)
 		}
 
-		if currentGame.CurrentState != chess.StateSaveGame && win.Pressed(pixelgl.KeyS) && win.Pressed(pixelgl.KeyLeftSuper) {
+		if currentGame.CurrentState != chessapi.StateSaveGame && win.Pressed(pixelgl.KeyS) && win.Pressed(pixelgl.KeyLeftSuper) {
 			fmt.Println("Save game? Y/N")
 			pendingSaveConfirm = true
-			currentGame.CurrentState = chess.StateSaveGame
+			currentGame.CurrentState = chessapi.StateSaveGame
 		}
 
 		switch currentGame.CurrentState {
-		case chess.StateSaveGame:
+		case chessapi.StateSaveGame:
 			if pendingSaveConfirm == true {
 				if win.JustPressed(pixelgl.KeyY) {
 					fmt.Println("Yes")
@@ -185,20 +185,20 @@ func run() {
 				}
 			} else if doSave == true {
 				fmt.Println("Saving game...")
-				err := chess.Save(&currentGame)
+				err := chessapi.Save(&currentGame)
 				if err != nil {
 					fmt.Println("Error saving game")
 					os.Exit(1)
 				}
-				currentGame.CurrentState = chess.StateDraw
+				currentGame.CurrentState = chessapi.StateDraw
 			} else {
 				fmt.Println("Not saving game...")
-				currentGame.CurrentState = chess.StateDraw
+				currentGame.CurrentState = chessapi.StateDraw
 			}
 		/*
 			Draw the title screen
 		*/
-		case chess.StateTitle:
+		case chessapi.StateTitle:
 			if currentGame.Draw {
 				fmt.Println("drawing")
 				win.Clear(colornames.Black)
@@ -217,27 +217,27 @@ func run() {
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				currentGame.CurrentState = chess.StateDraw
+				currentGame.CurrentState = chessapi.StateDraw
 				win.Clear(colornames.Black)
 				currentGame.Draw = true
 			}
 		/*
 			Draw the current state of the pieces on the board
 		*/
-		case chess.StateDraw:
+		case chessapi.StateDraw:
 			if currentGame.Draw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
 				currentGame.Draw = false
-				currentGame.CurrentState = chess.StateSelectPiece
+				currentGame.CurrentState = chessapi.StateSelectPiece
 			}
 		/*
 			Listen for input - the current player may select a piece to move
 		*/
-		case chess.StateSelectPiece:
+		case chessapi.StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				square := chessui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					coord, ok := chess.GetCoordByXY(
+					coord, ok := chessapi.GetCoordByXY(
 						squareOriginByCoords,
 						square.OriginX,
 						square.OriginY,
@@ -245,7 +245,7 @@ func run() {
 					if ok {
 						occupant, isOccupied := currentGame.BoardState[coord]
 						if occupant.Color == currentGame.CurrentPlayerColor() && isOccupied {
-							currentGame.ValidDestinations = chess.GetValidMoves(
+							currentGame.ValidDestinations = chessapi.GetValidMoves(
 								currentGame.CurrentPlayerColor(),
 								occupant.Piece,
 								currentGame.BoardState,
@@ -254,7 +254,7 @@ func run() {
 							if len(currentGame.ValidDestinations) > 0 {
 								currentGame.PieceToMove = occupant
 								currentGame.MoveStartCoord = coord
-								currentGame.CurrentState = chess.StateDrawValidMoves
+								currentGame.CurrentState = chessapi.StateDrawValidMoves
 								currentGame.Draw = true
 							}
 						}
@@ -266,29 +266,29 @@ func run() {
 		/*
 			Highlight squares that are valid moves for the piece that was just selected
 		*/
-		case chess.StateDrawValidMoves:
+		case chessapi.StateDrawValidMoves:
 			if currentGame.Draw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
 				chessui.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
 				currentGame.Draw = false
-				currentGame.CurrentState = chess.StateSelectDestination
+				currentGame.CurrentState = chessapi.StateSelectDestination
 			}
 		/*
 			Listen for input - the current player may select a destination square for their selected piece
 		*/
-		case chess.StateSelectDestination:
+		case chessapi.StateSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 				square := chessui.FindSquareByVec(squares, mpos)
 				if square != nil {
-					coord, ok := chess.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
+					coord, ok := chessapi.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						occupant, isOccupied := currentGame.BoardState[coord]
 						_, isValid := currentGame.ValidDestinations[coord]
-						if isValid && chess.IsDestinationValid(currentGame.WhiteToMove, isOccupied, occupant) {
+						if isValid && chessapi.IsDestinationValid(currentGame.WhiteToMove, isOccupied, occupant) {
 							currentGame.Move(coord)
 						} else {
-							currentGame.CurrentState = chess.StateSelectPiece
+							currentGame.CurrentState = chessapi.StateSelectPiece
 						}
 					}
 				}
