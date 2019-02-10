@@ -11,7 +11,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	"github.com/miketmoore/chess"
+	chessui "github.com/miketmoore/chess"
 	"github.com/miketmoore/chess-api/coordsmapper"
 	"github.com/miketmoore/chess-api/gamemodel"
 	"github.com/miketmoore/chess-api/gamestate"
@@ -129,16 +129,16 @@ func run() {
 	themeName := "sandcastle"
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
-	squares, squareOriginByCoords := chess.NewBoardView(
+	squares, squareOriginByCoords := chessui.NewBoardView(
 		float64(boardOriginX),
 		150,
 		squareSize,
-		chess.Themes[themeName]["black"],
-		chess.Themes[themeName]["white"],
+		chessui.Themes[themeName]["black"],
+		chessui.Themes[themeName]["white"],
 	)
 
 	// Make pieces
-	pieceDrawer, err := chess.NewPieceDrawer(win)
+	pieceDrawer, err := chessui.NewPieceDrawer(win)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -241,7 +241,7 @@ func run() {
 		*/
 		case gamestate.SelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				square := chess.FindSquareByVec(squares, win.MousePosition())
+				square := chessui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
 					coord, ok := coordsmapper.GetCoordByXY(
 						squareOriginByCoords,
@@ -275,7 +275,7 @@ func run() {
 		case gamestate.DrawValidMoves:
 			if currentGame.Draw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
-				chess.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
+				chessui.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
 				currentGame.Draw = false
 				currentGame.CurrentState = gamestate.SelectDestination
 			}
@@ -285,7 +285,7 @@ func run() {
 		case gamestate.SelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
-				square := chess.FindSquareByVec(squares, mpos)
+				square := chessui.FindSquareByVec(squares, mpos)
 				if square != nil {
 					coord, ok := coordsmapper.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
