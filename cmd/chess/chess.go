@@ -7,6 +7,11 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/BurntSushi/toml"
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
+	"github.com/miketmoore/chess"
 	"github.com/miketmoore/chess-api/coordsmapper"
 	"github.com/miketmoore/chess-api/gamemodel"
 	"github.com/miketmoore/chess-api/gamestate"
@@ -14,13 +19,7 @@ import (
 	"github.com/miketmoore/chess-api/model"
 	"github.com/miketmoore/chess-api/parse"
 	"github.com/miketmoore/chess-api/save"
-
-	"github.com/BurntSushi/toml"
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"github.com/miketmoore/chess/fonts"
-	"github.com/miketmoore/chess/view"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
 	"golang.org/x/text/language"
@@ -130,16 +129,16 @@ func run() {
 	themeName := "sandcastle"
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
-	squares, squareOriginByCoords := view.NewBoardView(
+	squares, squareOriginByCoords := chess.NewBoardView(
 		float64(boardOriginX),
 		150,
 		squareSize,
-		view.Themes[themeName]["black"],
-		view.Themes[themeName]["white"],
+		chess.Themes[themeName]["black"],
+		chess.Themes[themeName]["white"],
 	)
 
 	// Make pieces
-	pieceDrawer, err := view.NewPieceDrawer(win)
+	pieceDrawer, err := chess.NewPieceDrawer(win)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -242,7 +241,7 @@ func run() {
 		*/
 		case gamestate.SelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				square := view.FindSquareByVec(squares, win.MousePosition())
+				square := chess.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
 					coord, ok := coordsmapper.GetCoordByXY(
 						squareOriginByCoords,
@@ -276,7 +275,7 @@ func run() {
 		case gamestate.DrawValidMoves:
 			if currentGame.Draw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
-				view.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
+				chess.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
 				currentGame.Draw = false
 				currentGame.CurrentState = gamestate.SelectDestination
 			}
@@ -286,7 +285,7 @@ func run() {
 		case gamestate.SelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
-				square := view.FindSquareByVec(squares, mpos)
+				square := chess.FindSquareByVec(squares, mpos)
 				if square != nil {
 					coord, ok := coordsmapper.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
