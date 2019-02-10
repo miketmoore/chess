@@ -145,7 +145,7 @@ func run() {
 	}
 
 	// The current game data is stored here
-	currentGame := gamemodel.New()
+	currentGame := gamemodel.NewGame()
 
 	if gameLoadSuccess == true {
 		currentGame.CurrentState = gamestate.Draw
