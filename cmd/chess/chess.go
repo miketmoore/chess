@@ -142,7 +142,7 @@ func run() {
 	currentGame := chess.NewGame()
 
 	if gameLoadSuccess == true {
-		currentGame.CurrentState = chess.Draw
+		currentGame.CurrentState = chess.StateDraw
 		fmt.Println("Loading game into memory...")
 		currentGame.BoardState = boardState
 		if currentPlayer == chess.PlayerWhite {
@@ -165,14 +165,14 @@ func run() {
 			os.Exit(0)
 		}
 
-		if currentGame.CurrentState != chess.SaveGame && win.Pressed(pixelgl.KeyS) && win.Pressed(pixelgl.KeyLeftSuper) {
+		if currentGame.CurrentState != chess.StateSaveGame && win.Pressed(pixelgl.KeyS) && win.Pressed(pixelgl.KeyLeftSuper) {
 			fmt.Println("Save game? Y/N")
 			pendingSaveConfirm = true
-			currentGame.CurrentState = chess.SaveGame
+			currentGame.CurrentState = chess.StateSaveGame
 		}
 
 		switch currentGame.CurrentState {
-		case chess.SaveGame:
+		case chess.StateSaveGame:
 			if pendingSaveConfirm == true {
 				if win.JustPressed(pixelgl.KeyY) {
 					fmt.Println("Yes")
@@ -190,15 +190,15 @@ func run() {
 					fmt.Println("Error saving game")
 					os.Exit(1)
 				}
-				currentGame.CurrentState = chess.Draw
+				currentGame.CurrentState = chess.StateDraw
 			} else {
 				fmt.Println("Not saving game...")
-				currentGame.CurrentState = chess.Draw
+				currentGame.CurrentState = chess.StateDraw
 			}
 		/*
 			Draw the title screen
 		*/
-		case chess.Title:
+		case chess.StateTitle:
 			if currentGame.Draw {
 				fmt.Println("drawing")
 				win.Clear(colornames.Black)
@@ -217,23 +217,23 @@ func run() {
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				currentGame.CurrentState = chess.Draw
+				currentGame.CurrentState = chess.StateDraw
 				win.Clear(colornames.Black)
 				currentGame.Draw = true
 			}
 		/*
 			Draw the current state of the pieces on the board
 		*/
-		case chess.Draw:
+		case chess.StateDraw:
 			if currentGame.Draw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
 				currentGame.Draw = false
-				currentGame.CurrentState = chess.SelectPiece
+				currentGame.CurrentState = chess.StateSelectPiece
 			}
 		/*
 			Listen for input - the current player may select a piece to move
 		*/
-		case chess.SelectPiece:
+		case chess.StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				square := chessui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
@@ -254,7 +254,7 @@ func run() {
 							if len(currentGame.ValidDestinations) > 0 {
 								currentGame.PieceToMove = occupant
 								currentGame.MoveStartCoord = coord
-								currentGame.CurrentState = chess.DrawValidMoves
+								currentGame.CurrentState = chess.StateDrawValidMoves
 								currentGame.Draw = true
 							}
 						}
@@ -266,17 +266,17 @@ func run() {
 		/*
 			Highlight squares that are valid moves for the piece that was just selected
 		*/
-		case chess.DrawValidMoves:
+		case chess.StateDrawValidMoves:
 			if currentGame.Draw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
 				chessui.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
 				currentGame.Draw = false
-				currentGame.CurrentState = chess.SelectDestination
+				currentGame.CurrentState = chess.StateSelectDestination
 			}
 		/*
 			Listen for input - the current player may select a destination square for their selected piece
 		*/
-		case chess.SelectDestination:
+		case chess.StateSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
 				square := chessui.FindSquareByVec(squares, mpos)
@@ -288,7 +288,7 @@ func run() {
 						if isValid && chess.IsDestinationValid(currentGame.WhiteToMove, isOccupied, occupant) {
 							currentGame.Move(coord)
 						} else {
-							currentGame.CurrentState = chess.SelectPiece
+							currentGame.CurrentState = chess.StateSelectPiece
 						}
 					}
 				}
