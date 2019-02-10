@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/miketmoore/chess-api/coordsmapper"
 	"github.com/miketmoore/chess-api/gamemodel"
 	"github.com/miketmoore/chess-api/gamestate"
 	"github.com/miketmoore/chess-api/logic"
@@ -18,7 +19,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	"github.com/miketmoore/chess/coordsmapper"
 	"github.com/miketmoore/chess/fonts"
 	"github.com/miketmoore/chess/view"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
