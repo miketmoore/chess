@@ -3,7 +3,7 @@ package chess
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/miketmoore/chess-api/model"
+	chess "github.com/miketmoore/chess-api"
 )
 
 type pieceDrawer struct {
@@ -42,7 +42,7 @@ func NewPieceDrawer(win *pixelgl.Window) (pieceDrawer, error) {
 }
 
 // Draw renders the chess pieces in the correct position on the board
-func (drawer pieceDrawer) Draw(boardState model.BoardState, squares BoardMap) {
+func (drawer pieceDrawer) Draw(boardState chess.BoardState, squares BoardMap) {
 	// Draw board
 	for _, square := range squares {
 		square.Shape.Draw(drawer.win)
@@ -51,7 +51,7 @@ func (drawer pieceDrawer) Draw(boardState model.BoardState, squares BoardMap) {
 	// Draw pieces in the correct position
 	for coord, livePieceData := range boardState {
 		var set PieceSpriteSet
-		if livePieceData.Color == model.PlayerBlack {
+		if livePieceData.Color == chess.PlayerBlack {
 			set = drawer.black
 		} else {
 			set = drawer.white
@@ -59,17 +59,17 @@ func (drawer pieceDrawer) Draw(boardState model.BoardState, squares BoardMap) {
 
 		var piece *pixel.Sprite
 		switch livePieceData.Piece {
-		case model.PieceBishop:
+		case chess.PieceBishop:
 			piece = set.Bishop
-		case model.PieceKing:
+		case chess.PieceKing:
 			piece = set.King
-		case model.PieceKnight:
+		case chess.PieceKnight:
 			piece = set.Knight
-		case model.PiecePawn:
+		case chess.PiecePawn:
 			piece = set.Pawn
-		case model.PieceQueen:
+		case chess.PieceQueen:
 			piece = set.Queen
-		case model.PieceRook:
+		case chess.PieceRook:
 			piece = set.Rook
 		}
 
