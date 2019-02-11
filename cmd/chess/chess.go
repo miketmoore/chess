@@ -141,8 +141,26 @@ func run() {
 	// The current game data is stored here
 	currentGame := chessapi.NewGame()
 
+	type view int
+	const (
+		viewTitle view = iota
+		viewSaveGame
+		viewDraw
+		viewSelectPiece
+		viewDrawValidMoves
+		viewSelectDestination
+	)
+
+	type UIState struct {
+		CurrentView view
+	}
+
+	uiState := UIState{
+		CurrentView: viewTitle,
+	}
+
 	if gameLoadSuccess == true {
-		currentGame.CurrentState = chessapi.StateDraw
+		uiState.CurrentView = viewDraw
 		fmt.Println("Loading game into memory...")
 		currentGame.BoardState = boardState
 		if currentPlayer == chessapi.PlayerWhite {
@@ -166,14 +184,14 @@ func run() {
 			os.Exit(0)
 		}
 
-		if currentGame.CurrentState != chessapi.StateSaveGame && win.Pressed(pixelgl.KeyS) && win.Pressed(pixelgl.KeyLeftSuper) {
+		if uiState.CurrentView != viewSaveGame && win.Pressed(pixelgl.KeyS) && win.Pressed(pixelgl.KeyLeftSuper) {
 			fmt.Println("Save game? Y/N")
 			pendingSaveConfirm = true
-			currentGame.CurrentState = chessapi.StateSaveGame
+			uiState.CurrentView = viewSaveGame
 		}
 
-		switch currentGame.CurrentState {
-		case chessapi.StateSaveGame:
+		switch uiState.CurrentView {
+		case viewSaveGame:
 			if pendingSaveConfirm == true {
 				if win.JustPressed(pixelgl.KeyY) {
 					fmt.Println("Yes")
@@ -191,15 +209,15 @@ func run() {
 					fmt.Println("Error saving game")
 					os.Exit(1)
 				}
-				currentGame.CurrentState = chessapi.StateDraw
+				uiState.CurrentView = viewDraw
 			} else {
 				fmt.Println("Not saving game...")
-				currentGame.CurrentState = chessapi.StateDraw
+				uiState.CurrentView = viewDraw
 			}
 		/*
 			Draw the title screen
 		*/
-		case chessapi.StateTitle:
+		case viewTitle:
 			if doDraw {
 				fmt.Println("drawing")
 				win.Clear(colornames.Black)
@@ -218,23 +236,23 @@ func run() {
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
-				currentGame.CurrentState = chessapi.StateDraw
+				uiState.CurrentView = viewDraw
 				win.Clear(colornames.Black)
 				doDraw = true
 			}
 		/*
 			Draw the current state of the pieces on the board
 		*/
-		case chessapi.StateDraw:
+		case viewDraw:
 			if doDraw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
 				doDraw = false
-				currentGame.CurrentState = chessapi.StateSelectPiece
+				uiState.CurrentView = viewSelectPiece
 			}
 		/*
 			Listen for input - the current player may select a piece to move
 		*/
-		case chessapi.StateSelectPiece:
+		case viewSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				fmt.Println("StateSelectPiece MoustButtonLeft")
 				square := chessui.FindSquareByVec(squares, win.MousePosition())
@@ -256,7 +274,7 @@ func run() {
 							if len(currentGame.ValidDestinations) > 0 {
 								currentGame.PieceToMove = occupant
 								currentGame.MoveStartCoord = coord
-								currentGame.CurrentState = chessapi.StateDrawValidMoves
+								uiState.CurrentView = viewDrawValidMoves
 								doDraw = true
 							}
 						}
@@ -268,17 +286,17 @@ func run() {
 		/*
 			Highlight squares that are valid moves for the piece that was just selected
 		*/
-		case chessapi.StateDrawValidMoves:
+		case viewDrawValidMoves:
 			if doDraw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
 				chessui.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
 				doDraw = false
-				currentGame.CurrentState = chessapi.StateSelectDestination
+				uiState.CurrentView = viewSelectDestination
 			}
 		/*
 			Listen for input - the current player may select a destination square for their selected piece
 		*/
-		case chessapi.StateSelectDestination:
+		case viewSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				fmt.Println("StateSelectDestination MouseButtonLeft")
 				mpos := win.MousePosition()
@@ -294,8 +312,9 @@ func run() {
 							currentGame.Move(coord)
 							fmt.Println("StateSelectDestination after Move()")
 							doDraw = true
+							uiState.CurrentView = viewDraw
 						} else {
-							currentGame.CurrentState = chessapi.StateSelectPiece
+							uiState.CurrentView = viewSelectPiece
 						}
 					}
 				}
