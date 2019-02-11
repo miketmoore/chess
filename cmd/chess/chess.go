@@ -158,6 +158,7 @@ func run() {
 
 	pendingSaveConfirm := false
 	doSave := false
+	doDraw := true
 
 	for !win.Closed() {
 
@@ -199,7 +200,7 @@ func run() {
 			Draw the title screen
 		*/
 		case chessapi.StateTitle:
-			if currentGame.Draw {
+			if doDraw {
 				fmt.Println("drawing")
 				win.Clear(colornames.Black)
 
@@ -213,21 +214,21 @@ func run() {
 				bodyTxt.Color = colornames.White
 				bodyTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(bodyTxt.Bounds().Center())))
 
-				currentGame.Draw = false
+				doDraw = false
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
 				currentGame.CurrentState = chessapi.StateDraw
 				win.Clear(colornames.Black)
-				currentGame.Draw = true
+				doDraw = true
 			}
 		/*
 			Draw the current state of the pieces on the board
 		*/
 		case chessapi.StateDraw:
-			if currentGame.Draw {
+			if doDraw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
-				currentGame.Draw = false
+				doDraw = false
 				currentGame.CurrentState = chessapi.StateSelectPiece
 			}
 		/*
@@ -235,6 +236,7 @@ func run() {
 		*/
 		case chessapi.StateSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
+				fmt.Println("StateSelectPiece MoustButtonLeft")
 				square := chessui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
 					coord, ok := chessapi.GetCoordByXY(
@@ -255,7 +257,7 @@ func run() {
 								currentGame.PieceToMove = occupant
 								currentGame.MoveStartCoord = coord
 								currentGame.CurrentState = chessapi.StateDrawValidMoves
-								currentGame.Draw = true
+								doDraw = true
 							}
 						}
 
@@ -267,10 +269,10 @@ func run() {
 			Highlight squares that are valid moves for the piece that was just selected
 		*/
 		case chessapi.StateDrawValidMoves:
-			if currentGame.Draw {
+			if doDraw {
 				pieceDrawer.Draw(currentGame.BoardState, squares)
 				chessui.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
-				currentGame.Draw = false
+				doDraw = false
 				currentGame.CurrentState = chessapi.StateSelectDestination
 			}
 		/*
@@ -278,15 +280,20 @@ func run() {
 		*/
 		case chessapi.StateSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
+				fmt.Println("StateSelectDestination MouseButtonLeft")
 				mpos := win.MousePosition()
 				square := chessui.FindSquareByVec(squares, mpos)
 				if square != nil {
 					coord, ok := chessapi.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
+						fmt.Println("StateSelectDestination ok!")
 						occupant, isOccupied := currentGame.BoardState[coord]
 						_, isValid := currentGame.ValidDestinations[coord]
 						if isValid && chessapi.IsDestinationValid(currentGame.WhiteToMove, isOccupied, occupant) {
+							fmt.Println("StateSelectDestination isValid, calling Move()...")
 							currentGame.Move(coord)
+							fmt.Println("StateSelectDestination after Move()")
+							doDraw = true
 						} else {
 							currentGame.CurrentState = chessapi.StateSelectPiece
 						}
