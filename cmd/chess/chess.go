@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	_ "image/png"
-	"io/ioutil"
 	"os"
 
 	"github.com/BurntSushi/toml"
@@ -33,30 +32,6 @@ func run() {
 
 	flag.StringVar(&gameFilePath, "game", "", "file path of game to load")
 	flag.Parse()
-
-	gameLoadSuccess := false
-	var currentPlayer chessapi.PlayerColor
-	var boardState chessapi.BoardState
-
-	if gameFilePath != "" {
-		fmt.Println("Loading game from file...")
-
-		b, err := ioutil.ReadFile(gameFilePath)
-		if err != nil {
-			fmt.Println("Error reading file ", err)
-			os.Exit(1)
-		}
-
-		fmt.Println("Parsing game")
-		currentPlayer, boardState, err = chessapi.Parse(string(b))
-		if err != nil {
-			fmt.Println("Failed to parse game ", err)
-			os.Exit(1)
-		}
-
-		gameLoadSuccess = true
-		fmt.Println("Finished parsing game!")
-	}
 
 	// i18n
 	bundle := &i18n.Bundle{DefaultLanguage: language.English}
@@ -144,7 +119,6 @@ func run() {
 	type view int
 	const (
 		viewTitle view = iota
-		viewSaveGame
 		viewDraw
 		viewSelectPiece
 		viewDrawValidMoves
@@ -159,23 +133,8 @@ func run() {
 		CurrentView: viewTitle,
 	}
 
-	if gameLoadSuccess == true {
-		uiState.CurrentView = viewDraw
-		fmt.Println("Loading game into memory...")
-		currentGame.BoardState = boardState
-		if currentPlayer == chessapi.PlayerWhite {
-			fmt.Println("Current player is white")
-			currentGame.WhiteToMove = true
-		} else {
-			fmt.Println("Current player is black")
-			currentGame.WhiteToMove = false
-		}
-	}
-
 	fmt.Println(currentGame.BoardState)
 
-	pendingSaveConfirm := false
-	doSave := false
 	doDraw := true
 
 	for !win.Closed() {
@@ -184,36 +143,8 @@ func run() {
 			os.Exit(0)
 		}
 
-		if uiState.CurrentView != viewSaveGame && win.Pressed(pixelgl.KeyS) && win.Pressed(pixelgl.KeyLeftSuper) {
-			fmt.Println("Save game? Y/N")
-			pendingSaveConfirm = true
-			uiState.CurrentView = viewSaveGame
-		}
-
 		switch uiState.CurrentView {
-		case viewSaveGame:
-			if pendingSaveConfirm == true {
-				if win.JustPressed(pixelgl.KeyY) {
-					fmt.Println("Yes")
-					doSave = true
-					pendingSaveConfirm = false
-				} else if win.JustPressed(pixelgl.KeyN) {
-					fmt.Println("No")
-					doSave = false
-					pendingSaveConfirm = false
-				}
-			} else if doSave == true {
-				fmt.Println("Saving game...")
-				err := chessapi.Save(&currentGame)
-				if err != nil {
-					fmt.Println("Error saving game")
-					os.Exit(1)
-				}
-				uiState.CurrentView = viewDraw
-			} else {
-				fmt.Println("Not saving game...")
-				uiState.CurrentView = viewDraw
-			}
+
 		/*
 			Draw the title screen
 		*/
