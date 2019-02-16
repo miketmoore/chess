@@ -212,17 +212,16 @@ func run() {
 				mpos := win.MousePosition()
 				square := chessui.FindSquareByVec(squares, mpos)
 				if square != nil {
-					coord, ok := chessapi.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
+					err, ok := currentGame.Move(squareOriginByCoords, square.OriginX, square.OriginY)
+					if err != nil {
+						fmt.Println(err)
+						os.Exit(1)
+					}
 					if ok {
-						occupant, isOccupied := currentGame.BoardState[coord]
-						_, isValid := currentGame.ValidDestinations[coord]
-						if isValid && chessapi.IsDestinationValid(currentGame.WhiteToMove, isOccupied, occupant) {
-							currentGame.Move(coord)
-							doDraw = true
-							uiState.CurrentView = viewDraw
-						} else {
-							uiState.CurrentView = viewSelectPiece
-						}
+						doDraw = true
+						uiState.CurrentView = viewDraw
+					} else {
+						uiState.CurrentView = viewSelectPiece
 					}
 				}
 			}
