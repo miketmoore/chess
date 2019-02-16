@@ -114,7 +114,7 @@ func run() {
 	}
 
 	// The current game data is stored here
-	currentGame := chessapi.NewGame()
+	game := chessapi.NewGame()
 
 	type view int
 	const (
@@ -133,7 +133,7 @@ func run() {
 		CurrentView: viewTitle,
 	}
 
-	fmt.Println(currentGame.BoardState)
+	fmt.Println(game.BoardState)
 
 	doDraw := true
 
@@ -176,7 +176,7 @@ func run() {
 		*/
 		case viewDraw:
 			if doDraw {
-				pieceDrawer.Draw(currentGame.BoardState, squares)
+				pieceDrawer.Draw(game.BoardState, squares)
 				doDraw = false
 				uiState.CurrentView = viewSelectPiece
 			}
@@ -187,7 +187,7 @@ func run() {
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				square := chessui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					ok := currentGame.SelectPieceToMove(squareOriginByCoords, square.OriginX, square.OriginY)
+					ok := game.SelectPieceToMove(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						uiState.CurrentView = viewDrawValidMoves
 						doDraw = true
@@ -199,8 +199,8 @@ func run() {
 		*/
 		case viewDrawValidMoves:
 			if doDraw {
-				pieceDrawer.Draw(currentGame.BoardState, squares)
-				chessui.HighlightSquares(win, squares, currentGame.ValidDestinations, colornames.Greenyellow)
+				pieceDrawer.Draw(game.BoardState, squares)
+				chessui.HighlightSquares(win, squares, game.ValidDestinations, colornames.Greenyellow)
 				doDraw = false
 				uiState.CurrentView = viewSelectDestination
 			}
@@ -212,7 +212,7 @@ func run() {
 				mpos := win.MousePosition()
 				square := chessui.FindSquareByVec(squares, mpos)
 				if square != nil {
-					err, ok := currentGame.Move(squareOriginByCoords, square.OriginX, square.OriginY)
+					err, ok := game.Move(squareOriginByCoords, square.OriginX, square.OriginY)
 					if err != nil {
 						fmt.Println(err)
 						os.Exit(1)
