@@ -185,10 +185,9 @@ func run() {
 		*/
 		case viewSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				fmt.Println("StateSelectPiece MoustButtonLeft")
 				square := chessui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					ok := currentGame.PrepSelectPieceToMove(squareOriginByCoords, square.OriginX, square.OriginY)
+					ok := currentGame.SelectPieceToMove(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						uiState.CurrentView = viewDrawValidMoves
 						doDraw = true
@@ -210,19 +209,15 @@ func run() {
 		*/
 		case viewSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				fmt.Println("StateSelectDestination MouseButtonLeft")
 				mpos := win.MousePosition()
 				square := chessui.FindSquareByVec(squares, mpos)
 				if square != nil {
 					coord, ok := chessapi.GetCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
-						fmt.Println("StateSelectDestination ok!")
 						occupant, isOccupied := currentGame.BoardState[coord]
 						_, isValid := currentGame.ValidDestinations[coord]
 						if isValid && chessapi.IsDestinationValid(currentGame.WhiteToMove, isOccupied, occupant) {
-							fmt.Println("StateSelectDestination isValid, calling Move()...")
 							currentGame.Move(coord)
-							fmt.Println("StateSelectDestination after Move()")
 							doDraw = true
 							uiState.CurrentView = viewDraw
 						} else {
