@@ -83,7 +83,7 @@ func NewBoardView(
 }
 
 // HighlightSquares adds a visual marker to the list of board squares
-func HighlightSquares(win *pixelgl.Window, squares BoardMap, coords chessapi.ValidMoves, color color.RGBA) {
+func HighlightSquares(win *pixelgl.Window, squares BoardMap, coords chessapi.ValidDestinations, color color.RGBA) {
 	for coord := range coords {
 
 		square := squares[coord]
