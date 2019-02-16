@@ -133,8 +133,6 @@ func run() {
 		CurrentView: viewTitle,
 	}
 
-	fmt.Println(game.BoardState)
-
 	doDraw := true
 
 	for !win.Closed() {
@@ -176,7 +174,7 @@ func run() {
 		*/
 		case viewDraw:
 			if doDraw {
-				pieceDrawer.Draw(game.BoardState, squares)
+				pieceDrawer.Draw(game.CurrentBoardState, squares)
 				doDraw = false
 				uiState.CurrentView = viewSelectPiece
 			}
@@ -199,7 +197,7 @@ func run() {
 		*/
 		case viewDrawValidMoves:
 			if doDraw {
-				pieceDrawer.Draw(game.BoardState, squares)
+				pieceDrawer.Draw(game.CurrentBoardState, squares)
 				chessui.HighlightSquares(win, squares, game.ValidDestinations, colornames.Greenyellow)
 				doDraw = false
 				uiState.CurrentView = viewSelectDestination
