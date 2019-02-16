@@ -188,30 +188,11 @@ func run() {
 				fmt.Println("StateSelectPiece MoustButtonLeft")
 				square := chessui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					coord, ok := chessapi.GetCoordByXY(
-						squareOriginByCoords,
-						square.OriginX,
-						square.OriginY,
-					)
+					ok := currentGame.PrepSelectPieceToMove(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
-						occupant, isOccupied := currentGame.BoardState[coord]
-						if occupant.Color == currentGame.CurrentPlayerColor() && isOccupied {
-							currentGame.ValidDestinations = chessapi.GetValidMoves(
-								currentGame.CurrentPlayerColor(),
-								occupant.Piece,
-								currentGame.BoardState,
-								coord,
-							)
-							if len(currentGame.ValidDestinations) > 0 {
-								currentGame.PieceToMove = occupant
-								currentGame.MoveStartCoord = coord
-								uiState.CurrentView = viewDrawValidMoves
-								doDraw = true
-							}
-						}
-
+						uiState.CurrentView = viewDrawValidMoves
+						doDraw = true
 					}
-
 				}
 			}
 		/*
