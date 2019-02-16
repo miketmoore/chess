@@ -185,7 +185,7 @@ func run() {
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				square := chessui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					ok := game.SelectPieceToMove(squareOriginByCoords, square.OriginX, square.OriginY)
+					ok := game.PlyStart(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						uiState.CurrentView = viewDrawValidMoves
 						doDraw = true
@@ -210,7 +210,7 @@ func run() {
 				mpos := win.MousePosition()
 				square := chessui.FindSquareByVec(squares, mpos)
 				if square != nil {
-					err, ok := game.Move(squareOriginByCoords, square.OriginX, square.OriginY)
+					err, ok := game.PlyEnd(squareOriginByCoords, square.OriginX, square.OriginY)
 					if err != nil {
 						fmt.Println(err)
 						os.Exit(1)
