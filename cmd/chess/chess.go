@@ -185,11 +185,15 @@ func run() {
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				square := chessui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					ok := game.PlyStart(squareOriginByCoords, square.OriginX, square.OriginY)
+					coord, ok := getCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
-						uiState.CurrentView = viewDrawValidMoves
-						doDraw = true
+						ok := game.PlyStart(coord)
+						if ok {
+							uiState.CurrentView = viewDrawValidMoves
+							doDraw = true
+						}
 					}
+
 				}
 			}
 		/*
@@ -210,17 +214,21 @@ func run() {
 				mpos := win.MousePosition()
 				square := chessui.FindSquareByVec(squares, mpos)
 				if square != nil {
-					err, ok := game.PlyEnd(squareOriginByCoords, square.OriginX, square.OriginY)
-					if err != nil {
-						fmt.Println(err)
-						os.Exit(1)
-					}
+					coord, ok := getCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
-						doDraw = true
-						uiState.CurrentView = viewDraw
-					} else {
-						uiState.CurrentView = viewSelectPiece
+						err, ok := game.PlyEnd(coord)
+						if err != nil {
+							fmt.Println(err)
+							os.Exit(1)
+						}
+						if ok {
+							doDraw = true
+							uiState.CurrentView = viewDraw
+						} else {
+							uiState.CurrentView = viewSelectPiece
+						}
 					}
+
 				}
 			}
 		}
@@ -231,4 +239,17 @@ func run() {
 
 func main() {
 	pixelgl.Run(run)
+}
+
+// getCoordByXY a coordinate for a set of rank (y) and file (x) coordinates
+func getCoordByXY(
+	squareOriginByCoords map[chessapi.Coord][]float64,
+	x, y float64,
+) (chessapi.Coord, bool) {
+	for coord, xy := range squareOriginByCoords {
+		if xy[0] == x && xy[1] == y {
+			return coord, true
+		}
+	}
+	return chessapi.Coord{}, false
 }
