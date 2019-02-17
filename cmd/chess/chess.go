@@ -159,10 +159,10 @@ func run() {
 		*/
 		case viewSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				coord, ok := board.GetCoord(win.MousePosition())
-				if ok {
-					ok := game.PlyStart(coord)
-					if ok {
+				coord, coordOK := board.GetCoord(win.MousePosition())
+				if coordOK {
+					plyStartOK := game.PlyStart(coord)
+					if plyStartOK {
 						uiState.CurrentView = viewDrawValidMoves
 						draw = true
 					}
@@ -183,11 +183,11 @@ func run() {
 		*/
 		case viewSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				coord, ok := board.GetCoord(win.MousePosition())
-				if ok {
-					err, ok := game.PlyEnd(coord)
+				coord, coordOK := board.GetCoord(win.MousePosition())
+				if coordOK {
+					err, plyEndOK := game.PlyEnd(coord)
 					exitOnError(err)
-					if ok {
+					if plyEndOK {
 						draw = true
 						uiState.CurrentView = viewDraw
 					} else {
