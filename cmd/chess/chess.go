@@ -26,6 +26,20 @@ const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
 const translationFile = "i18n/en.toml"
 const lang = "en-US"
 
+type view int
+
+const (
+	viewTitle view = iota
+	viewDraw
+	viewSelectPiece
+	viewDrawValidMoves
+	viewSelectDestination
+)
+
+type UIState struct {
+	CurrentView view
+}
+
 func run() {
 
 	var gameFilePath string
@@ -89,24 +103,11 @@ func run() {
 	// The current game data is stored here
 	game := chessapi.NewGame()
 
-	type view int
-	const (
-		viewTitle view = iota
-		viewDraw
-		viewSelectPiece
-		viewDrawValidMoves
-		viewSelectDestination
-	)
-
-	type UIState struct {
-		CurrentView view
-	}
-
 	uiState := UIState{
 		CurrentView: viewTitle,
 	}
 
-	doDraw := true
+	draw := true
 
 	for !win.Closed() {
 
@@ -120,7 +121,7 @@ func run() {
 			Draw the title screen
 		*/
 		case viewTitle:
-			if doDraw {
+			if draw {
 				win.Clear(colornames.Black)
 
 				// Draw title text
@@ -133,21 +134,21 @@ func run() {
 				textHelper.Body.Color = colornames.White
 				textHelper.Body.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(textHelper.Body.Bounds().Center())))
 
-				doDraw = false
+				draw = false
 			}
 
 			if win.JustPressed(pixelgl.KeyEnter) || win.JustPressed(pixelgl.MouseButtonLeft) {
 				uiState.CurrentView = viewDraw
 				win.Clear(colornames.Black)
-				doDraw = true
+				draw = true
 			}
 		/*
 			Draw the current state of the pieces on the board
 		*/
 		case viewDraw:
-			if doDraw {
+			if draw {
 				pieceDrawer.Draw(game.CurrentBoardState, squares)
-				doDraw = false
+				draw = false
 				uiState.CurrentView = viewSelectPiece
 			}
 		/*
@@ -162,7 +163,7 @@ func run() {
 						ok := game.PlyStart(coord)
 						if ok {
 							uiState.CurrentView = viewDrawValidMoves
-							doDraw = true
+							draw = true
 						}
 					}
 
@@ -172,10 +173,10 @@ func run() {
 			Highlight squares that are valid moves for the piece that was just selected
 		*/
 		case viewDrawValidMoves:
-			if doDraw {
+			if draw {
 				pieceDrawer.Draw(game.CurrentBoardState, squares)
 				ui.HighlightSquares(win, squares, game.ValidDestinations, colornames.Greenyellow)
-				doDraw = false
+				draw = false
 				uiState.CurrentView = viewSelectDestination
 			}
 		/*
@@ -191,7 +192,7 @@ func run() {
 						err, ok := game.PlyEnd(coord)
 						exitOnError(err)
 						if ok {
-							doDraw = true
+							draw = true
 							uiState.CurrentView = viewDraw
 						} else {
 							uiState.CurrentView = viewSelectPiece
