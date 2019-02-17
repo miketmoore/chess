@@ -61,29 +61,14 @@ func run() {
 	win, err := pixelgl.NewWindow(cfg)
 	exitOnError(err)
 
-	// Prepare display text
-	displayFace, err := fonts.LoadTTF(displayFontPath, 80)
-	exitOnError(err)
-
-	displayAtlas := text.NewAtlas(displayFace, text.ASCII)
-	displayOrig := pixel.V(screenW/2, screenH/2)
-	displayTxt := text.New(displayOrig, displayAtlas)
-
-	// Prepare body text
-	bodyFace, err := fonts.LoadTTF(bodyFontPath, 12)
-	exitOnError(err)
-
-	// Build body text
-	bodyAtlas := text.NewAtlas(bodyFace, text.ASCII)
-	bodyOrig := pixel.V(screenW/2, screenH/2)
-	bodyTxt := text.New(bodyOrig, bodyAtlas)
+	textHelper := initTextHelper()
 
 	// Title
-	fmt.Fprintln(displayTxt, i18nTitle)
+	fmt.Fprintln(textHelper.Display, i18nTitle)
 
 	// Sub-title
 	pressAnyKeyStr := i18nPressAnyKey
-	fmt.Fprintln(bodyTxt, pressAnyKeyStr)
+	fmt.Fprintln(textHelper.Body, pressAnyKeyStr)
 
 	// Make board
 	themeName := "sandcastle"
@@ -136,18 +121,17 @@ func run() {
 		*/
 		case viewTitle:
 			if doDraw {
-				fmt.Println("drawing")
 				win.Clear(colornames.Black)
 
 				// Draw title text
-				c := displayTxt.Bounds().Center()
+				c := textHelper.Display.Bounds().Center()
 				heightThird := screenH / 5
 				c.Y = c.Y - float64(heightThird)
-				displayTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(c)))
+				textHelper.Display.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(c)))
 
 				// Draw secondary text
-				bodyTxt.Color = colornames.White
-				bodyTxt.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(bodyTxt.Bounds().Center())))
+				textHelper.Body.Color = colornames.White
+				textHelper.Body.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(textHelper.Body.Bounds().Center())))
 
 				doDraw = false
 			}
@@ -234,5 +218,32 @@ func exitOnError(err error) {
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
+	}
+}
+
+type TextHelper struct {
+	Display *text.Text
+	Body    *text.Text
+}
+
+func initTextHelper() TextHelper {
+	// Prepare display text
+	displayFace, err := fonts.LoadTTF(displayFontPath, 80)
+	exitOnError(err)
+
+	displayAtlas := text.NewAtlas(displayFace, text.ASCII)
+	displayOrig := pixel.V(screenW/2, screenH/2)
+
+	// Prepare body text
+	bodyFace, err := fonts.LoadTTF(bodyFontPath, 12)
+	exitOnError(err)
+
+	// Build body text
+	bodyAtlas := text.NewAtlas(bodyFace, text.ASCII)
+	bodyOrig := pixel.V(screenW/2, screenH/2)
+
+	return TextHelper{
+		Display: text.New(displayOrig, displayAtlas),
+		Body:    text.New(bodyOrig, bodyAtlas),
 	}
 }
