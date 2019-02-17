@@ -126,7 +126,7 @@ func run() {
 	for !win.Closed() {
 
 		if win.JustPressed(pixelgl.KeyQ) {
-			exitIntentionally()
+			exit()
 		}
 
 		switch uiState.CurrentView {
@@ -226,7 +226,7 @@ func main() {
 	pixelgl.Run(run)
 }
 
-func exitIntentionally() {
+func exit() {
 	os.Exit(0)
 }
 
