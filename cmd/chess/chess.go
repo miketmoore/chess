@@ -11,7 +11,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	ui "github.com/miketmoore/chess"
-	chessapi "github.com/miketmoore/chess-api"
+	api "github.com/miketmoore/chess-api"
 	"github.com/miketmoore/chess/fonts"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
@@ -101,7 +101,7 @@ func run() {
 	exitOnError(err)
 
 	// The current game data is stored here
-	game := chessapi.NewGame()
+	game := api.NewGame()
 
 	uiState := UIState{
 		CurrentView: viewTitle,
