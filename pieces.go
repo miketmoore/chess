@@ -1,28 +1,31 @@
 package chess
 
 import (
+	"image"
+	"os"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	chessapi "github.com/miketmoore/chess-api"
 )
 
-type pieceDrawer struct {
+type pieces struct {
 	win               *pixelgl.Window
-	pieceSpriteSheets map[chessapi.PlayerColor]PieceSpriteSet
+	pieceSpriteSheets map[chessapi.PlayerColor]pieceSpriteSheet
 }
 
-// NewPieceDrawer builds a pieceDrawer instance that is responsible for drawing chess pieces
-func NewPieceDrawer(win *pixelgl.Window) (pieceDrawer, error) {
+// NewPieceRenderer builds a pieces instance that is responsible for drawing chess pieces
+func NewPieceRenderer(win *pixelgl.Window) (pieces, error) {
 	// Load sprite sheet graphic
 	pic, err := loadPicture(spriteSheetPath)
 	if err != nil {
-		return pieceDrawer{}, err
+		return pieces{}, err
 	}
 
-	return pieceDrawer{
+	return pieces{
 		win: win,
-		pieceSpriteSheets: map[chessapi.PlayerColor]PieceSpriteSet{
-			chessapi.PlayerBlack: PieceSpriteSet{
+		pieceSpriteSheets: map[chessapi.PlayerColor]pieceSpriteSheet{
+			chessapi.PlayerBlack: pieceSpriteSheet{
 				King:   newSprite(pic, 0, 0, 40, 40),
 				Queen:  newSprite(pic, 40, 0, 90, 40),
 				Bishop: newSprite(pic, 90, 0, 140, 40),
@@ -30,7 +33,7 @@ func NewPieceDrawer(win *pixelgl.Window) (pieceDrawer, error) {
 				Rook:   newSprite(pic, 185, 0, 220, 40),
 				Pawn:   newSprite(pic, 230, 0, 270, 40),
 			},
-			chessapi.PlayerWhite: PieceSpriteSet{
+			chessapi.PlayerWhite: pieceSpriteSheet{
 				King:   newSprite(pic, 0, 40, 40, 85),
 				Queen:  newSprite(pic, 40, 40, 90, 85),
 				Bishop: newSprite(pic, 90, 40, 140, 85),
@@ -43,7 +46,7 @@ func NewPieceDrawer(win *pixelgl.Window) (pieceDrawer, error) {
 }
 
 // Draw renders the chess pieces in the correct position on the board
-func (drawer pieceDrawer) Draw(boardState chessapi.BoardState, squares BoardMap) {
+func (drawer pieces) Draw(boardState chessapi.BoardState, squares BoardMap) {
 	// Draw board
 	for _, square := range squares {
 		square.Shape.Draw(drawer.win)
@@ -75,4 +78,33 @@ func (drawer pieceDrawer) Draw(boardState chessapi.BoardState, squares BoardMap)
 		y := square.OriginY + 25
 		piece.Draw(drawer.win, pixel.IM.Moved(pixel.V(x, y)))
 	}
+}
+
+var spriteSheetPath = "assets/standard_chess_pieces_sprite_sheet.png"
+
+// pieceSpriteSheet contains one sprite per type of piece
+type pieceSpriteSheet struct {
+	King   *pixel.Sprite
+	Queen  *pixel.Sprite
+	Bishop *pixel.Sprite
+	Knight *pixel.Sprite
+	Rook   *pixel.Sprite
+	Pawn   *pixel.Sprite
+}
+
+func newSprite(pic pixel.Picture, xa, ya, xb, yb float64) *pixel.Sprite {
+	return pixel.NewSprite(pic, pixel.Rect{Min: pixel.V(xa, ya), Max: pixel.V(xb, yb)})
+}
+
+func loadPicture(path string) (pixel.Picture, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+	return pixel.PictureDataFromImage(img), nil
 }

@@ -23,17 +23,48 @@ type Square struct {
 	OriginY float64
 }
 
+type Board struct {
+	Squares              BoardMap
+	SquareOriginByCoords map[chessapi.Coord][]float64
+}
+
+func (board *Board) GetCoord(vec pixel.Vec) (chessapi.Coord, bool) {
+	for _, square := range board.Squares {
+		if vec.X > square.OriginX &&
+			vec.X < (square.OriginX+50) &&
+			vec.Y > square.OriginY &&
+			vec.Y < (square.OriginY+50) {
+
+			coord, ok := board.getFileRankByXY(square)
+			if ok {
+				return coord, true
+			}
+		}
+	}
+	return chessapi.Coord{}, false
+}
+
+// getFileRankByXY a coordinate for a set of rank (y) and file (x) coordinates
+func (board *Board) getFileRankByXY(square Square) (chessapi.Coord, bool) {
+	for coord, xy := range board.SquareOriginByCoords {
+		if xy[0] == square.OriginX && xy[1] == square.OriginY {
+			return coord, true
+		}
+	}
+	return chessapi.Coord{}, false
+}
+
 // BoardColNames is the list of column names in algebraic notation
 // var BoardColNames = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 
-// NewBoardView returns an array of *imdraw.IMDraw instances, each representing one square
+// NewBoard returns an array of *imdraw.IMDraw instances, each representing one square
 // on a chess boardview. The size argument defines the width and height of each square.
 // The blackFill and whiteFill arguments define what colors are used for the "black"
 // and "white" squares.
-func NewBoardView(
+func NewBoard(
 	originX, originY, size float64,
 	blackFill, whiteFill color.RGBA,
-) (BoardMap, map[chessapi.Coord][]float64) {
+) Board {
 	var squareW = size
 	var squareH = size
 	var r, c float64
@@ -79,7 +110,11 @@ func NewBoardView(
 		xInc = originX
 		yInc += size
 	}
-	return squares, squareOriginByCoords
+
+	return Board{
+		Squares:              squares,
+		SquareOriginByCoords: squareOriginByCoords,
+	}
 }
 
 // HighlightSquares adds a visual marker to the list of board squares

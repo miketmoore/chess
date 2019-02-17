@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"image/color"
 	_ "image/png"
 	"os"
 
@@ -85,19 +86,21 @@ func run() {
 	fmt.Fprintln(textHelper.Body, pressAnyKeyStr)
 
 	// Make board
-	themeName := "sandcastle"
 	boardW := squareSize * 8
-	boardOriginX := (screenW - int(boardW)) / 2
-	squares, squareOriginByCoords := ui.NewBoardView(
-		float64(boardOriginX),
-		150,
+	var boardOriginX float64 = (screenW - boardW) / 2
+	var boardOriginY float64 = 150
+	blackSquareColor := color.RGBA{184, 139, 74, 255}
+	whiteSquareColor := color.RGBA{227, 193, 111, 255}
+	board := ui.NewBoard(
+		boardOriginX,
+		boardOriginY,
 		squareSize,
-		ui.Themes[themeName]["black"],
-		ui.Themes[themeName]["white"],
+		blackSquareColor,
+		whiteSquareColor,
 	)
 
 	// Make pieces
-	pieceDrawer, err := ui.NewPieceDrawer(win)
+	pieces, err := ui.NewPieceRenderer(win)
 	exitOnError(err)
 
 	// The current game data is stored here
@@ -125,10 +128,10 @@ func run() {
 				win.Clear(colornames.Black)
 
 				// Draw title text
-				c := textHelper.Display.Bounds().Center()
+				center := textHelper.Display.Bounds().Center()
 				heightThird := screenH / 5
-				c.Y = c.Y - float64(heightThird)
-				textHelper.Display.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(c)))
+				center.Y = center.Y - float64(heightThird)
+				textHelper.Display.Draw(win, pixel.IM.Moved(win.Bounds().Center().Sub(center)))
 
 				// Draw secondary text
 				textHelper.Body.Color = colornames.White
@@ -147,7 +150,7 @@ func run() {
 		*/
 		case viewDraw:
 			if draw {
-				pieceDrawer.Draw(game.CurrentBoardState, squares)
+				pieces.Draw(game.CurrentBoardState, board.Squares)
 				draw = false
 				uiState.CurrentView = viewSelectPiece
 			}
@@ -156,17 +159,13 @@ func run() {
 		*/
 		case viewSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				square := ui.FindSquareByVec(squares, win.MousePosition())
-				if square != nil {
-					coord, ok := ui.GetFileRankByXY(squareOriginByCoords, square.OriginX, square.OriginY)
+				coord, ok := board.GetCoord(win.MousePosition())
+				if ok {
+					ok := game.PlyStart(coord)
 					if ok {
-						ok := game.PlyStart(coord)
-						if ok {
-							uiState.CurrentView = viewDrawValidMoves
-							draw = true
-						}
+						uiState.CurrentView = viewDrawValidMoves
+						draw = true
 					}
-
 				}
 			}
 		/*
@@ -174,8 +173,8 @@ func run() {
 		*/
 		case viewDrawValidMoves:
 			if draw {
-				pieceDrawer.Draw(game.CurrentBoardState, squares)
-				ui.HighlightSquares(win, squares, game.ValidDestinations, colornames.Greenyellow)
+				pieces.Draw(game.CurrentBoardState, board.Squares)
+				ui.HighlightSquares(win, board.Squares, game.ValidDestinations, colornames.Greenyellow)
 				draw = false
 				uiState.CurrentView = viewSelectDestination
 			}
@@ -184,21 +183,16 @@ func run() {
 		*/
 		case viewSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				mpos := win.MousePosition()
-				square := ui.FindSquareByVec(squares, mpos)
-				if square != nil {
-					coord, ok := ui.GetFileRankByXY(squareOriginByCoords, square.OriginX, square.OriginY)
+				coord, ok := board.GetCoord(win.MousePosition())
+				if ok {
+					err, ok := game.PlyEnd(coord)
+					exitOnError(err)
 					if ok {
-						err, ok := game.PlyEnd(coord)
-						exitOnError(err)
-						if ok {
-							draw = true
-							uiState.CurrentView = viewDraw
-						} else {
-							uiState.CurrentView = viewSelectPiece
-						}
+						draw = true
+						uiState.CurrentView = viewDraw
+					} else {
+						uiState.CurrentView = viewSelectPiece
 					}
-
 				}
 			}
 		}
@@ -222,29 +216,26 @@ func exitOnError(err error) {
 	}
 }
 
-type TextHelper struct {
+type textHelper struct {
 	Display *text.Text
 	Body    *text.Text
 }
 
-func initTextHelper() TextHelper {
-	// Prepare display text
+func initTextHelper() textHelper {
 	displayFace, err := fonts.LoadTTF(displayFontPath, 80)
 	exitOnError(err)
 
-	displayAtlas := text.NewAtlas(displayFace, text.ASCII)
-	displayOrig := pixel.V(screenW/2, screenH/2)
-
-	// Prepare body text
 	bodyFace, err := fonts.LoadTTF(bodyFontPath, 12)
 	exitOnError(err)
 
-	// Build body text
-	bodyAtlas := text.NewAtlas(bodyFace, text.ASCII)
-	bodyOrig := pixel.V(screenW/2, screenH/2)
-
-	return TextHelper{
-		Display: text.New(displayOrig, displayAtlas),
-		Body:    text.New(bodyOrig, bodyAtlas),
+	return textHelper{
+		Display: text.New(
+			pixel.V(screenW/2, screenH/2),
+			text.NewAtlas(displayFace, text.ASCII),
+		),
+		Body: text.New(
+			pixel.V(screenW/2, screenH/2),
+			text.NewAtlas(bodyFace, text.ASCII),
+		),
 	}
 }
