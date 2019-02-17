@@ -10,7 +10,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	chessui "github.com/miketmoore/chess"
+	ui "github.com/miketmoore/chess"
 	chessapi "github.com/miketmoore/chess-api"
 	"github.com/miketmoore/chess/fonts"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -98,16 +98,16 @@ func run() {
 	themeName := "sandcastle"
 	boardW := squareSize * 8
 	boardOriginX := (screenW - int(boardW)) / 2
-	squares, squareOriginByCoords := chessui.NewBoardView(
+	squares, squareOriginByCoords := ui.NewBoardView(
 		float64(boardOriginX),
 		150,
 		squareSize,
-		chessui.Themes[themeName]["black"],
-		chessui.Themes[themeName]["white"],
+		ui.Themes[themeName]["black"],
+		ui.Themes[themeName]["white"],
 	)
 
 	// Make pieces
-	pieceDrawer, err := chessui.NewPieceDrawer(win)
+	pieceDrawer, err := ui.NewPieceDrawer(win)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -183,9 +183,9 @@ func run() {
 		*/
 		case viewSelectPiece:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
-				square := chessui.FindSquareByVec(squares, win.MousePosition())
+				square := ui.FindSquareByVec(squares, win.MousePosition())
 				if square != nil {
-					coord, ok := getCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
+					coord, ok := ui.GetFileRankByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						ok := game.PlyStart(coord)
 						if ok {
@@ -202,7 +202,7 @@ func run() {
 		case viewDrawValidMoves:
 			if doDraw {
 				pieceDrawer.Draw(game.CurrentBoardState, squares)
-				chessui.HighlightSquares(win, squares, game.ValidDestinations, colornames.Greenyellow)
+				ui.HighlightSquares(win, squares, game.ValidDestinations, colornames.Greenyellow)
 				doDraw = false
 				uiState.CurrentView = viewSelectDestination
 			}
@@ -212,9 +212,9 @@ func run() {
 		case viewSelectDestination:
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				mpos := win.MousePosition()
-				square := chessui.FindSquareByVec(squares, mpos)
+				square := ui.FindSquareByVec(squares, mpos)
 				if square != nil {
-					coord, ok := getCoordByXY(squareOriginByCoords, square.OriginX, square.OriginY)
+					coord, ok := ui.GetFileRankByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						err, ok := game.PlyEnd(coord)
 						if err != nil {
@@ -239,17 +239,4 @@ func run() {
 
 func main() {
 	pixelgl.Run(run)
-}
-
-// getCoordByXY a coordinate for a set of rank (y) and file (x) coordinates
-func getCoordByXY(
-	squareOriginByCoords map[chessapi.Coord][]float64,
-	x, y float64,
-) (chessapi.Coord, bool) {
-	for coord, xy := range squareOriginByCoords {
-		if xy[0] == x && xy[1] == y {
-			return coord, true
-		}
-	}
-	return chessapi.Coord{}, false
 }
