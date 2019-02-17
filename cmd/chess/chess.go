@@ -59,17 +59,11 @@ func run() {
 		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	exitOnError(err)
 
 	// Prepare display text
 	displayFace, err := fonts.LoadTTF(displayFontPath, 80)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	exitOnError(err)
 
 	displayAtlas := text.NewAtlas(displayFace, text.ASCII)
 	displayOrig := pixel.V(screenW/2, screenH/2)
@@ -77,10 +71,7 @@ func run() {
 
 	// Prepare body text
 	bodyFace, err := fonts.LoadTTF(bodyFontPath, 12)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	exitOnError(err)
 
 	// Build body text
 	bodyAtlas := text.NewAtlas(bodyFace, text.ASCII)
@@ -108,10 +99,7 @@ func run() {
 
 	// Make pieces
 	pieceDrawer, err := ui.NewPieceDrawer(win)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	exitOnError(err)
 
 	// The current game data is stored here
 	game := chessapi.NewGame()
@@ -138,7 +126,7 @@ func run() {
 	for !win.Closed() {
 
 		if win.JustPressed(pixelgl.KeyQ) {
-			os.Exit(0)
+			exitIntentionally()
 		}
 
 		switch uiState.CurrentView {
@@ -217,10 +205,7 @@ func run() {
 					coord, ok := ui.GetFileRankByXY(squareOriginByCoords, square.OriginX, square.OriginY)
 					if ok {
 						err, ok := game.PlyEnd(coord)
-						if err != nil {
-							fmt.Println(err)
-							os.Exit(1)
-						}
+						exitOnError(err)
 						if ok {
 							doDraw = true
 							uiState.CurrentView = viewDraw
@@ -239,4 +224,15 @@ func run() {
 
 func main() {
 	pixelgl.Run(run)
+}
+
+func exitIntentionally() {
+	os.Exit(0)
+}
+
+func exitOnError(err error) {
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
