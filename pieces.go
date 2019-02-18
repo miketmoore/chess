@@ -46,14 +46,14 @@ func NewPieceRenderer(win *pixelgl.Window) (pieces, error) {
 }
 
 // Draw renders the chess pieces in the correct position on the board
-func (drawer pieces) Draw(boardState chessapi.BoardState, squares BoardMap) {
+func (drawer pieces) Draw(board chessapi.Board, squares BoardMap) {
 	// Draw board
 	for _, square := range squares {
 		square.Shape.Draw(drawer.win)
 	}
 
 	// Draw pieces in the correct position
-	for coord, livePieceData := range boardState {
+	for coord, livePieceData := range board {
 
 		set := drawer.pieceSpriteSheets[livePieceData.Color]
 
