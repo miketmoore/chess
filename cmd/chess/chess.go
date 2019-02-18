@@ -150,7 +150,7 @@ func run() {
 		*/
 		case viewDraw:
 			if draw {
-				pieces.Draw(game.CurrentBoardState, board.Squares)
+				pieces.Draw(game.Board, board.Squares)
 				draw = false
 				uiState.CurrentView = viewSelectPiece
 			}
@@ -173,7 +173,7 @@ func run() {
 		*/
 		case viewDrawValidMoves:
 			if draw {
-				pieces.Draw(game.CurrentBoardState, board.Squares)
+				pieces.Draw(game.Board, board.Squares)
 				ui.HighlightSquares(win, board.Squares, game.ValidDestinations, colornames.Greenyellow)
 				draw = false
 				uiState.CurrentView = viewSelectDestination
@@ -185,9 +185,12 @@ func run() {
 			if win.JustPressed(pixelgl.MouseButtonLeft) {
 				coord, coordOK := board.GetCoord(win.MousePosition())
 				if coordOK {
-					err, plyEndOK := game.PlyEnd(coord)
+					err, plyEndOK, capture, capturedPiece := game.PlyEnd(coord)
 					exitOnError(err)
 					if plyEndOK {
+						if capture {
+							fmt.Printf("Captured %s %s!\n", capturedPiece.Color, capturedPiece.Piece)
+						}
 						draw = true
 						uiState.CurrentView = viewDraw
 					} else {

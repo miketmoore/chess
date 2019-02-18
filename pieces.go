@@ -53,7 +53,7 @@ func (drawer pieces) Draw(board chessapi.Board, squares BoardMap) {
 	}
 
 	// Draw pieces in the correct position
-	for coord, livePieceData := range board {
+	for _, livePieceData := range board.Pieces {
 
 		set := drawer.pieceSpriteSheets[livePieceData.Color]
 
@@ -73,7 +73,7 @@ func (drawer pieces) Draw(board chessapi.Board, squares BoardMap) {
 			piece = set.Rook
 		}
 
-		square := squares[coord]
+		square := squares[livePieceData.Coord]
 		x := square.OriginX + 25
 		y := square.OriginY + 25
 		piece.Draw(drawer.win, pixel.IM.Moved(pixel.V(x, y)))
