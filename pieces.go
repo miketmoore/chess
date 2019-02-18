@@ -11,7 +11,7 @@ import (
 
 type pieces struct {
 	win               *pixelgl.Window
-	pieceSpriteSheets map[chessapi.PlayerColor]pieceSpriteSheet
+	pieceSpriteSheets map[chessapi.Player]pieceSpriteSheet
 }
 
 // NewPieceRenderer builds a pieces instance that is responsible for drawing chess pieces
@@ -24,8 +24,8 @@ func NewPieceRenderer(win *pixelgl.Window) (pieces, error) {
 
 	return pieces{
 		win: win,
-		pieceSpriteSheets: map[chessapi.PlayerColor]pieceSpriteSheet{
-			chessapi.PlayerBlack: pieceSpriteSheet{
+		pieceSpriteSheets: map[chessapi.Player]pieceSpriteSheet{
+			chessapi.Black: pieceSpriteSheet{
 				King:   newSprite(pic, 0, 0, 40, 40),
 				Queen:  newSprite(pic, 40, 0, 90, 40),
 				Bishop: newSprite(pic, 90, 0, 140, 40),
@@ -33,7 +33,7 @@ func NewPieceRenderer(win *pixelgl.Window) (pieces, error) {
 				Rook:   newSprite(pic, 185, 0, 220, 40),
 				Pawn:   newSprite(pic, 230, 0, 270, 40),
 			},
-			chessapi.PlayerWhite: pieceSpriteSheet{
+			chessapi.White: pieceSpriteSheet{
 				King:   newSprite(pic, 0, 40, 40, 85),
 				Queen:  newSprite(pic, 40, 40, 90, 85),
 				Bishop: newSprite(pic, 90, 40, 140, 85),
@@ -59,17 +59,17 @@ func (drawer pieces) Draw(boardState chessapi.BoardState, squares BoardMap) {
 
 		var piece *pixel.Sprite
 		switch livePieceData.Piece {
-		case chessapi.PieceBishop:
+		case chessapi.Bishop:
 			piece = set.Bishop
-		case chessapi.PieceKing:
+		case chessapi.King:
 			piece = set.King
-		case chessapi.PieceKnight:
+		case chessapi.Knight:
 			piece = set.Knight
-		case chessapi.PiecePawn:
+		case chessapi.Pawn:
 			piece = set.Pawn
-		case chessapi.PieceQueen:
+		case chessapi.Queen:
 			piece = set.Queen
-		case chessapi.PieceRook:
+		case chessapi.Rook:
 			piece = set.Rook
 		}
 
