@@ -7,16 +7,13 @@ import (
 	_ "image/png"
 	"os"
 
-	"github.com/BurntSushi/toml"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	ui "github.com/miketmoore/chess"
 	api "github.com/miketmoore/chess-api"
 	"github.com/miketmoore/chess/fonts"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/image/colornames"
-	"golang.org/x/text/language"
 )
 
 const screenW = 600
@@ -24,7 +21,6 @@ const screenH = 600
 const squareSize float64 = 50
 const displayFontPath = "assets/kenney_fontpackage/Fonts/Kenney Future Narrow.ttf"
 const bodyFontPath = "assets/kenney_fontpackage/Fonts/Kenney Pixel Square.ttf"
-const translationFile = "i18n/en.toml"
 const lang = "en-US"
 
 type view int
@@ -48,28 +44,12 @@ func run() {
 	flag.StringVar(&gameFilePath, "game", "", "file path of game to load")
 	flag.Parse()
 
-	// i18n
-	bundle := &i18n.Bundle{DefaultLanguage: language.English}
-
-	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
-	bundle.MustLoadMessageFile(translationFile)
-
-	localizer := i18n.NewLocalizer(bundle, "en")
-
-	i18nTitle := localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID: "Title",
-		},
-	})
-	i18nPressAnyKey := localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID: "PressAnyKey",
-		},
-	})
+	msgTitle := "Title"
+	msgPressAnyKey := "Press any key"
 
 	// Setup GUI window
 	cfg := pixelgl.WindowConfig{
-		Title:  i18nTitle,
+		Title:  msgTitle,
 		Bounds: pixel.R(0, 0, screenW, screenH),
 		VSync:  true,
 	}
@@ -79,11 +59,10 @@ func run() {
 	textHelper := initTextHelper()
 
 	// Title
-	fmt.Fprintln(textHelper.Display, i18nTitle)
+	fmt.Fprintln(textHelper.Display, msgTitle)
 
 	// Sub-title
-	pressAnyKeyStr := i18nPressAnyKey
-	fmt.Fprintln(textHelper.Body, pressAnyKeyStr)
+	fmt.Fprintln(textHelper.Body, msgPressAnyKey)
 
 	// Make board
 	boardW := squareSize * 8
